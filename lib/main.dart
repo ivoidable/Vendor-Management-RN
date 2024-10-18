@@ -24,10 +24,10 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
-        GetPage(name: '/normal_user_dashboard', page: () => NormalUserDashboard()),
-        GetPage(name: '/vendor_dashboard', page: () => VendorDashboard()),
-        GetPage(name: '/moderator_dashboard', page: () => ModeratorDashboard()),
-        GetPage(name: '/admin_dashboard', page: () => AdminDashboard()),
+        // GetPage(name: '/normal_user_dashboard', page: () => NormalUserDashboard()),
+        // GetPage(name: '/vendor_dashboard', page: () => VendorDashboard()),
+        // GetPage(name: '/moderator_dashboard', page: () => ModeratorDashboard()),
+        // GetPage(name: '/admin_dashboard', page: () => AdminDashboard()),
       ],
     );
   }
