@@ -18,11 +18,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(AuthController()); // Initialize UserController
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +46,13 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   Future<AppUser?> getUserData() async {
     print("Called");
-    if (FirebaseAuth.instance.currentUser != null) {
+    var shite = await DatabaseService().getUser(FirebaseAuth.instance.currentUser!.uid);
+    if (FirebaseAuth.instance.currentUser != null && shite != null) {
       String uid = FirebaseAuth.instance.currentUser!.uid;
       AppUser user =
           AppUser.fromFirestore((await DatabaseService().getUser(uid))!);
       return user;
-    } else {
+    } else if (shite == null) {
       return null;
     }
   }
@@ -62,7 +63,7 @@ class AuthenticationWrapper extends StatelessWidget {
       future: getUserData(), // Check login status
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Show loading indicator
+          return Center(child: const CircularProgressIndicator()); // Show loading indicator
         }
 
         if (snapshot.hasData && snapshot.data != null) {
@@ -70,6 +71,7 @@ class AuthenticationWrapper extends StatelessWidget {
           switch (snapshot.data!.role) {
             case 'vendor':
               Get.put(VendorMainController());
+              //FIXME: The app shows errors when you reload or sign in, my guess its because of the double checking of authentication, remove one mf
               return VendorMainScreen();
             // case 'moderator':
 

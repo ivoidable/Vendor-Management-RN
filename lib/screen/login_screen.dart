@@ -42,7 +42,13 @@ class LoginScreen extends StatelessWidget {
                   DatabaseService()
                       .signIn(emailController.text, passwordController.text);
                 },
-                child: Text("Login"))
+                child: Text("Login"),),
+            SizedBox(height: 18,),
+            OutlinedButton(
+                onPressed: () {
+                  Get.offNamed('/register');
+                },
+                child: Text("Register"),),
           ],
         ),
       ),

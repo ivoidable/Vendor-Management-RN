@@ -13,7 +13,10 @@ class VendorEventsTab extends StatelessWidget {
     return FutureBuilder(
       future: mainController.getEvents(),
       builder: (context, snapshot) {
-        return Padding(
+        if (mainController.events.isEmpty) {
+          return Center(child: Text("No Available Events"),);
+        } else {
+          return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: ListView.builder(
           padding: const EdgeInsets.all(8.0),
@@ -33,6 +36,7 @@ class VendorEventsTab extends StatelessWidget {
           },
         ),
       );
+        }
       }
     );
   }
