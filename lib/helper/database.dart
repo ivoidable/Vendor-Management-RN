@@ -18,6 +18,14 @@ class DatabaseService {
     return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
   }
 
+  Future<List<Event>> getAllEvents() async {
+    List<Event> events = (await _db.collection('events').get()).docs.map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    return events;
+    // return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+  }
+
   // UPDATE an event
   Future<void> updateEvent(Event event) async {
     await _db.collection('events').doc(event.id).update(event.toMap());
