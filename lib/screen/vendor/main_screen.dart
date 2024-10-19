@@ -11,11 +11,11 @@ class VendorMainScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Obx(() {
-        final controller = Get.find<MainController>();
+        final controller = Get.find<VendorMainController>();
         return controller.tabs[controller.selectedIndex.value];
       }),
       bottomNavigationBar: Obx(() {
-        final controller = Get.find<MainController>();
+        final controller = Get.find<VendorMainController>();
         return BottomNavigationBar(
           currentIndex: controller.selectedIndex.value,
           onTap: (index) => controller.changeTab(index),

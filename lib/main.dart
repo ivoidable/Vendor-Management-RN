@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 
 void main() async {
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(UserController()); // Initialize UserController
   runApp(MyApp());
@@ -41,13 +41,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class AuthenticationWrapper extends StatelessWidget {
-
   Future<AppUser?> getUserData() async {
     if (FirebaseAuth.instance.currentUser != null) {
       String uid = FirebaseAuth.instance.currentUser!.uid;
-      AppUser user = AppUser.fromFirestore((await DatabaseService().getUser(uid))!);
+      AppUser user =
+          AppUser.fromFirestore((await DatabaseService().getUser(uid))!);
       return user;
     } else {
       return null;
@@ -67,12 +66,13 @@ class AuthenticationWrapper extends StatelessWidget {
           // If user is logged in, initialize the MainController and go to VendorMainScreen
           switch (snapshot.data!.role) {
             case 'vendor':
+              Get.put(VendorMainController());
               return VendorMainScreen();
             // case 'moderator':
-              
+
             //   break;
             // case 'admin':
-              
+
             //   break;
             default:
               return UserMainScreen();

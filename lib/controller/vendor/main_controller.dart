@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class MainController extends GetxController {
+class VendorMainController extends GetxController {
   var selectedIndex = 0.obs;
 
   final tabs = [
