@@ -65,14 +65,52 @@ class DatabaseService {
   }
 
   // Authentication - Sign Up User with Email & Password
-  Future<User?> signUp(String email, String password) async {
-    UserCredential result = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return result.user;
-  }
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required DateTime dateOfBirth,
+    required String role, // 'Admin', 'Moderator', 'Vendor', 'User'
+    String? businessName, // Only needed for Vendor
+    String? logoUrl, // Only needed for Vendor
+  }) async {
+    try {
+      // Create the user with Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
+      // Get the generated UID
+      String uid = userCredential.user!.uid;
+
+      // Create the appropriate user object based on the role
+      AppUser newUser;
+      switch (role) {
+        case 'vendor':
+          newUser = Vendor(
+            id: uid,
+            name: name,
+            dateOfBirth: dateOfBirth,
+            businessName: businessName ?? '',
+            logoUrl: logoUrl ?? '',
+          );
+          break;
+        default:
+          newUser = NormalUser(
+            id: uid,
+            name: name,
+            dateOfBirth: dateOfBirth,
+          );
+      }
+
+      // Save the user object to Firestore under 'users/{uid}'
+      await _db.collection('users').doc(uid).set(newUser.toMap());
+    } catch (e) {
+      print('Error signing up: $e');
+      rethrow; // Handle errors as needed
+    }
+  }
   // Authentication - Sign In User with Email & Password
   Future<User?> signIn(String email, String password) async {
     UserCredential result = await _auth.signInWithEmailAndPassword(

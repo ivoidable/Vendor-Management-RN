@@ -31,16 +31,16 @@ class UserController extends GetxController {
   void _navigateBasedOnRole(String role) {
     switch (role) {
       case 'vendor':
-        Get.offAllNamed('/vendor_dashboard');
+        Get.offAllNamed('/vendor_main');
         break;
       case 'moderator':
-        Get.offAllNamed('/moderator_dashboard');
+        Get.offAllNamed('/moderator_main');
         break;
       case 'admin':
-        Get.offAllNamed('/admin_dashboard');
+        Get.offAllNamed('/admin_main');
         break;
       default:
-        Get.offAllNamed('/normal_user_dashboard');
+        Get.offAllNamed('/user_main');
     }
   }
 

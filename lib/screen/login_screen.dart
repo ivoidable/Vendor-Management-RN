@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:vendor/helper/database.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -25,9 +26,7 @@ class LoginScreen extends StatelessWidget {
             TextField(controller: passwordController, maxLength: 64, obscureText: true, decoration: InputDecoration(label: Text("Password")),),
             // Submit button
             ElevatedButton(onPressed: () {
-
-              //TODO: Implement Login Logic
-
+              DatabaseService().signIn(emailController.text, passwordController.text);
             }, child: Text("Login"))
           ],
         ),

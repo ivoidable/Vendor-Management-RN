@@ -26,16 +26,25 @@ class AppUser {
         return NormalUser.fromMap(doc.id, data);
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'date_of_birth': dateOfBirth.toIso8601String(),
+      'role': role,
+    };
+  }
 }
 
 class NormalUser extends AppUser {
-  List<String> favoriteEvents;
+  List<String> favorite_vendors;
 
   NormalUser({
     required String id,
     required String name,
     required DateTime dateOfBirth,
-    this.favoriteEvents = const [],
+    this.favorite_vendors = const [],
   }) : super(id: id, name: name, dateOfBirth: dateOfBirth, role: 'normal_user');
 
   factory NormalUser.fromMap(String id, Map<String, dynamic> data) {
@@ -43,8 +52,15 @@ class NormalUser extends AppUser {
       id: id,
       name: data['name'],
       dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
-      favoriteEvents: List<String>.from(data['favorite_events'] ?? []),
+      favorite_vendors: List<String>.from(data['favorite_events'] ?? []),
     );
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    final map = super.toMap();
+    map.addAll({'favorite_vendors': favorite_vendors});
+    return map;
   }
   
 }
@@ -76,13 +92,11 @@ class Vendor extends AppUser {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'business_name': businessName,
-      'logo_url': logoUrl,
-      'slogan': slogan,
-    };
+    final map = super.toMap();
+    map.addAll({'business_name': businessName, 'logo_url': logoUrl, 'slogan': slogan});
+    return map;
   }
 }
 
