@@ -13,7 +13,7 @@ class AppUser {
     required this.role,
   });
 
-  factory AppUser.fromFirestore(DocumentSnapshot doc) {
+  factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() as Map<String, dynamic>;
     switch (data['role']) {
       case 'vendor':

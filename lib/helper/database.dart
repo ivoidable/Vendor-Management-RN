@@ -48,9 +48,9 @@ class DatabaseService {
   }
 
   // READ user data from Firestore
-  Future<Map<String, dynamic>?> getUser(String uid) async {
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUser(String uid) async {
     DocumentSnapshot doc = await _db.collection('users').doc(uid).get();
-    return doc.exists ? doc.data() as Map<String, dynamic> : null;
+    return doc.exists ? doc as DocumentSnapshot<Map<String, dynamic>> : null;
   }
 
   // UPDATE user data
