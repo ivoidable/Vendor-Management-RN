@@ -21,7 +21,7 @@ class VendorMainController extends GetxController {
 
 
   //TODO: Add Data Fetching Methods & Refresh Method
-  void getEvents() async {
+  Future<void> getEvents() async {
     events = await DatabaseService().getAllEvents();
   }
 }

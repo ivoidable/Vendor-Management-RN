@@ -2,33 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
 import 'package:vendor/helper/helper_widgets.dart';
-import 'package:vendor/model/event.dart';
 
 class VendorEventsTab extends StatelessWidget {
-  final MainController mainController = Get.find<MainController>();
+  final VendorMainController mainController = Get.find<VendorMainController>();
   //TODO: Fetch Real Event Data
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: events.length,
-        itemBuilder: (context, index) {
-          final event = events[index];
-          return EventCard(
-            name: event.name,
-            imageUrl: event.imageUrl,
-            vendors: event.registeredVendors.length,
-            maxVendors: event.maxVendors,
-            onClick: () {
-              // Handle click event
-              print('Clicked on ${event.name}');
-            },
-          );
-        },
-      ),
+    
+    return FutureBuilder(
+      future: mainController.getEvents(),
+      builder: (context, snapshot) {
+        return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(8.0),
+          itemCount: mainController.events.length,
+          itemBuilder: (context, index) {
+            final event = mainController.events[index];
+            return EventCard(
+              name: event.name,
+              imageUrl: event.imageUrl,
+              vendors: event.registeredVendors.length,
+              maxVendors: event.maxVendors,
+              onClick: () {
+                // Handle click event
+                print('Clicked on ${event.name}');
+              },
+            );
+          },
+        ),
+      );
+      }
     );
   }
 }
@@ -57,22 +62,5 @@ class VendorProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text("Profile Tab");
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: mainController.events.length,
-      itemBuilder: (context, index) {
-        final event = mainController.events[index];
-        return EventCard(
-          name: event.name,
-          imageUrl: event.imageUrl,
-          vendors: event['vendors'],
-          maxVendors: event['maxVendors'],
-          onClick: () {
-            // Handle click event
-            print('Clicked on ${event['name']}');
-          },
-        );
-      },
-    );
   }
 }
