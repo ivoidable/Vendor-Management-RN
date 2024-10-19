@@ -13,11 +13,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
-  Get.put(UserController()); // Initialize UserController
-  runApp(MyApp());
+  Get.put(AuthController()); // Initialize UserController
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,11 +29,12 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       defaultTransition: Transition.cupertino,
       title: "Vendor Management App",
-      initialRoute: '/login',
+      initialRoute: '/auth',
       getPages: [
+        GetPage(name: '/auth', page: () => AuthenticationWrapper()),
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
-        GetPage(name: '/user_main', page: () => UserMainScreen()),
+        GetPage(name: '/user_main', page: () => const UserMainScreen()),
         GetPage(name: '/vendor_main', page: () => VendorMainScreen()),
         // GetPage(name: '/moderator_dashboard', page: () => ModeratorDashboard()),
         // GetPage(name: '/admin_dashboard', page: () => AdminDashboard()),
@@ -41,13 +43,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class AuthenticationWrapper extends StatelessWidget {
-
   Future<AppUser?> getUserData() async {
+    print("Called");
     if (FirebaseAuth.instance.currentUser != null) {
       String uid = FirebaseAuth.instance.currentUser!.uid;
-      AppUser user = AppUser.fromFirestore((await DatabaseService().getUser(uid))!);
+      AppUser user =
+          AppUser.fromFirestore((await DatabaseService().getUser(uid))!);
       return user;
     } else {
       return null;
@@ -67,15 +69,16 @@ class AuthenticationWrapper extends StatelessWidget {
           // If user is logged in, initialize the MainController and go to VendorMainScreen
           switch (snapshot.data!.role) {
             case 'vendor':
+              Get.put(VendorMainController());
               return VendorMainScreen();
             // case 'moderator':
-              
+
             //   break;
             // case 'admin':
-              
+
             //   break;
             default:
-              return UserMainScreen();
+              return const UserMainScreen();
           }
         } else {
           // Navigate to Login Screen if not authenticated

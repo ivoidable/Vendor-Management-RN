@@ -9,10 +9,11 @@ class AuthMiddleware extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
-    final UserController userController = Get.find<UserController>();
+    final AuthController userController = Get.find<AuthController>();
 
     if (userController.userRole.value != requiredRole) {
-      return RouteSettings(name: '/login'); // Redirect to login if role doesn't match
+      return RouteSettings(
+          name: '/login'); // Redirect to login if role doesn't match
     }
     return null;
   }

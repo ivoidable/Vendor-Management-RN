@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/event.dart';
 
-class MainController extends GetxController {
+class VendorMainController extends GetxController {
   var selectedIndex = 0.obs;
 
   List<Event> events = [];

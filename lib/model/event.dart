@@ -5,6 +5,8 @@ class Event {
   final String id;
   final String name;
   final DateTime date;
+  final int maxVendors;
+  final String imageUrl;
   final String location;
   final String description;
   final List<Vendor> registeredVendors;
@@ -13,6 +15,8 @@ class Event {
     required this.id,
     required this.name,
     required this.date,
+    required this.imageUrl,
+    required this.maxVendors,
     required this.location,
     required this.description,
     this.registeredVendors = const [],
@@ -30,6 +34,8 @@ class Event {
       name: data['name'] ?? '',
       date: (data['date'] as Timestamp).toDate(),
       location: data['location'] ?? '',
+      maxVendors: data['max_vendors'] ?? 0,
+      imageUrl: data['image_url'] ?? '',
       description: data['description'] ?? '',
       registeredVendors: vendors,
     );
@@ -42,6 +48,8 @@ class Event {
       'date': Timestamp.fromDate(date),
       'location': location,
       'description': description,
+      'image_url': imageUrl,
+      'max_vendors': maxVendors,
       'registered_vendors':
           registeredVendors.map((vendor) => vendor.toMap()).toList(),
     };
