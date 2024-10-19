@@ -14,20 +14,35 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(Get.width),
+        padding: EdgeInsets.symmetric(horizontal: Get.width / 8),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo Here
             // Email Text Box
-            TextField(controller: emailController, keyboardType: TextInputType.emailAddress, maxLength: 255, decoration: InputDecoration(label: Text("Email Address")),),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              maxLength: 255,
+              decoration: InputDecoration(label: Text("Email Address")),
+            ),
             // Password Text Box
-            TextField(controller: passwordController, maxLength: 64, obscureText: true, decoration: InputDecoration(label: Text("Password")),),
+            TextField(
+              controller: passwordController,
+              maxLength: 64,
+              obscureText: true,
+              decoration: InputDecoration(label: Text("Password")),
+            ),
             // Submit button
-            ElevatedButton(onPressed: () {
-              DatabaseService().signIn(emailController.text, passwordController.text);
-            }, child: Text("Login"))
+            ElevatedButton(
+                onPressed: () {
+                  DatabaseService()
+                      .signIn(emailController.text, passwordController.text);
+                },
+                child: Text("Login"))
           ],
         ),
       ),
