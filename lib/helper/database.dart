@@ -19,11 +19,22 @@ class DatabaseService {
   }
 
   Future<List<Event>> getAllEvents() async {
-    List<Event> events = (await _db.collection('events').get()).docs.map((elem) {
+    List<Event> events =
+        (await _db.collection('events').get()).docs.map((elem) {
       return Event.fromMap(elem.id, elem.data());
     }).toList();
     return events;
     // return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+  }
+
+  Future<List<Vendor>> getAllVendors() async {
+    List<Vendor> vendors =
+        (await _db.collection('users').get()).docs.where((doc) {
+      return doc.data()["role"] == "vendor";
+    }).map((elem) {
+      return Vendor.fromMap(elem.id, elem.data());
+    }).toList();
+    return vendors;
   }
 
   // UPDATE an event
@@ -84,7 +95,8 @@ class DatabaseService {
   }) async {
     try {
       // Create the user with Firebase Authentication
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -119,6 +131,7 @@ class DatabaseService {
       rethrow; // Handle errors as needed
     }
   }
+
   // Authentication - Sign In User with Email & Password
   Future<User?> signIn(String email, String password) async {
     UserCredential result = await _auth.signInWithEmailAndPassword(
