@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
+import 'package:vendor/screen/vendor/tabs/vendor_tabs.dart';
 
 class VendorMainController extends GetxController {
   var selectedIndex = 0.obs;
@@ -10,17 +11,16 @@ class VendorMainController extends GetxController {
   List<Vendor> vendors = [];
 
   final tabs = [
-    // VendorEventsTab(),
-    // VendorMessagesTab(),
-    // VendorNotificationsTab(),
-    // VendorProfileTab(),
+    VendorEventsTab(),
+    VendorVendorsTab(),
+    VendorNotificationsTab(),
+    VendorProfileTab(),
   ];
 
   void changeTab(int index) {
     selectedIndex.value = index;
   }
 
-  //TODO: Add Data Fetching Methods & Refresh Method
   Future<List<Event>> getEvents() async {
     events = await DatabaseService().getAllEvents();
     return events;

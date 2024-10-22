@@ -2,7 +2,8 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
-import 'package:vendor/main.dart';
+import 'package:vendor/screen/login_screen.dart';
+import 'package:vendor/screen/user/main_screen.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -33,21 +34,21 @@ class AuthController extends GetxController {
   void _navigateBasedOnRole(String role) {
     switch (role) {
       case 'vendor':
-      Get.put(VendorMainController());
+        Get.put(VendorMainController());
         Get.offAllNamed('/vendor_main');
         break;
-      case 'moderator':
-        Get.offAllNamed('/moderator_main');
+      case 'organizer':
+        Get.offAllNamed('/organizer_main');
+        break;
+      case 'normal_user':
+        Get.put(UserMainScreen());
+        Get.offAllNamed('/user_main');
         break;
       case 'admin':
         Get.offAllNamed('/admin_main');
         break;
-      case 'normal_user':
-      //TODO: add user controller
-        Get.offAllNamed('/user_main');
-        break;
       default:
-        Get.offAll(AuthenticationWrapper());
+        Get.offAll(LoginScreen());
         break;
     }
   }

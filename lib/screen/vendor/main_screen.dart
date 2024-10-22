@@ -25,8 +25,8 @@ class VendorMainScreen extends StatelessWidget {
               label: 'Events',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: 'Messages',
+              icon: Icon(Icons.people),
+              label: 'Vendors',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications),

@@ -10,7 +10,6 @@ import 'package:vendor/screen/settings_screen.dart';
 
 class VendorEventsTab extends StatelessWidget {
   final VendorMainController mainController = Get.find<VendorMainController>();
-  //TODO: Fetch Real Event Data
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +96,7 @@ class VendorVendorsTab extends StatelessWidget {
 }
 
 class VendorNotificationsTab extends StatelessWidget {
-  const VendorNotificationsTab({super.key});
+  VendorNotificationsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +105,7 @@ class VendorNotificationsTab extends StatelessWidget {
 }
 
 class VendorProfileTab extends StatelessWidget {
-  const VendorProfileTab({Key? key}) : super(key: key);
+  VendorProfileTab({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -129,13 +128,11 @@ class VendorProfileTab extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Profile"),
+          title: const Text("Profile"),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings),
+              icon: const Icon(Icons.settings),
               onPressed: () {
-                // Handle settings button press
-                TODO:
                 Get.to(SettingsScreen());
               },
             ),
