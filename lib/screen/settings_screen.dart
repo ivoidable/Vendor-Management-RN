@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:vendor/controller/user_controller.dart';
 import 'package:vendor/screen/settings_controller.dart';
 
@@ -7,7 +8,17 @@ class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
   final SettingsController controller = Get.put(SettingsController());
   void getData() {
-    //TODO: Set Language & isNotified
+    var settingsBox = Hive.box('settings');
+    if (settingsBox.containsKey('isNotified')) {
+      controller.changeIsNotified(settingsBox.get('isNotified') as bool);
+    } else {
+      settingsBox.put('isNotified', false);
+    }
+    if (settingsBox.containsKey('lang')) {
+      controller.changeLanguage(settingsBox.get('lang') as Locale);
+    } else {
+      settingsBox.put('lang', const Locale('en', 'us'));
+    }
   }
 
   @override
@@ -18,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
         scrollDirection: Axis.vertical,
         children: [
           buildSwitchTile(),
-          // buildDropdownTile(),
+          buildDropdownTile(),
           signOutButton(),
         ],
       ),
@@ -62,7 +73,9 @@ class SettingsScreen extends StatelessWidget {
   Widget buildDropdownTile() {
     return ListTile(
       onTap: () {
-        //TODO: Show language change pop up and then restart app
+        Get.defaultDialog(
+          title: "Choose Language",
+        );
       },
       leading: const Row(
         children: [

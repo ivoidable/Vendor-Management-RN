@@ -1,9 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vendor/controller/vendor/main_controller.dart';
-import 'package:vendor/helper/database.dart';
-import 'package:vendor/model/user.dart';
+import 'package:hive/hive.dart';
 import 'package:vendor/screen/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/register_screen.dart';
@@ -18,6 +15,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Hive.openBox('settings');
   Get.put(AuthController()); // Initialize UserController
   runApp(MyApp());
 }
