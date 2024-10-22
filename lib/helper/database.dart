@@ -111,6 +111,7 @@ class DatabaseService {
           newUser = Vendor(
             id: uid,
             name: name,
+            email: email,
             dateOfBirth: dateOfBirth,
             businessName: businessName ?? '',
             logoUrl: logoUrl ?? '',
@@ -120,6 +121,7 @@ class DatabaseService {
           newUser = NormalUser(
             id: uid,
             name: name,
+            email: email,
             dateOfBirth: dateOfBirth,
           );
       }

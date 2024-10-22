@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:vendor/screen/login_screen.dart';
+import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
-import 'package:vendor/screen/register_screen.dart';
+import 'package:vendor/screen/shared/register_screen.dart';
 import 'package:vendor/screen/user/main_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
 import 'controller/user/user_controller.dart';

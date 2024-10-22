@@ -6,7 +6,7 @@ import 'package:vendor/controller/vendor/main_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/model/user.dart';
-import 'package:vendor/screen/settings_screen.dart';
+import 'package:vendor/screen/shared/settings_screen.dart';
 
 class VendorEventsTab extends StatelessWidget {
   final VendorMainController mainController = Get.find<VendorMainController>();
