@@ -46,7 +46,8 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   Future<AppUser?> getUserData() async {
     print("Called");
-    var shite = await DatabaseService().getUser(FirebaseAuth.instance.currentUser!.uid);
+    var shite =
+        await DatabaseService().getUser(FirebaseAuth.instance.currentUser!.uid);
     if (FirebaseAuth.instance.currentUser != null && shite != null) {
       String uid = FirebaseAuth.instance.currentUser!.uid;
       AppUser user =
@@ -63,7 +64,9 @@ class AuthenticationWrapper extends StatelessWidget {
       future: getUserData(), // Check login status
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: const CircularProgressIndicator()); // Show loading indicator
+          return Center(
+              child:
+                  const CircularProgressIndicator()); // Show loading indicator
         }
 
         if (snapshot.hasData && snapshot.data != null) {
