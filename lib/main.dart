@@ -6,7 +6,7 @@ import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/register_screen.dart';
 import 'package:vendor/screen/user/main_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
-import 'controller/user_controller.dart';
+import 'controller/user/user_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
