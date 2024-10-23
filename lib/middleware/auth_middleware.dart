@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:vendor/controller/user/user_controller.dart';
+import 'package:vendor/controller/auth_controller.dart';
 
 class AuthMiddleware extends GetMiddleware {
   final String requiredRole;

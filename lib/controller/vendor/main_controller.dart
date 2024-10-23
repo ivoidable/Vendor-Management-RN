@@ -10,13 +10,6 @@ class VendorMainController extends GetxController {
   List<Event> events = [];
   List<Vendor> vendors = [];
 
-  final tabs = [
-    VendorEventsTab(),
-    VendorVendorsTab(),
-    VendorNotificationsTab(),
-    VendorProfileTab(),
-  ];
-
   void changeTab(int index) {
     selectedIndex.value = index;
   }

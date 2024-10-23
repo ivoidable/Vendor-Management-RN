@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
+import 'package:vendor/screen/vendor/tabs/vendor_tabs.dart';
 
 class VendorMainScreen extends StatelessWidget {
+  VendorMainScreen({super.key});
+
+  final VendorMainController controller = Get.put(VendorMainController());
+
   @override
   Widget build(BuildContext context) {
+    var tabs = [
+      VendorEventsTab(mainController: controller),
+      VendorVendorsTab(mainController: controller),
+      VendorNotificationsTab(mainController: controller),
+      VendorProfileTab(mainController: controller),
+    ];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Events & Bazaars'),
-        centerTitle: true,
-      ),
       body: Obx(() {
-        final controller = Get.find<VendorMainController>();
-        return controller.tabs[controller.selectedIndex.value];
+        return tabs[controller.selectedIndex.value];
       }),
       bottomNavigationBar: Obx(() {
-        final controller = Get.find<VendorMainController>();
         return BottomNavigationBar(
           currentIndex: controller.selectedIndex.value,
           onTap: (index) => controller.changeTab(index),

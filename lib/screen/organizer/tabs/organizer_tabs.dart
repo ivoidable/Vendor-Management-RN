@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:vendor/controller/organizer/main_controller.dart';
-import 'package:vendor/controller/user/user_controller.dart';
+import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/model/user.dart';

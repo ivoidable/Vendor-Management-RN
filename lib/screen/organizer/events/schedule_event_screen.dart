@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/organizer/create_event_controller.dart';
-import 'package:vendor/controller/user/user_controller.dart';
+import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/event.dart';
 

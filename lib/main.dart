@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:vendor/middleware/auth_middleware.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/shared/register_screen.dart';
 import 'package:vendor/screen/user/main_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
-import 'controller/user/user_controller.dart';
+import 'controller/auth_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+late AuthController authController;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Hive.init('/');
   Hive.openBox('settings');
-  Get.put(AuthController()); // Initialize UserController
+  authController = Get.put(AuthController()); // Initialize UserController
   runApp(MyApp());
 }
 
@@ -33,8 +37,16 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
         GetPage(name: '/user_main', page: () => const UserMainScreen()),
-        GetPage(name: '/vendor_main', page: () => VendorMainScreen()),
-        GetPage(name: '/organizer_main', page: () => OrganizerMainScreen()),
+        GetPage(
+          name: '/vendor_main',
+          middlewares: [AuthMiddleware('vendor')],
+          page: () => VendorMainScreen(),
+        ),
+        GetPage(
+          name: '/organizer_main',
+          middlewares: [AuthMiddleware('organizer')],
+          page: () => OrganizerMainScreen(),
+        ),
         // GetPage(name: '/moderator_dashboard', page: () => ModeratorDashboard()),
         // GetPage(name: '/admin_dashboard', page: () => AdminDashboard()),
       ],

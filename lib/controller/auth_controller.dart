@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vendor/controller/vendor/main_controller.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
-import 'package:vendor/screen/user/main_screen.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  String uid = "";
   Rxn<User?> firebaseUser = Rxn<User?>();
   RxString userRole = ''.obs; // Observes role changes
 
@@ -21,11 +21,14 @@ class AuthController extends GetxController {
 
   Future<void> _setUserRole(User? user) async {
     if (user == null) {
+      uid = '';
       userRole.value = ''; // Reset role on sign out
       Get.offAllNamed('/login');
     } else {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(user.uid).get();
+      uid = userDoc.id;
+      debugPrint(uid);
       userRole.value = userDoc['role'] ?? 'signed_out';
       _navigateBasedOnRole(userRole.value); // Navigate based on role
     }
@@ -34,14 +37,15 @@ class AuthController extends GetxController {
   void _navigateBasedOnRole(String role) {
     switch (role) {
       case 'vendor':
-        Get.put(VendorMainController());
+        debugPrint("Running As Vendor");
         Get.offAllNamed('/vendor_main');
         break;
       case 'organizer':
+        debugPrint("Running As Organizer");
         Get.offAllNamed('/organizer_main');
         break;
-      case 'normal_user':
-        Get.put(UserMainScreen());
+      case 'user':
+        debugPrint("Running As User");
         Get.offAllNamed('/user_main');
         break;
       case 'admin':

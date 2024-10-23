@@ -22,7 +22,7 @@ class AppUser {
     switch (data['role']) {
       case 'vendor':
         return Vendor.fromMap(doc.id, data);
-      case 'moderator':
+      case 'organizer':
         return Organizer.fromMap(doc.id, data);
       case 'admin':
         return Admin.fromMap(doc.id, data);
@@ -35,6 +35,7 @@ class AppUser {
     return {
       'id': id,
       'name': name,
+      'email': email,
       'phone_number': phoneNumber,
       'date_of_birth': dateOfBirth.toIso8601String(),
       'role': role,
@@ -107,10 +108,11 @@ class Vendor extends AppUser {
     return Vendor(
       id: id,
       name: data['name'] ?? '',
-      dateOfBirth: data['date_of_birth'],
-      email: data['email'],
-      phoneNumber: data['phone_number'],
+      dateOfBirth: DateTime.parse(data['date_of_birth']),
+      email: data['email'] ?? "",
+      phoneNumber: data['phone_number'] ?? "",
       businessName: data['business_name'] ?? '',
+      products: ,
       logoUrl: data['logo_url'] ?? '',
       slogan: data['slogan'] ?? '',
     );

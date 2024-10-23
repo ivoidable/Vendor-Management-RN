@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:vendor/controller/user/user_controller.dart';
+import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
 
 class VendorEventsTab extends StatelessWidget {
-  final VendorMainController mainController = Get.find<VendorMainController>();
+  final VendorMainController mainController;
+  VendorEventsTab({required this.mainController});
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +54,8 @@ class VendorEventsTab extends StatelessWidget {
 }
 
 class VendorVendorsTab extends StatelessWidget {
-  final VendorMainController mainController = Get.find<VendorMainController>();
-  VendorVendorsTab({super.key});
+  final VendorMainController mainController;
+  VendorVendorsTab({required this.mainController});
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +98,8 @@ class VendorVendorsTab extends StatelessWidget {
 }
 
 class VendorNotificationsTab extends StatelessWidget {
-  VendorNotificationsTab({super.key});
+  final VendorMainController mainController;
+  VendorNotificationsTab({required this.mainController});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +108,8 @@ class VendorNotificationsTab extends StatelessWidget {
 }
 
 class VendorProfileTab extends StatelessWidget {
-  VendorProfileTab({Key? key}) : super(key: key);
+  final VendorMainController mainController;
+  VendorProfileTab({required this.mainController});
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +143,22 @@ class VendorProfileTab extends StatelessWidget {
           ],
         ),
         body: FutureBuilder(
-            future: DatabaseService()
-                .getUser(AuthController().firebaseUser.value!.uid),
+            future: DatabaseService().getUser(authController.uid),
             builder: (context, snapshot) {
-              Vendor user = snapshot.data as Vendor;
+              if (snapshot.hasError) {
+                print(snapshot.error.toString());
+                return Center(
+                  child: Text(snapshot.error.toString()),
+                );
+              }
+              if (!snapshot.hasData) {
+                return Center(
+                  child: Text("Couldn't Get Data"),
+                );
+              }
+              debugPrint(snapshot.data.toString());
+              Vendor user =
+                  Vendor.fromMap(AuthController().uid, snapshot.data!.data()!);
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
