@@ -3,6 +3,7 @@ import 'package:vendor/model/user.dart';
 
 class Event {
   final String id;
+  final String organizerId;
   final String name;
   final DateTime date;
   final int maxVendors;
@@ -16,6 +17,7 @@ class Event {
     required this.name,
     required this.date,
     required this.imageUrl,
+    required this.organizerId,
     required this.maxVendors,
     required this.location,
     required this.description,
@@ -25,7 +27,9 @@ class Event {
   // Convert Firestore data to Event object
   factory Event.fromMap(String id, Map<String, dynamic> data) {
     List<Vendor> vendors = (data['registered_vendors'] as List<dynamic>?)
-            ?.map((vendorData) => Vendor.fromMap(vendorData['id'], vendorData))
+            ?.map(
+              (vendorData) => Vendor.fromMap(vendorData['id'], vendorData),
+            )
             .toList() ??
         [];
 
@@ -35,6 +39,7 @@ class Event {
       date: (data['date'] as Timestamp).toDate(),
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
+      organizerId: data['organizer_id'],
       imageUrl: data['image_url'] ?? '',
       description: data['description'] ?? '',
       registeredVendors: vendors,
@@ -49,6 +54,7 @@ class Event {
       'location': location,
       'description': description,
       'image_url': imageUrl,
+      'organizer_id': organizerId,
       'max_vendors': maxVendors,
       'registered_vendors':
           registeredVendors.map((vendor) => vendor.toMap()).toList(),

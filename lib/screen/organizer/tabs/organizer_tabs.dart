@@ -15,11 +15,13 @@ class OrganizerEventsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: mainController.getEvents(),
+      future: mainController.getScheduledEvents(
+          DatabaseService().getUser(AuthController().firebaseUser.value!.uid)
+              as Future<Organizer>),
       builder: (context, snapshot) {
         if (mainController.events.isEmpty) {
           return Center(
-            child: Text("No Available Events"),
+            child: Text("No Scheduled Events"),
           );
         } else if (snapshot.hasError) {
           return Center(
@@ -28,22 +30,36 @@ class OrganizerEventsTab extends StatelessWidget {
         } else {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.events.length,
-              itemBuilder: (context, index) {
-                final event = mainController.events[index];
-                return EventCard(
-                  name: event.name,
-                  imageUrl: event.imageUrl,
-                  vendors: event.registeredVendors.length,
-                  maxVendors: event.maxVendors,
-                  onClick: () {
-                    // Handle click event
-                    print('Clicked on ${event.name}');
+            child: Stack(
+              children: [
+                ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: mainController.events.length,
+                  itemBuilder: (context, index) {
+                    final event = mainController.events[index];
+                    return EventCard(
+                      name: event.name,
+                      imageUrl: event.imageUrl,
+                      vendors: event.registeredVendors.length,
+                      maxVendors: event.maxVendors,
+                      onClick: () {
+                        // Handle click event
+                        print('Clicked on ${event.name}');
+                      },
+                    );
                   },
-                );
-              },
+                ),
+                Positioned(
+                  bottom: 50,
+                  left: 25,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      //TODO: Get.to(ScheduleEventScreen())
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                ),
+              ],
             ),
           );
         }
@@ -63,7 +79,7 @@ class OrganizerVendorsTab extends StatelessWidget {
       future: mainController.getVendors(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(
+          return const Center(
             child: Text("No Vendors Found"),
           );
         } else if (snapshot.hasError) {
@@ -84,7 +100,7 @@ class OrganizerVendorsTab extends StatelessWidget {
                   vendors: event.registeredVendors.length,
                   maxVendors: event.maxVendors,
                   onClick: () {
-                    // Handle click event
+                    //TODO: Get.to(ViewVendorProfile());
                     print('Clicked on ${event.name}');
                   },
                 );
@@ -180,7 +196,8 @@ class OrganizerProfileTab extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.phone),
                   title: Text("Phone Number"),
-                  subtitle: Text("055 456 7890"), // Placeholder
+                  subtitle:
+                      Text(user.phoneNumber ?? "No number set"), // Placeholder
                 ),
               ],
             ),

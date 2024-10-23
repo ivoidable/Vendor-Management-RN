@@ -27,6 +27,25 @@ class DatabaseService {
     // return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
   }
 
+  void scheduleEvent(Organizer organizer, Event event) {
+    if (organizer.privileges.contains('schedule_event')) {
+      _db.collection('events').add(event.toMap());
+    }
+  }
+
+  Future<List<Event>> getScheduledEvents(Organizer organizer) async {
+    List<Event> events = (await _db
+            .collection('events')
+            .where('organizer_id', isEqualTo: organizer.id)
+            .get())
+        .docs
+        .map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    return events;
+    // return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+  }
+
   Future<List<Vendor>> getAllVendors() async {
     List<Vendor> vendors =
         (await _db.collection('users').get()).docs.where((doc) {
