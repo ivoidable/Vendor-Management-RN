@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/organizer/create_event_controller.dart';
-import 'package:vendor/controller/organizer/main_controller.dart';
 import 'package:vendor/controller/user/user_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/event.dart';
@@ -71,6 +70,7 @@ class ScheduleEventScreen extends StatelessWidget {
                           location: 'T.B.D',
                           description: controller.description.value);
                       DatabaseService().createEvent(event);
+                      Get.back();
                       Get.snackbar('Success', 'Event Has Been Sent For Review!',
                           backgroundColor: Colors.lightGreen);
                     }
