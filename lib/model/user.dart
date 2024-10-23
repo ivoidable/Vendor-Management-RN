@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vendor/model/product.dart';
 
 class AppUser {
   String id;
@@ -7,6 +8,7 @@ class AppUser {
   String email;
   String? phoneNumber;
   String role;
+  List<String> privileges;
 
   AppUser({
     required this.id,
@@ -15,6 +17,7 @@ class AppUser {
     this.phoneNumber,
     required this.email,
     required this.role,
+    required this.privileges
   });
 
   factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -36,6 +39,7 @@ class AppUser {
       'id': id,
       'name': name,
       'phone_number': phoneNumber,
+      'privileges': privileges,
       'date_of_birth': dateOfBirth.toIso8601String(),
       'role': role,
     };
@@ -52,6 +56,7 @@ class NormalUser extends AppUser {
     String? phoneNumber,
     required String email,
     this.favorite_vendors = const [],
+    required super.privileges
   }) : super(
             id: id,
             name: name,
@@ -66,6 +71,7 @@ class NormalUser extends AppUser {
       name: data['name'],
       email: data['email'],
       phoneNumber: data['phoneNumber'],
+      privileges: data['privileges'] as List<String>,
       dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
       favorite_vendors: List<String>.from(data['favorite_events'] ?? []),
     );
@@ -83,7 +89,7 @@ class Vendor extends AppUser {
   String businessName;
   String logoUrl;
   String? slogan;
-  List<String> products;
+  List<Product> products;
 
   Vendor({
     required String id,
@@ -94,14 +100,15 @@ class Vendor extends AppUser {
     required this.businessName,
     this.logoUrl = '',
     this.slogan,
-    this.products = const [],
+    required super.privileges,
+    required this.products,
   }) : super(
             id: id,
             name: name,
             email: email,
             phoneNumber: phoneNumber,
             dateOfBirth: dateOfBirth,
-            role: 'vendor');
+            role: 'vendor',);
 
   factory Vendor.fromMap(String id, Map<String, dynamic> data) {
     return Vendor(
@@ -111,7 +118,9 @@ class Vendor extends AppUser {
       email: data['email'],
       phoneNumber: data['phone_number'],
       businessName: data['business_name'] ?? '',
+      privileges: data['privileges'],
       logoUrl: data['logo_url'] ?? '',
+      products: (data['products'] as List<Map<String,dynamic>>).map((product) => Product.fromMap(product)).toList(),
       slogan: data['slogan'] ?? '',
     );
   }
@@ -120,14 +129,13 @@ class Vendor extends AppUser {
   Map<String, dynamic> toMap() {
     final map = super.toMap();
     map.addAll(
-        {'business_name': businessName, 'logo_url': logoUrl, 'slogan': slogan});
+        {'business_name': businessName, 'logo_url': logoUrl, 'slogan': slogan, 'products': products.map((product) => product.toMap()).toList()});
     return map;
   }
 }
 
 class Organizer extends AppUser {
   List<String> managedEvents;
-  List<String> privileges;
 
   Organizer({
     required String id,
@@ -136,7 +144,7 @@ class Organizer extends AppUser {
     String? phoneNumber,
     required String email,
     this.managedEvents = const [],
-    this.privileges = const ['canScheduleEvents'],
+    super.privileges = const ['canScheduleEvents'],
   }) : super(
             id: id,
             name: name,
@@ -155,10 +163,17 @@ class Organizer extends AppUser {
       privileges: List<String>.from(data['privileges'] ?? []),
     );
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    final map = super.toMap();
+    map.addAll(
+        {'business_name': managedEvents});
+    return map;
+  }
 }
 
 class Admin extends AppUser {
-  List<String> privileges;
 
   Admin({
     required String id,
@@ -166,7 +181,7 @@ class Admin extends AppUser {
     required String email,
     String? phoneNumber,
     required DateTime dateOfBirth,
-    this.privileges = const ['admin'],
+    super.privileges = const ['admin'],
   }) : super(
             id: id,
             name: name,
@@ -181,7 +196,14 @@ class Admin extends AppUser {
       name: data['name'],
       email: data['email'],
       phoneNumber: data['phone_number'],
+      privileges: data['privileges'],
       dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
     );
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    final map = super.toMap();
+    return map;
   }
 }
