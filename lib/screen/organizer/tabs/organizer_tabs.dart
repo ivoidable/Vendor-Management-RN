@@ -6,6 +6,7 @@ import 'package:vendor/controller/user/user_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/model/user.dart';
+import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerEventsTab extends StatelessWidget {
@@ -54,7 +55,7 @@ class OrganizerEventsTab extends StatelessWidget {
                   left: 25,
                   child: FloatingActionButton(
                     onPressed: () {
-                      //TODO: Get.to(ScheduleEventScreen())
+                      Get.to(ScheduleEventScreen());
                     },
                     child: Icon(Icons.add),
                   ),
