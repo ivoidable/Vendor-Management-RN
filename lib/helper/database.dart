@@ -8,7 +8,10 @@ class DatabaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> createEvent(Event event) async {
-    await _db.collection('events').doc(event.id).set(event.toMap());
+    var doc = await _db.collection('events').doc(event.id);
+    event.id = doc.id;
+    print(doc.id);
+    doc.set(event.toMap());
   }
 
   // READ an event by ID

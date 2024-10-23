@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/model/user.dart';
 
 class Event {
-  final String id;
+  String id;
   final String organizerId;
   final String name;
   final DateTime date;
