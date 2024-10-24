@@ -54,6 +54,58 @@ class ScheduleEventScreen extends StatelessWidget {
                       controller.userFee.value = double.tryParse(value) ?? 0.0,
                 ),
                 _buildDatePicker(context),
+                Obx(
+                  () => ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: controller.questions.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: controller.questions[index],
+                              decoration: const InputDecoration(
+                                hintText: 'Enter your question',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Question cannot be empty';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => controller.removeQuestion(index),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: controller.addQuestion,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Question'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          // Handle form submission
+                          Get.snackbar(
+                              'Success', 'Form submitted successfully!');
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
@@ -61,18 +113,20 @@ class ScheduleEventScreen extends StatelessWidget {
                       String uid =
                           await AuthController().firebaseUser.value!.uid;
                       Event event = Event(
-                          id: '',
-                          name: controller.name.value,
-                          date: controller.date.value,
-                          vendorFee: controller.vendorFee.value,
-                          attendeeFee: controller.userFee.value,
-                          applications: [],
-                          registeredVendors: [],
-                          imageUrl: controller.images.value[0] ?? '',
-                          organizerId: uid,
-                          maxVendors: controller.maxVendors.value,
-                          location: 'T.B.D',
-                          description: controller.description.value);
+                        id: '',
+                        name: controller.name.value,
+                        date: controller.date.value,
+                        vendorFee: controller.vendorFee.value,
+                        attendeeFee: controller.userFee.value,
+                        applications: [],
+                        registeredVendors: [],
+                        imageUrl: controller.images.value[0] ?? '',
+                        organizerId: uid,
+                        maxVendors: controller.maxVendors.value,
+                        location: 'T.B.D',
+                        description: controller.description.value,
+                        questions: [],
+                      );
                       DatabaseService().createEvent(event);
                       Get.back();
                       Get.snackbar('Success', 'Event Has Been Sent For Review!',

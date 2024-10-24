@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/organizer/main_controller.dart';
+import 'package:vendor/screen/organizer/tabs/organizer_tabs.dart';
 
 class OrganizerMainScreen extends StatelessWidget {
-  const OrganizerMainScreen({super.key});
+  OrganizerMainScreen({super.key});
+  final OrganizerMainController controller = Get.put(OrganizerMainController());
 
   @override
   Widget build(BuildContext context) {
+    var tabs = [
+      OrganizerEventsTab(),
+      OrganizerVendorsTab(),
+      OrganizerNotificationsTab(),
+      OrganizerProfileTab(),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Events & Bazaars'),
         centerTitle: true,
       ),
       body: Obx(() {
-        final controller = Get.find<OrganizerMainController>();
-        return controller.tabs[controller.selectedIndex.value];
+        return tabs[controller.selectedIndex.value];
       }),
       bottomNavigationBar: Obx(() {
-        final controller = Get.find<OrganizerMainController>();
         return BottomNavigationBar(
           currentIndex: controller.selectedIndex.value,
           onTap: (index) => controller.changeTab(index),

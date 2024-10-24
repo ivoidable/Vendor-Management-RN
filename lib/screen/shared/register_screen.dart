@@ -95,11 +95,14 @@ class RegisterScreen extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   DatabaseService().signUp(
-                      email: emailController.text,
-                      password: passwordController.text,
-                      name: nameController.text,
-                      dateOfBirth: dateOfBirth,
-                      role: controller.isVendor.value ? 'vendor' : 'user');
+                    email: emailController.text,
+                    password: passwordController.text,
+                    name: nameController.text,
+                    dateOfBirth: dateOfBirth,
+                    role: controller.selectedChip.value == 0
+                        ? 'vendor'
+                        : 'organizer',
+                  );
                 },
                 child: const Text("Register")),
             const SizedBox(

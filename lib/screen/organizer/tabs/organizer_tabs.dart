@@ -5,6 +5,7 @@ import 'package:vendor/controller/organizer/main_controller.dart';
 import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
@@ -16,9 +17,8 @@ class OrganizerEventsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: mainController.getScheduledEvents(
-          DatabaseService().getUser(AuthController().firebaseUser.value!.uid)
-              as Future<Organizer>),
+      future: mainController
+          .getScheduledEvents(DatabaseService().getUser(authController.uid)),
       builder: (context, snapshot) {
         if (mainController.events.isEmpty) {
           return Center(

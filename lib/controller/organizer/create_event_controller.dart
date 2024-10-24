@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreateEventController extends GetxController {
@@ -20,5 +21,23 @@ class CreateEventController extends GetxController {
 
   void addApplication(String applicant) {
     applications.add(applicant);
+  }
+
+  var questions = <TextEditingController>[].obs;
+
+  void addQuestion() {
+    questions.add(TextEditingController());
+  }
+
+  void removeQuestion(int index) {
+    questions.removeAt(index);
+  }
+
+  @override
+  void onClose() {
+    for (var controller in questions) {
+      controller.dispose(); // Clean up controllers
+    }
+    super.onClose();
   }
 }

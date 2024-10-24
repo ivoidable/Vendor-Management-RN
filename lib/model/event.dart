@@ -49,6 +49,7 @@ class Event {
   final double attendeeFee;
   final String location;
   final String description;
+  List<Map<String, dynamic>> questions;
   List<Vendor> registeredVendors;
   List<Application> applications;
 
@@ -65,6 +66,7 @@ class Event {
     required this.description,
     required this.registeredVendors,
     required this.applications,
+    required this.questions,
   });
 
   // Convert Firestore data to Event object
@@ -97,6 +99,7 @@ class Event {
       description: data['description'] ?? '',
       registeredVendors: vendors,
       applications: applications,
+      questions: data['questions'] as List<Map<String, dynamic>>,
     );
   }
 

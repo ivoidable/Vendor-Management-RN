@@ -47,7 +47,7 @@ class ViewEventScreen extends StatelessWidget {
               'Applications:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            //TODO: Fix Applications
+            //FIXME: Fix Applications
             // ...event.applications.map((app) => ListTile(
             //       title: Text(app.),
             //       subtitle: Text('Status: ${app.status}'),
