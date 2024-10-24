@@ -22,14 +22,12 @@ class AppUser {
   factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() as Map<String, dynamic>;
     switch (data['role']) {
-      case 'vendor':
-        return Vendor.fromMap(doc.id, data);
       case 'organizer':
         return Organizer.fromMap(doc.id, data);
       case 'admin':
         return Admin.fromMap(doc.id, data);
       default:
-        return NormalUser.fromMap(doc.id, data);
+        return Vendor.fromMap(doc.id, data);
     }
   }
 
@@ -43,45 +41,6 @@ class AppUser {
       'date_of_birth': dateOfBirth.toIso8601String(),
       'role': role,
     };
-  }
-}
-
-class NormalUser extends AppUser {
-  List<String> favorite_vendors;
-
-  NormalUser(
-      {required String id,
-      required String name,
-      required DateTime dateOfBirth,
-      String? phoneNumber,
-      required String email,
-      this.favorite_vendors = const [],
-      required super.privileges})
-      : super(
-            id: id,
-            name: name,
-            email: email,
-            phoneNumber: phoneNumber,
-            dateOfBirth: dateOfBirth,
-            role: 'normal_user');
-
-  factory NormalUser.fromMap(String id, Map<String, dynamic> data) {
-    return NormalUser(
-      id: id,
-      name: data['name'],
-      email: data['email'],
-      phoneNumber: data['phoneNumber'],
-      privileges: data['privileges'] as List<String>,
-      dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
-      favorite_vendors: List<String>.from(data['favorite_events'] ?? []),
-    );
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    final map = super.toMap();
-    map.addAll({'favorite_vendors': favorite_vendors});
-    return map;
   }
 }
 
@@ -119,11 +78,13 @@ class Vendor extends AppUser {
       email: data['email'] ?? "",
       phoneNumber: data['phone_number'] ?? "",
       businessName: data['business_name'] ?? '',
-      privileges: data['privileges'],
+      privileges: data['privileges'] ?? [],
       logoUrl: data['logo_url'] ?? '',
-      products: (data['products'] as List<Map<String, dynamic>>)
-          .map((product) => Product.fromMap(product))
-          .toList(),
+      products: (data['products'] as List<dynamic>?)
+              ?.map((product) =>
+                  Product.fromMap(Map<String, dynamic>.from(product)))
+              .toList() ??
+          [],
       slogan: data['slogan'] ?? '',
     );
   }
@@ -135,7 +96,7 @@ class Vendor extends AppUser {
       'business_name': businessName,
       'logo_url': logoUrl,
       'slogan': slogan,
-      'products': products.map((product) => product.toMap()).toList()
+      'products': products.map((product) => product.toMap()).toList(),
     });
     return map;
   }

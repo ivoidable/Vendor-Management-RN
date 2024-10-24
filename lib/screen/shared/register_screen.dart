@@ -5,6 +5,11 @@ import 'package:vendor/helper/database.dart';
 
 class RegisterController extends GetxController {
   var isVendor = false.obs;
+  var selectedChip = 0.obs; // Observable to store the selected chip index
+
+  void selectChip(int index) {
+    selectedChip.value = index; // Update the selected chip
+  }
 }
 
 class RegisterScreen extends StatelessWidget {
@@ -82,6 +87,7 @@ class RegisterScreen extends StatelessWidget {
                 controller.isVendor.value = vendor;
               },
             ),
+            ChipSelector(),
             const SizedBox(
               height: 12,
             ),
@@ -102,6 +108,40 @@ class RegisterScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChipSelector extends StatelessWidget {
+  const ChipSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final RegisterController controller = Get.put(RegisterController());
+
+    final List<String> options = ['Vendor', 'Organizer'];
+
+    return Wrap(
+      spacing: 12.0,
+      children: options.asMap().entries.map((entry) {
+        final int index = entry.key;
+        final String label = entry.value;
+
+        return Obx(() => ChoiceChip(
+              label: Text(label),
+              selected: controller.selectedChip.value == index,
+              onSelected: (bool isSelected) {
+                if (isSelected) controller.selectChip(index);
+              },
+              selectedColor: Colors.amber,
+              backgroundColor: Colors.grey.shade200,
+              labelStyle: TextStyle(
+                color: controller.selectedChip.value == index
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ));
+      }).toList(),
     );
   }
 }

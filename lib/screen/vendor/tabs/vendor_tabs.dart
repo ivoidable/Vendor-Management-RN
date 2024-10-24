@@ -20,7 +20,10 @@ class VendorEventsTab extends StatelessWidget {
       builder: (context, snapshot) {
         if (mainController.events.isEmpty) {
           return Center(
-            child: Text("No Available Events"),
+            child: ElevatedButton(
+              onPressed: () => authController.signOut(),
+              child: Text("Sign out"),
+            ),
           );
         } else if (snapshot.hasError) {
           return Center(
@@ -158,7 +161,7 @@ class VendorProfileTab extends StatelessWidget {
               }
               debugPrint(snapshot.data.toString());
               Vendor user =
-                  Vendor.fromMap(AuthController().uid, snapshot.data!.data()!);
+                  Vendor.fromMap(authController.uid, snapshot.data!.data()!);
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -205,14 +208,14 @@ class VendorProfileTab extends StatelessWidget {
                     ListTile(
                       leading: Icon(Icons.email),
                       title: Text("Email"),
-                      subtitle: Text("user@example.com"), // Placeholder
+                      subtitle: Text(user.email), // Placeholder
                     ),
 
                     // Phone Number (Placeholder)
                     ListTile(
                       leading: Icon(Icons.phone),
                       title: Text("Phone Number"),
-                      subtitle: Text("055 456 7890"), // Placeholder
+                      subtitle: Text(user.phoneNumber ?? ""), // Placeholder
                     ),
                   ],
                 ),

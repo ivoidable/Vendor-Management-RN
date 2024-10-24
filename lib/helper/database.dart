@@ -129,7 +129,18 @@ class DatabaseService {
       // Create the appropriate user object based on the role
       AppUser newUser;
       switch (role) {
-        case 'vendor':
+        case 'organizer':
+          newUser = Organizer(
+            id: uid,
+            name: name,
+            email: email,
+            dateOfBirth: dateOfBirth,
+            privileges: [],
+            managedEvents: [],
+            phoneNumber: "",
+          );
+          break;
+        default:
           newUser = Vendor(
             id: uid,
             name: name,
@@ -137,15 +148,12 @@ class DatabaseService {
             dateOfBirth: dateOfBirth,
             businessName: businessName ?? '',
             logoUrl: logoUrl ?? '',
+            privileges: [],
+            products: [],
+            phoneNumber: "",
+            slogan: "",
           );
           break;
-        default:
-          newUser = NormalUser(
-            id: uid,
-            name: name,
-            email: email,
-            dateOfBirth: dateOfBirth,
-          );
       }
 
       // Save the user object to Firestore under 'users/{uid}'

@@ -5,7 +5,6 @@ import 'package:vendor/middleware/auth_middleware.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/shared/register_screen.dart';
-import 'package:vendor/screen/user/main_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
 import 'controller/auth_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
-        GetPage(name: '/user_main', page: () => const UserMainScreen()),
         GetPage(
           name: '/vendor_main',
           middlewares: [AuthMiddleware('vendor')],

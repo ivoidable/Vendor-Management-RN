@@ -24,22 +24,50 @@ class VendorMainScreen extends StatelessWidget {
         return BottomNavigationBar(
           currentIndex: controller.selectedIndex.value,
           onTap: (index) => controller.changeTab(index),
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.event),
+              icon: Icon(
+                Icons.event,
+                color: Colors.amber,
+              ),
               label: 'Events',
+              activeIcon: Icon(
+                Icons.event,
+                color: Colors.orange,
+              ),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people),
+              icon: Icon(
+                Icons.people,
+                color: Colors.amber,
+              ),
               label: 'Vendors',
+              activeIcon: Icon(
+                Icons.people,
+                color: Colors.orange,
+              ),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
+              icon: Icon(
+                Icons.notifications,
+                color: Colors.amber,
+              ),
               label: 'Notifications',
+              activeIcon: Icon(
+                Icons.notifications,
+                color: Colors.orange,
+              ),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(
+                Icons.person,
+                color: Colors.amber,
+              ),
               label: 'Profile',
+              activeIcon: Icon(
+                Icons.person,
+                color: Colors.orange,
+              ),
             ),
           ],
         );
