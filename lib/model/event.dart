@@ -4,6 +4,7 @@ import 'package:vendor/model/user.dart';
 class Application {
   String id;
   String vendorId;
+  Vendor vendor;
   String eventId;
   DateTime applicationDate;
   List<Map<String, dynamic>> questions;
@@ -11,6 +12,7 @@ class Application {
   Application({
     required this.id,
     required this.vendorId,
+    required this.vendor,
     required this.eventId,
     required this.applicationDate,
     required this.questions,
@@ -20,6 +22,7 @@ class Application {
     return Application(
       id: id,
       vendorId: data['name'] ?? '',
+      vendor: Vendor.fromMap(data['vendor_id'], data['vendor'] as Map<String, dynamic>),
       eventId: data['event_id'] ?? '',
       applicationDate: (data['application_date'] as Timestamp).toDate(),
       questions: data['questions'],
@@ -31,6 +34,7 @@ class Application {
     return {
       'id': id,
       'vendor_id': vendorId,
+      'vendor': vendor.toMap(),
       'event_id': eventId,
       'application_date': Timestamp.fromDate(applicationDate),
       'questions': questions,

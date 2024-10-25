@@ -43,21 +43,6 @@ class ViewEventScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Applications:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            //TODO: Fix Applications
-            // ...event.applications.map((app) => ListTile(
-            //       title: Text(app.),
-            //       subtitle: Text('Status: ${app.status}'),
-            //     )),
-            const SizedBox(height: 16),
-            const Text(
-              'Event Images:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
             SizedBox(
               height: 150,
               child: ListView.builder(

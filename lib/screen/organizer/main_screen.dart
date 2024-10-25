@@ -27,7 +27,7 @@ class OrganizerMainScreen extends StatelessWidget {
         return BottomNavigationBar(
           currentIndex: controller.selectedIndex.value,
           onTap: (index) => controller.changeTab(index),
-          items: const [
+          items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.event),
               label: 'Events',
