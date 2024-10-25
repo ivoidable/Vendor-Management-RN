@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:vendor/model/event.dart';
 
 class ViewApplicationScreen extends StatelessWidget {
@@ -42,19 +43,18 @@ class ViewApplicationScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Handle approval
-                    Navigator.pop(context, 'Approved');
+                    Get.back(result: Approval(approved: true));
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green),
+                      backgroundColor: Colors.lightGreen),
                   child: const Text('Approve'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle rejection
-                    Navigator.pop(context, 'Rejected');
+                    Get.back(result: Approval(approved: false));
                   },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   child: const Text('Reject'),
                 ),
               ],

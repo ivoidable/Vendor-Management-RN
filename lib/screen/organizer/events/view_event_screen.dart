@@ -11,7 +11,8 @@ class ViewEventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    event.applications.sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
+    event.applications
+        .sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
     return Scaffold(
       appBar: AppBar(
         title: Text('Event: ${event.name}'),
@@ -21,6 +22,29 @@ class ViewEventScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              'Event Images:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Image.network(
+                      event.imageUrl,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
+            ),
             Text(
               event.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -50,50 +74,32 @@ class ViewEventScreen extends StatelessWidget {
               'Applications:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            //FIXME: Fix Applications
             ListView.builder(
               itemCount: event.applications.length,
               itemBuilder: (context, index) {
                 final application = event.applications[index];
                 return ApplicationCard(
                   application: application,
-                  onShowDetails: () {
-                    Get.to(ViewApplicationScreen(application: application));
+                  onShowDetails: () async {
+                    Approval approval = await Get.to(
+                        ViewApplicationScreen(application: application));
+                    application.approved = approval;
+                    if (approval.approved != null) {
+                      if (approval.approved!) {
+                        event.registeredVendors.add(application.vendor);
+                      } else if (!approval.approved!) {}
+                    }
                   },
                 );
               },
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Event Images:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Image.network(
-                      event.imageUrl,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 }
-
 
 class ApplicationCard extends StatelessWidget {
   final Application application;
@@ -107,9 +113,24 @@ class ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color;
+    String status = "";
+    if (application.approved.approved != null) {
+      if (application.approved.approved == true) {
+        color = Colors.lightGreen;
+        status = "Approved";
+      } else {
+        color = Colors.red;
+        status = "Rejected";
+      }
+    } else {
+      color = Colors.blueGrey;
+      status = "Pending Review";
+    }
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
+        tileColor: color,
         leading: application.vendor.logoUrl.isNotEmpty
             ? Image.network(application.vendor.logoUrl, width: 50)
             : const Icon(Icons.business),
@@ -117,9 +138,19 @@ class ApplicationCard extends StatelessWidget {
         subtitle: Text(
           'Application Date: ${application.applicationDate.toLocal()}',
         ),
-        trailing: ElevatedButton(
-          onPressed: onShowDetails,
-          child: const Text('Show Application'),
+        trailing: Row(
+          children: [
+            Text(status),
+            ElevatedButton(
+              onPressed: application.approved.approved == null
+                  ? onShowDetails
+                  : () {
+                      Get.snackbar('Already Reviewed Application',
+                          'You can not review applications multiple times');
+                    },
+              child: const Text('Show Application'),
+            ),
+          ],
         ),
       ),
     );
