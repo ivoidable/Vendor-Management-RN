@@ -19,8 +19,12 @@ class ScheduleEventScreen extends StatelessWidget {
         'https://media.discordapp.net/attachments/1152649816199938060/1293154293385265212/2024-10-08_13.09.24.png?ex=671d6989&is=671c1809&hm=09a6caa9ee923aadad52f542940ca582fa7caaa4211cb0371a659783e12477cb&=&format=webp&quality=lossless&width=1071&height=602');
     return Scaffold(
       appBar: AppBar(
-        title: Text("Schedule Event"),
+        title: Text(
+          "Schedule Event",
+          style: TextStyle(color: Colors.blueGrey[700]),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -30,6 +34,9 @@ class ScheduleEventScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: Get.height * 0.13,
+                ),
                 _buildTextField(
                   label: 'Event Name',
                   onChanged: (value) => controller.name.value = value,
@@ -66,23 +73,45 @@ class ScheduleEventScreen extends StatelessWidget {
                 Obx(
                   () => ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: controller.questions.length,
                     itemBuilder: (context, index) {
                       return Row(
                         children: [
                           Expanded(
-                            child: TextFormField(
-                              controller: controller.questions[index],
-                              decoration: const InputDecoration(
-                                hintText: 'Enter your question',
-                                border: OutlineInputBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Enter your question',
+                                  focusColor: Colors.amber,
+                                  labelStyle: TextStyle(color: Colors.blueGrey),
+                                  iconColor: Colors.amber,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: Colors.amber,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                controller: controller.questions[index],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Question cannot be empty';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Question cannot be empty';
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           IconButton(
@@ -96,9 +125,17 @@ class ScheduleEventScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: Size(Get.width / 2, Get.height * 0.05),
+                        backgroundColor: Colors.blueGrey[700],
+                        foregroundColor: Colors.amber,
+                      ),
                       onPressed: controller.addQuestion,
                       icon: const Icon(Icons.add),
                       label: const Text('Add Question'),
@@ -106,32 +143,48 @@ class ScheduleEventScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      String uid = authController.uid;
-                      Event event = Event(
-                        id: '',
-                        organizerId: uid,
-                        name: controller.name.value,
-                        date: controller.date.value,
-                        vendorFee: controller.vendorFee.value,
-                        attendeeFee: controller.userFee.value,
-                        maxVendors: controller.maxVendors.value,
-                        description: controller.description.value,
-                        imageUrl: controller.images[0],
-                        location: 'T.B.D',
-                        registeredVendors: [],
-                        applications: [],
-                        questions: [],
-                      );
-                      DatabaseService().createEvent(event);
-                      Get.back();
-                      Get.snackbar('Success', 'Event Has Been Scheduled',
-                          backgroundColor: Colors.lightGreen);
-                    }
-                  },
-                  child: const Text('Create Event'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: Size(Get.width / 2, Get.height * 0.05),
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.blueGrey[700],
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          String uid = authController.uid;
+                          Event event = Event(
+                            id: '',
+                            organizerId: uid,
+                            name: controller.name.value,
+                            date: controller.date.value,
+                            vendorFee: controller.vendorFee.value,
+                            attendeeFee: controller.userFee.value,
+                            maxVendors: controller.maxVendors.value,
+                            description: controller.description.value,
+                            imageUrl: controller.images[0],
+                            location: 'T.B.D',
+                            registeredVendors: [],
+                            applications: [],
+                            questions: [],
+                          );
+                          DatabaseService().createEvent(event);
+                          Get.back();
+                          Get.snackbar('Success', 'Event Has Been Scheduled',
+                              backgroundColor: Colors.lightGreen);
+                        }
+                      },
+                      child: const Text('Create Event'),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 24,
                 ),
               ],
             ),
@@ -153,7 +206,23 @@ class ScheduleEventScreen extends StatelessWidget {
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          focusColor: Colors.amber,
+          labelStyle: TextStyle(color: Colors.blueGrey),
+          iconColor: Colors.amber,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: Colors.amber,
+              width: 3,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: Colors.blueGrey,
+            ),
+          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         keyboardType: keyboardType,
         maxLines: maxLines,
@@ -173,15 +242,16 @@ class ScheduleEventScreen extends StatelessWidget {
     return Obx(() {
       return ListTile(
         title: Text(
-          'Event Date: ${controller.date.value.toLocal()}'.split(' ')[0],
+          'Event Date: ${controller.date.value.toLocal().toIso8601String()}'
+              .split('T')[0],
         ),
         trailing: const Icon(Icons.calendar_today),
         onTap: () async {
           DateTime? picked = await showDatePicker(
             context: context,
             initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2101),
+            firstDate: DateTime.now(),
+            lastDate: DateTime(DateTime.now().year + 3),
           );
           if (picked != null) {
             controller.setDate(picked);

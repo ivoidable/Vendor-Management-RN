@@ -21,42 +21,49 @@ class EventCard extends StatelessWidget {
       onTap: onClick,
       child: Card(
         shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: Colors.amber,
+          ),
           borderRadius: BorderRadius.circular(12.0),
         ),
         margin: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: 150,
-                fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12.0), bottom: Radius.circular(12.0)),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    'Vendors: $vendors / $maxVendors',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ],
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'Vendors: $vendors / $maxVendors',
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

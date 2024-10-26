@@ -8,6 +8,7 @@ import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
+import 'package:vendor/screen/organizer/events/view_event_screen.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerEventsTab extends StatelessWidget {
@@ -42,6 +43,7 @@ class OrganizerEventsTab extends StatelessWidget {
                       maxVendors: event.maxVendors,
                       onClick: () {
                         // Handle click event
+                        Get.to(ViewEventScreen(event: event));
                         print('Clicked on ${event.name}');
                       },
                     );
@@ -51,8 +53,8 @@ class OrganizerEventsTab extends StatelessWidget {
                   bottom: 25,
                   right: 25,
                   child: FloatingActionButton(
-                    foregroundColor: Colors.amber,
-                    backgroundColor: Colors.blueGrey,
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.blueGrey,
                     onPressed: () {
                       Get.to(ScheduleEventScreen());
                     },
@@ -85,14 +87,17 @@ class OrganizerEventsTab extends StatelessWidget {
                   },
                 ),
                 Positioned(
-                  bottom: -50,
-                  left: -25,
+                  bottom: 25,
+                  right: 25,
                   child: FloatingActionButton(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.blueGrey,
                     onPressed: () {
                       Get.to(ScheduleEventScreen());
                     },
-                    child: Icon(Icons.add),
+                    child: Icon(
+                      Icons.add,
+                    ),
                   ),
                 ),
               ],

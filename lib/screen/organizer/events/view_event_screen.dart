@@ -17,18 +17,16 @@ class ViewEventScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Event: ${event.name}'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Event Images:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 150,
+            Container(
+              color: Colors.amber,
+              height: 180,
+              width: Get.width * 0.85,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 1,
@@ -37,61 +35,93 @@ class ViewEventScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Image.network(
                       event.imageUrl,
-                      width: 150,
-                      height: 150,
+                      width: 180,
+                      height: 180,
                       fit: BoxFit.cover,
                     ),
                   );
                 },
               ),
             ),
+            SizedBox(
+              height: 24,
+            ),
             Text(
               event.name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               event.description,
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '${DateFormat.yMMMMd().add_jm().format(event.date)}',
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w400),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
-            Text(
-              'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Applications:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            const SizedBox(
+              height: 4,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Date: ${DateFormat.yMMMMd().add_jm().format(event.date)}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Applications:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            ListView.builder(
-              itemCount: event.applications.length,
-              itemBuilder: (context, index) {
-                final application = event.applications[index];
-                return ApplicationCard(
-                  application: application,
-                  onShowDetails: () async {
-                    Approval approval = await Get.to(
-                        ViewApplicationScreen(application: application));
-                    application.approved = approval;
-                    if (approval.approved != null) {
-                      if (approval.approved!) {
-                        event.registeredVendors.add(application.vendor);
-                      } else if (!approval.approved!) {}
-                    }
-                  },
-                );
-              },
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[300],
+              ),
+              width: Get.width * 0.85,
+              height: Get.height * 0.3,
+              child: ListView.builder(
+                itemCount: event.applications.length,
+                itemBuilder: (context, index) {
+                  final application = event.applications[index];
+                  return ApplicationCard(
+                    application: application,
+                    onShowDetails: () async {
+                      Approval approval = await Get.to(
+                          ViewApplicationScreen(application: application));
+                      application.approved = approval;
+                      if (approval.approved != null) {
+                        if (approval.approved!) {
+                          event.registeredVendors.add(application.vendor);
+                        } else if (!approval.approved!) {}
+                      }
+                    },
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 16),
           ],
