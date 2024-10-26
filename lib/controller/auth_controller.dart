@@ -23,7 +23,9 @@ class AuthController extends GetxController {
     if (user == null) {
       uid = '';
       userRole.value = ''; // Reset role on sign out
-      Get.offAllNamed('/login');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.offAll(LoginScreen());
+      });
     } else {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(user.uid).get();
@@ -35,26 +37,28 @@ class AuthController extends GetxController {
   }
 
   void _navigateBasedOnRole(String role) {
-    switch (role) {
-      case 'vendor':
-        debugPrint("Running As Vendor");
-        Get.offAllNamed('/vendor_main');
-        break;
-      case 'organizer':
-        debugPrint("Running As Organizer");
-        Get.offAllNamed('/organizer_main');
-        break;
-      case 'user':
-        debugPrint("Running As User");
-        Get.offAllNamed('/user_main');
-        break;
-      case 'admin':
-        Get.offAllNamed('/admin_main');
-        break;
-      default:
-        Get.offAll(LoginScreen());
-        break;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      switch (role) {
+        case 'vendor':
+          debugPrint("Running As Vendor");
+          Get.offAllNamed('/vendor_main');
+          break;
+        case 'organizer':
+          debugPrint("Running As Organizer");
+          Get.offAllNamed('/organizer_main');
+          break;
+        case 'user':
+          debugPrint("Running As User");
+          Get.offAllNamed('/user_main');
+          break;
+        case 'admin':
+          Get.offAllNamed('/admin_main');
+          break;
+        default:
+          Get.offAll(LoginScreen());
+          break;
+      }
+    });
   }
 
   Future<void> signOut() async {

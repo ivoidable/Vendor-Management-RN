@@ -26,6 +26,17 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     getData();
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Profile"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Get.to(SettingsScreen());
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Container(
           height: Get.height * 0.88,

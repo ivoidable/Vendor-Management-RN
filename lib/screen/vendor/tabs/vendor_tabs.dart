@@ -65,7 +65,7 @@ class VendorVendorsTab extends StatelessWidget {
       future: mainController.getVendors(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(
+          return const Center(
             child: Text("No Vendors Found"),
           );
         } else if (snapshot.hasError) {
@@ -73,6 +73,7 @@ class VendorVendorsTab extends StatelessWidget {
             child: Text(snapshot.error.toString()),
           );
         } else {
+          List<Vendor> vendor = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView.builder(
@@ -80,13 +81,10 @@ class VendorVendorsTab extends StatelessWidget {
               itemCount: mainController.events.length,
               itemBuilder: (context, index) {
                 final event = mainController.events[index];
-                return EventCard(
-                  name: event.name,
-                  imageUrl: event.imageUrl,
-                  vendors: event.registeredVendors.length,
-                  maxVendors: event.maxVendors,
+                return VendorCard(
+                  vendor: vendor[index],
                   onClick: () {
-                    // Handle click event
+                    //TODO: Get.to(ViewVendorProfile());
                     print('Clicked on ${event.name}');
                   },
                 );
@@ -105,7 +103,7 @@ class VendorNotificationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("Notifications Do not work yet");
+    return Center(child: Text("To be implemented"));
   }
 }
 
@@ -133,92 +131,87 @@ class VendorProfileTab extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Profile"),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Get.to(SettingsScreen());
-              },
-            ),
-          ],
-        ),
-        body: FutureBuilder(
-            future: DatabaseService().getUser(authController.uid),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                print(snapshot.error.toString());
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-              if (!snapshot.hasData) {
-                return Center(
-                  child: Text("Couldn't Get Data"),
-                );
-              }
-              debugPrint(snapshot.data.toString());
-              Vendor user =
-                  Vendor.fromMap(authController.uid, snapshot.data!.data()!);
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Profile Image
-                    Center(
-                      child: buildProfileImage(user),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Edit Profile Button
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        //TODO: Get.to(EditProfileScreen());
-                      },
-                      icon: Icon(Icons.edit),
-                      label: Text("Edit Profile"),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Name
-                    ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text("Name"),
-                      subtitle: Text(user.name),
-                    ),
-
-                    // Date of Birth
-                    ListTile(
-                      leading: Icon(Icons.cake),
-                      title: Text("Date of Birth"),
-                      subtitle: Text(formatDate(user.dateOfBirth)),
-                    ),
-
-                    // Role
-                    ListTile(
-                      leading: Icon(Icons.work),
-                      title: Text("Role"),
-                      subtitle: Text(user.role),
-                    ),
-
-                    // Email (Placeholder - assuming email is part of AppUser data later)
-                    ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text("Email"),
-                      subtitle: Text(user.email), // Placeholder
-                    ),
-
-                    // Phone Number (Placeholder)
-                    ListTile(
-                      leading: Icon(Icons.phone),
-                      title: Text("Phone Number"),
-                      subtitle: Text(user.phoneNumber ?? ""), // Placeholder
-                    ),
-                  ],
+      appBar: AppBar(
+        title: const Text("Profile"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Get.to(SettingsScreen());
+            },
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        future: DatabaseService().getUser(authController.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          Vendor user =
+              Vendor.fromMap(snapshot.data!.id, snapshot.data!.data()!);
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Edit Profile Button
+                buildProfileImage(user),
+                SizedBox(
+                  height: 24,
                 ),
-              );
-            }));
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: Size(Get.width / 2, Get.height * 0.05),
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.blueGrey[700],
+                  ),
+                  onPressed: () {
+                    //TODO: Get.to(EditProfileScreen());
+                  },
+                  icon: Icon(Icons.edit),
+                  label: Text("Edit Profile"),
+                ),
+                const SizedBox(height: 24),
+                // Name
+                ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text("Name"),
+                  subtitle: Text(user.name),
+                ),
+
+                // Date of Birth
+                ListTile(
+                  leading: Icon(Icons.cake),
+                  title: Text("Date of Birth"),
+                  subtitle: Text(formatDate(user.dateOfBirth)),
+                ),
+
+                // Email (Placeholder - assuming email is part of AppUser data later)
+                ListTile(
+                  leading: Icon(Icons.email),
+                  title: Text("Email"),
+                  subtitle: Text(user.email), // Placeholder
+                ),
+
+                // Phone Number (Placeholder)
+                ListTile(
+                  leading: Icon(Icons.phone),
+                  title: Text("Phone Number"),
+                  subtitle: Text(user.phoneNumber == ""
+                      ? "No number set"
+                      : user.phoneNumber ?? "No number set"), // Placeholder
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }

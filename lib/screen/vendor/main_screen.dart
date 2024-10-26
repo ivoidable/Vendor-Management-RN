@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
 import 'package:vendor/screen/vendor/tabs/vendor_tabs.dart';
 
@@ -17,61 +18,53 @@ class VendorMainScreen extends StatelessWidget {
       VendorProfileTab(mainController: controller),
     ];
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Events & Bazaars',
+          style: TextStyle(
+            color: Colors.blueGrey,
+          ),
+        ),
+        backgroundColor: Colors.amber,
+        centerTitle: true,
+      ),
       body: Obx(() {
-        return tabs[controller.selectedIndex.value];
-      }),
-      bottomNavigationBar: Obx(() {
-        return BottomNavigationBar(
-          currentIndex: controller.selectedIndex.value,
-          onTap: (index) => controller.changeTab(index),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.event,
-                color: Colors.amber,
-              ),
-              label: 'Events',
-              activeIcon: Icon(
-                Icons.event,
-                color: Colors.orange,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
-                color: Colors.amber,
-              ),
-              label: 'Vendors',
-              activeIcon: Icon(
-                Icons.people,
-                color: Colors.orange,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications,
-                color: Colors.amber,
-              ),
-              label: 'Notifications',
-              activeIcon: Icon(
-                Icons.notifications,
-                color: Colors.orange,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-                color: Colors.amber,
-              ),
-              label: 'Profile',
-              activeIcon: Icon(
-                Icons.person,
-                color: Colors.orange,
-              ),
-            ),
-          ],
+        return IndexedStack(
+          index: controller.selectedIndex.value,
+          children: tabs,
         );
       }),
+      bottomNavigationBar: GNav(
+        rippleColor: Colors.amber[500]!,
+        hoverColor: Colors.grey[100]!,
+        gap: 8,
+        activeColor: Colors.blueGrey[700]!,
+        iconSize: 24,
+        tabBorderRadius: 8,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        duration: Duration(milliseconds: 200),
+        tabBackgroundColor: Colors.grey[100]!,
+        color: Colors.black,
+        onTabChange: (index) => controller.selectedIndex.value = index,
+        tabs: const [
+          GButton(
+            icon: Icons.home,
+            text: 'Home',
+          ),
+          GButton(
+            icon: Icons.people,
+            text: 'Vendor',
+          ),
+          GButton(
+            icon: Icons.notifications,
+            text: 'Notifications',
+          ),
+          GButton(
+            icon: Icons.person,
+            text: 'Profile',
+          )
+        ],
+      ),
     );
   }
 }
