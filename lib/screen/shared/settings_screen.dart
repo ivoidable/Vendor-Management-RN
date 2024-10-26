@@ -1,37 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/controller/settings_controller.dart';
+import 'package:vendor/main.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
   final SettingsController controller = Get.put(SettingsController());
-  void getData() {
-    var settingsBox = Hive.box('settings');
+  void getData() async {
+    var settingsBox = await Hive.openBox('settings');
     if (settingsBox.containsKey('isNotified')) {
       controller.changeIsNotified(settingsBox.get('isNotified') as bool);
     } else {
       settingsBox.put('isNotified', false);
     }
-    if (settingsBox.containsKey('lang')) {
-      controller.changeLanguage(settingsBox.get('lang') as Locale);
-    } else {
-      settingsBox.put('lang', const Locale('en', 'us'));
-    }
+    // if (settingsBox.containsKey('lang')) {
+    //   controller.changeLanguage(settingsBox.get('lang') as Locale);
+    // } else {
+    //   settingsBox.put('lang', const Locale('en', 'us'));
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     getData();
     return Scaffold(
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          buildSwitchTile(),
-          buildDropdownTile(),
-          signOutButton(),
-        ],
+      body: Center(
+        child: Container(
+          height: Get.height * 0.88,
+          width: Get.width * 0.88,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListView(
+            children: [
+              buildSwitchTile(),
+              buildDropdownTile(),
+              signOutButton(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -39,13 +49,11 @@ class SettingsScreen extends StatelessWidget {
   Widget signOutButton() {
     return ListTile(
       onTap: () {
-        AuthController().signOut();
+        authController.signOut();
       },
-      leading: const Row(
-        children: [
-          Icon(Icons.language),
-          Text("Sign out"),
-        ],
+      leading: Text(
+        "Log Out",
+        style: TextStyle(fontSize: 18),
       ),
       trailing: const Icon(Icons.logout),
     );
@@ -53,11 +61,9 @@ class SettingsScreen extends StatelessWidget {
 
   Widget buildSwitchTile() {
     return ListTile(
-      leading: const Row(
-        children: [
-          Icon(Icons.language),
-          Text("Enable Notifications"),
-        ],
+      leading: Text(
+        "Notifications",
+        style: TextStyle(fontSize: 18),
       ),
       trailing: Obx(
         () => Switch.adaptive(
@@ -77,11 +83,9 @@ class SettingsScreen extends StatelessWidget {
           title: "Choose Language",
         );
       },
-      leading: const Row(
-        children: [
-          Icon(Icons.language),
-          Text("Change Language"),
-        ],
+      leading: Text(
+        "Change Language",
+        style: TextStyle(fontSize: 18),
       ),
       trailing: const Icon(Icons.arrow_drop_down),
     );

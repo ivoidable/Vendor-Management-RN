@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vendor/middleware/auth_middleware.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
@@ -17,7 +18,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Hive.init('/');
+  final dir = await getApplicationDocumentsDirectory();
+  Hive.init(dir.path);
   Hive.openBox('settings');
   authController = Get.put(AuthController()); // Initialize UserController
   runApp(MyApp());

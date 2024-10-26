@@ -185,6 +185,11 @@ class OrganizerProfileTab extends StatelessWidget {
       body: FutureBuilder(
         future: DatabaseService().getUser(authController.uid),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
           Organizer user =
               Organizer.fromMap(snapshot.data!.id, snapshot.data!.data()!);
           return SingleChildScrollView(
@@ -193,14 +198,6 @@ class OrganizerProfileTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Edit Profile Button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    //TODO: Get.to(EditProfileScreen());
-                  },
-                  icon: Icon(Icons.edit),
-                  label: Text("Edit Profile"),
-                ),
-                const SizedBox(height: 20),
 
                 // Name
                 ListTile(
@@ -216,13 +213,6 @@ class OrganizerProfileTab extends StatelessWidget {
                   subtitle: Text(formatDate(user.dateOfBirth)),
                 ),
 
-                // Role
-                ListTile(
-                  leading: Icon(Icons.work),
-                  title: Text("Role"),
-                  subtitle: Text(user.role),
-                ),
-
                 // Email (Placeholder - assuming email is part of AppUser data later)
                 ListTile(
                   leading: Icon(Icons.email),
@@ -234,8 +224,25 @@ class OrganizerProfileTab extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.phone),
                   title: Text("Phone Number"),
-                  subtitle:
-                      Text(user.phoneNumber ?? "No number set"), // Placeholder
+                  subtitle: Text(user.phoneNumber == ""
+                      ? "No number set"
+                      : user.phoneNumber ?? "No number set"), // Placeholder
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: Size(Get.width / 2, Get.height * 0.05),
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.blueGrey[700],
+                  ),
+                  onPressed: () {
+                    //TODO: Get.to(EditProfileScreen());
+                  },
+                  icon: Icon(Icons.edit),
+                  label: Text("Edit Profile"),
                 ),
               ],
             ),
