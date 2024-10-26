@@ -78,13 +78,13 @@ class Vendor extends AppUser {
       email: data['email'] ?? "",
       phoneNumber: data['phone_number'] ?? "",
       businessName: data['business_name'] ?? '',
-      privileges: data['privileges'] ?? [],
+      privileges: (data['privileges'] as List<dynamic>)
+          .map((strin) => strin.toString())
+          .toList(),
       logoUrl: data['logo_url'] ?? '',
-      products: (data['products'] as List<dynamic>?)
-              ?.map((product) =>
-                  Product.fromMap(Map<String, dynamic>.from(product)))
-              .toList() ??
-          [],
+      products: (data['products'] as List<dynamic>)
+          .map((product) => Product.fromMap((product)))
+          .toList(),
       slogan: data['slogan'] ?? '',
     );
   }

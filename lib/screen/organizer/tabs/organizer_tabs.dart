@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:vendor/controller/organizer/main_controller.dart';
-import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
@@ -128,6 +127,7 @@ class OrganizerVendorsTab extends StatelessWidget {
             child: Text(snapshot.error.toString()),
           );
         } else {
+          List<Vendor> vendor = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView.builder(
@@ -135,11 +135,8 @@ class OrganizerVendorsTab extends StatelessWidget {
               itemCount: mainController.events.length,
               itemBuilder: (context, index) {
                 final event = mainController.events[index];
-                return EventCard(
-                  name: event.name,
-                  imageUrl: event.imageUrl,
-                  vendors: event.registeredVendors.length,
-                  maxVendors: event.maxVendors,
+                return VendorCard(
+                  vendor: vendor[index],
                   onClick: () {
                     //TODO: Get.to(ViewVendorProfile());
                     print('Clicked on ${event.name}');

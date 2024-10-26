@@ -17,7 +17,6 @@ class Product {
     required this.price,
   });
 
-
   factory Product.fromMap(Map<String, dynamic> data) {
     return Product(
       id: data['id'],
@@ -26,7 +25,7 @@ class Product {
       productDescription: data['product_description'],
       price: data['price'],
       stock: data['stock'],
-      images: data['images'],
+      images: data['images'] as List<String>,
     );
   }
 
@@ -38,7 +37,7 @@ class Product {
       'product_description': productDescription,
       'price': price,
       'stock': stock,
-      'images': images,
+      'images': images.toList(),
     };
   }
 }
