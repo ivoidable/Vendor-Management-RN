@@ -186,10 +186,10 @@ class OrganizerProfileTab extends StatelessWidget {
         ],
       ),
       body: FutureBuilder(
-        future:
-            DatabaseService().getUser(AuthController().firebaseUser.value!.uid),
+        future: DatabaseService().getUser(authController.uid),
         builder: (context, snapshot) {
-          Organizer user = snapshot.data as Organizer;
+          Organizer user =
+              Organizer.fromMap(snapshot.data!.id, snapshot.data!.data()!);
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
