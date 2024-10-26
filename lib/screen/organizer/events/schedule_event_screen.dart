@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:vendor/controller/organizer/create_event_controller.dart';
 import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 
 class ScheduleEventScreen extends StatelessWidget {
   ScheduleEventScreen({super.key});
 
-  final CreateEventController controller = Get.find<CreateEventController>();
+  final CreateEventController controller = Get.put(CreateEventController());
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    controller.images.add(
+        'https://media.discordapp.net/attachments/1152649816199938060/1293154293385265212/2024-10-08_13.09.24.png?ex=671d6989&is=671c1809&hm=09a6caa9ee923aadad52f542940ca582fa7caaa4211cb0371a659783e12477cb&=&format=webp&quality=lossless&width=1071&height=602');
     return Scaffold(
       appBar: AppBar(
         title: Text("Schedule Event"),
@@ -29,30 +33,35 @@ class ScheduleEventScreen extends StatelessWidget {
                 _buildTextField(
                   label: 'Event Name',
                   onChanged: (value) => controller.name.value = value,
+                  format: [],
                 ),
                 _buildTextField(
                   label: 'Description',
                   onChanged: (value) => controller.description.value = value,
                   maxLines: 3,
+                  format: [],
                 ),
                 _buildTextField(
                   label: 'Vendors Limit',
                   keyboardType: TextInputType.number,
                   onChanged: (value) =>
                       controller.maxVendors.value = int.tryParse(value) ?? 0,
+                  format: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 _buildTextField(
                   label: 'Vendor Fee',
                   keyboardType: TextInputType.number,
                   onChanged: (value) => controller.vendorFee.value =
                       double.tryParse(value) ?? 0.0,
+                  format: [FilteringTextInputFormatter.digitsOnly],
                 ),
-                _buildTextField(
-                  label: 'User Fee',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) =>
-                      controller.userFee.value = double.tryParse(value) ?? 0.0,
-                ),
+                // _buildTextField(
+                //   label: 'User Fee',
+                //   keyboardType: TextInputType.number,
+                //   onChanged: (value) =>
+                //       controller.userFee.value = double.tryParse(value) ?? 0.0,
+                //   format: [FilteringTextInputFormatter.digitsOnly],
+                // ),
                 _buildDatePicker(context),
                 Obx(
                   () => ListView.builder(
@@ -94,42 +103,31 @@ class ScheduleEventScreen extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       label: const Text('Add Question'),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          // Handle form submission
-                          Get.snackbar(
-                              'Success', 'Form submitted successfully!');
-                        }
-                      },
-                      child: const Text('Submit'),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      String uid =
-                          await AuthController().firebaseUser.value!.uid;
+                      String uid = authController.uid;
                       Event event = Event(
                         id: '',
+                        organizerId: uid,
                         name: controller.name.value,
                         date: controller.date.value,
                         vendorFee: controller.vendorFee.value,
                         attendeeFee: controller.userFee.value,
-                        applications: [],
-                        registeredVendors: [],
-                        imageUrl: controller.images.value[0] ?? '',
-                        organizerId: uid,
                         maxVendors: controller.maxVendors.value,
-                        location: 'T.B.D',
                         description: controller.description.value,
+                        imageUrl: controller.images[0],
+                        location: 'T.B.D',
+                        registeredVendors: [],
+                        applications: [],
                         questions: [],
                       );
                       DatabaseService().createEvent(event);
                       Get.back();
-                      Get.snackbar('Success', 'Event Has Been Sent For Review!',
+                      Get.snackbar('Success', 'Event Has Been Scheduled',
                           backgroundColor: Colors.lightGreen);
                     }
                   },
@@ -148,6 +146,7 @@ class ScheduleEventScreen extends StatelessWidget {
     required Function(String) onChanged,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    required List<TextInputFormatter> format,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -158,6 +157,7 @@ class ScheduleEventScreen extends StatelessWidget {
         ),
         keyboardType: keyboardType,
         maxLines: maxLines,
+        inputFormatters: format,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter $label';
@@ -171,7 +171,6 @@ class ScheduleEventScreen extends StatelessWidget {
 
   Widget _buildDatePicker(BuildContext context) {
     return Obx(() {
-      final controller = Get.find<CreateEventController>();
       return ListTile(
         title: Text(
           'Event Date: ${controller.date.value.toLocal()}'.split(' ')[0],
@@ -193,7 +192,6 @@ class ScheduleEventScreen extends StatelessWidget {
   }
 
   // Widget _buildMaxVendorsSlider() {
-  // final CreateEventController controller = Get.find<CreateEventController>();
 
   // return Obx(() {
   //   return Column(

@@ -60,6 +60,27 @@ class Application {
   }
 }
 
+class Question {
+  String question;
+  String answer;
+  Question({
+    required this.question,
+    required this.answer,
+  });
+  factory Question.fromMap(Map<String, dynamic> data) {
+    return Question(
+      question: data['question'],
+      answer: data['answer'],
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'question': question,
+      'answer': answer,
+    };
+  }
+}
+
 class Event {
   String id;
   final String organizerId;
@@ -71,7 +92,7 @@ class Event {
   final double attendeeFee;
   final String location;
   final String description;
-  List<Map<String, dynamic>> questions;
+  List<Question> questions;
   List<Vendor> registeredVendors;
   List<Application> applications;
 
@@ -107,6 +128,9 @@ class Event {
             )
             .toList() ??
         [];
+    List<Question> questions = (data['questions'] as List<dynamic>)
+        .map((question) => Question.fromMap(question))
+        .toList();
 
     return Event(
       id: id,
@@ -121,7 +145,7 @@ class Event {
       description: data['description'] ?? '',
       registeredVendors: vendors,
       applications: applications,
-      questions: data['questions'] as List<Map<String, dynamic>>,
+      questions: questions,
     );
   }
 
@@ -138,6 +162,7 @@ class Event {
       'attendee_fee': attendeeFee,
       'organizer_id': organizerId,
       'max_vendors': maxVendors,
+      'questions': questions.map((questions) => questions.toMap()).toList(),
       'registered_vendors':
           registeredVendors.map((vendor) => vendor.toMap()).toList(),
       'applications':

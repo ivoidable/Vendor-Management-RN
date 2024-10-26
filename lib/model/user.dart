@@ -127,7 +127,7 @@ class Organizer extends AppUser {
       name: data['name'],
       email: data['email'],
       phoneNumber: data['phone_number'],
-      dateOfBirth: (data['date_of_birth'] as Timestamp).toDate(),
+      dateOfBirth: DateTime.parse(data['date_of_birth'] as String),
       privileges: List<String>.from(data['privileges'] ?? []),
     );
   }
