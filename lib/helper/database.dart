@@ -14,6 +14,13 @@ class DatabaseService {
     doc.set(event.toMap());
   }
 
+  void addProduct(Vendor user) {
+    var doc = _db.collection('users').doc();
+    user.id = doc.id;
+    print(doc.id);
+    doc.update(user.toMap());
+  }
+
   // READ an event by ID
   Future<Event?> getEvent(String eventId) async {
     DocumentSnapshot doc = await _db.collection('events').doc(eventId).get();

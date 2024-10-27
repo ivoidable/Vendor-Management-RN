@@ -79,28 +79,7 @@ class ViewVendorVendorProfileScreen extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            Container(
-              height: Get.height * 0.55,
-              width: Get.width * 0.88,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 4,
-                ),
-                itemBuilder: (context, index) {
-                  return GridTile(
-                    child: ProductWidget(
-                      product: vendor.products[index],
-                    ),
-                  );
-                },
-                itemCount: vendor.products.length,
-              ),
-            ),
-            //TODO: Add Catalog
+            CatalogView(vendor: vendor),
           ],
         ),
       ),
@@ -108,9 +87,39 @@ class ViewVendorVendorProfileScreen extends StatelessWidget {
   }
 }
 
+class CatalogView extends StatelessWidget {
+  final Vendor vendor;
+  const CatalogView({required this.vendor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: Get.height * 0.5,
+      width: Get.width * 0.88,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 4,
+        ),
+        itemBuilder: (context, index) {
+          return GridTile(
+            child: ProductWidget(
+              product: vendor.products[index],
+            ),
+          );
+        },
+        itemCount: vendor.products.length,
+      ),
+    );
+  }
+}
+
 class ProductWidget extends StatelessWidget {
   final Product product;
-  const ProductWidget({required this.product});
+  ProductWidget({required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +128,12 @@ class ProductWidget extends StatelessWidget {
       child: Column(
         children: [
           //Image will be changed to carousel
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Image.network(product.images.first),
-          ),
+          product.images.isEmpty
+              ? const SizedBox()
+              : Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Image.network(product.images[0]),
+                ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Row(

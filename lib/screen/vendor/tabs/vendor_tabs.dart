@@ -7,6 +7,7 @@ import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
+import 'package:vendor/screen/vendor/profile/add_product_screen.dart';
 import 'package:vendor/screen/vendor/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
 
@@ -25,7 +26,7 @@ class VendorEventsTab extends StatelessWidget {
           );
         } else {
           return Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Obx(() {
               return RefreshIndicator(
                   onRefresh: mainController.onRefresh,
@@ -62,11 +63,7 @@ class VendorVendorsTab extends StatelessWidget {
     return FutureBuilder(
       future: mainController.getVendors(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: Text("No Vendors Found"),
-          );
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
           );
@@ -106,7 +103,7 @@ class VendorNotificationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("To be implemented"));
+    return const Center(child: Text("To be implemented"));
   }
 }
 
@@ -129,27 +126,16 @@ class VendorProfileTab extends StatelessWidget {
       return CircleAvatar(
         radius: 50,
         backgroundImage: (imageUrl.isNotEmpty) ? NetworkImage(imageUrl) : null,
-        child: (imageUrl.isEmpty) ? Icon(Icons.person, size: 50) : null,
+        child: (imageUrl.isEmpty) ? const Icon(Icons.person, size: 50) : null,
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Get.to(SettingsScreen());
-            },
-          ),
-        ],
-      ),
       body: FutureBuilder(
         future: DatabaseService().getUser(authController.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -162,7 +148,7 @@ class VendorProfileTab extends StatelessWidget {
               children: [
                 // Edit Profile Button
                 buildProfileImage(user),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 ElevatedButton.icon(
@@ -180,39 +166,54 @@ class VendorProfileTab extends StatelessWidget {
                           authController.uid, authController.appUser),
                     ));
                   },
-                  icon: Icon(Icons.edit),
-                  label: Text("Edit Profile"),
+                  icon: const Icon(Icons.edit),
+                  label: const Text("Edit Profile"),
                 ),
                 const SizedBox(height: 24),
                 // Name
                 ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text("Name"),
+                  leading: const Icon(Icons.person),
+                  title: const Text("Name"),
                   subtitle: Text(user.name),
                 ),
 
                 // Date of Birth
                 ListTile(
-                  leading: Icon(Icons.cake),
-                  title: Text("Date of Birth"),
+                  leading: const Icon(Icons.cake),
+                  title: const Text("Date of Birth"),
                   subtitle: Text(formatDate(user.dateOfBirth)),
                 ),
 
                 // Email (Placeholder - assuming email is part of AppUser data later)
                 ListTile(
-                  leading: Icon(Icons.email),
-                  title: Text("Email"),
+                  leading: const Icon(Icons.email),
+                  title: const Text("Email"),
                   subtitle: Text(user.email), // Placeholder
                 ),
 
-                // Phone Number (Placeholder)
+                // Phone Number
                 ListTile(
-                  leading: Icon(Icons.phone),
-                  title: Text("Phone Number"),
+                  leading: const Icon(Icons.phone),
+                  title: const Text("Phone Number"),
                   subtitle: Text(user.phoneNumber == ""
                       ? "No number set"
-                      : user.phoneNumber ?? "No number set"), // Placeholder
+                      : user.phoneNumber ?? "No number set"),
                 ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.shop,
+                  ),
+                  title: const Text("Products"),
+                  trailing: IconButton(
+                    onPressed: () {
+                      //TODO: Add Product Here
+                      Get.to(AddProductScreen());
+                      print("Add Product");
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                ),
+                CatalogView(vendor: user),
               ],
             ),
           );

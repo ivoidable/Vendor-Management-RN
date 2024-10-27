@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:vendor/controller/vendor/main_controller.dart';
+import 'package:vendor/screen/shared/settings_screen.dart';
 import 'package:vendor/screen/vendor/tabs/vendor_tabs.dart';
 
 class VendorMainScreen extends StatelessWidget {
@@ -25,6 +26,14 @@ class VendorMainScreen extends StatelessWidget {
             color: Colors.blueGrey,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Get.to(SettingsScreen());
+            },
+          ),
+        ],
         backgroundColor: Colors.amber,
         centerTitle: true,
       ),
