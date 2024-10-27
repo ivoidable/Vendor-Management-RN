@@ -23,22 +23,24 @@ class OrganizerEventsTab extends StatelessWidget {
       child: Stack(
         children: [
           Obx(() {
-            return ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.events.value.length,
-              itemBuilder: (context, index) {
-                final event = mainController.events[index];
-                return EventCard(
-                  name: event.name,
-                  imageUrl: event.imageUrl,
-                  vendors: event.registeredVendors.length,
-                  maxVendors: event.maxVendors,
-                  onClick: () {
-                    Get.to(ViewEventScreen(event: event));
+            return RefreshIndicator(
+                onRefresh: mainController.onRefresh,
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: mainController.events.value.length,
+                  itemBuilder: (context, index) {
+                    final event = mainController.events[index];
+                    return EventCard(
+                      name: event.name,
+                      images: event.images,
+                      vendors: event.registeredVendors.length,
+                      maxVendors: event.maxVendors,
+                      onClick: () {
+                        Get.to(ViewEventScreen(event: event));
+                      },
+                    );
                   },
-                );
-              },
-            );
+                ));
           }),
           Positioned(
             bottom: 10,
@@ -68,31 +70,31 @@ class OrganizerVendorsTab extends StatelessWidget {
     return FutureBuilder(
       future: mainController.getVendors(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: Text("No Vendors Found"),
-          );
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
           );
         } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.vendors.length,
-              itemBuilder: (context, index) {
-                final event = mainController.vendors[index];
-                return VendorCard(
-                  vendor: mainController.vendors[index],
-                  onClick: () {
-                    Get.to(ViewVendorProfileScreen(
-                        vendor: mainController.vendors[index]));
-                    print('Clicked on ${event.name}');
+          return Obx(
+            () => RefreshIndicator(
+              onRefresh: mainController.onRefresh,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: mainController.vendors.length,
+                  itemBuilder: (context, index) {
+                    final vendor = mainController.vendors[index];
+                    return VendorCard(
+                      vendor: mainController.vendors[index],
+                      onClick: () {
+                        Get.to(ViewVendorProfileScreen(vendor: vendor));
+                        print('Clicked on ${vendor.name}');
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ),
             ),
           );
         }

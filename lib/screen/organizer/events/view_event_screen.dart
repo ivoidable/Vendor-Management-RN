@@ -15,6 +15,8 @@ class ViewEventScreen extends StatelessWidget {
         .sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.amber,
+        centerTitle: true,
         title: Text('Event: ${event.name}'),
       ),
       body: Padding(
@@ -34,7 +36,7 @@ class ViewEventScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Image.network(
-                      event.imageUrl,
+                      event.images.first,
                       width: 180,
                       height: 180,
                       fit: BoxFit.cover,

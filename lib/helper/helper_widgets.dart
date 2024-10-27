@@ -3,14 +3,14 @@ import 'package:vendor/model/user.dart';
 
 class EventCard extends StatelessWidget {
   final String name;
-  final String imageUrl;
+  final List<String> images;
   final int vendors;
   final int maxVendors;
   final VoidCallback onClick;
 
   const EventCard({
     required this.name,
-    required this.imageUrl,
+    required this.images,
     required this.vendors,
     required this.maxVendors,
     required this.onClick,
@@ -37,7 +37,7 @@ class EventCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(12.0), bottom: Radius.circular(12.0)),
                 child: Image.network(
-                  imageUrl,
+                  images[0],
                   width: double.infinity,
                   height: 150,
                   fit: BoxFit.cover,

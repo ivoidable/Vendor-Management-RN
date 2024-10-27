@@ -19,37 +19,33 @@ class VendorEventsTab extends StatelessWidget {
     return FutureBuilder(
       future: mainController.getEvents(),
       builder: (context, snapshot) {
-        if (mainController.events.isEmpty) {
-          return Center(
-            child: ElevatedButton(
-              onPressed: () => authController.signOut(),
-              child: Text("Sign out"),
-            ),
-          );
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
           );
         } else {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.events.length,
-              itemBuilder: (context, index) {
-                final event = mainController.events[index];
-                return EventCard(
-                  name: event.name,
-                  imageUrl: event.imageUrl,
-                  vendors: event.registeredVendors.length,
-                  maxVendors: event.maxVendors,
-                  onClick: () {
-                    // Handle click event
-                    print('Clicked on ${event.name}');
-                  },
-                );
-              },
-            ),
+            padding: EdgeInsets.all(24),
+            child: Obx(() {
+              return RefreshIndicator(
+                  onRefresh: mainController.onRefresh,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: mainController.events.length,
+                    itemBuilder: (context, index) {
+                      final event = mainController.events[index];
+                      return EventCard(
+                        name: event.name,
+                        images: event.images,
+                        vendors: event.registeredVendors.length,
+                        maxVendors: event.maxVendors,
+                        onClick: () {
+                          //TODO: Navigate to Event Screen
+                        },
+                      );
+                    },
+                  ));
+            }),
           );
         }
       },
@@ -75,7 +71,7 @@ class VendorVendorsTab extends StatelessWidget {
             child: Text(snapshot.error.toString()),
           );
         } else {
-          List<Vendor> vendor = snapshot.data!;
+          List<Vendor> vendor = mainController.vendors;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView.builder(

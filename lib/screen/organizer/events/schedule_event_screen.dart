@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vendor/controller/organizer/create_event_controller.dart';
-import 'package:vendor/controller/auth_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
@@ -15,8 +15,9 @@ class ScheduleEventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO: Remove This on release
     controller.images.add(
-        'https://media.discordapp.net/attachments/1152649816199938060/1293154293385265212/2024-10-08_13.09.24.png?ex=671d6989&is=671c1809&hm=09a6caa9ee923aadad52f542940ca582fa7caaa4211cb0371a659783e12477cb&=&format=webp&quality=lossless&width=1071&height=602');
+        'https://firebasestorage.googleapis.com/v0/b/vendorevents-d3e6c.appspot.com/o/event_sample.jpg?alt=media&token=7c6dfe6a-c720-4797-bc52-2e301bfec13a');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -37,6 +38,11 @@ class ScheduleEventScreen extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.13,
                 ),
+                _buildImagePicker(),
+                SizedBox(
+                  height: Get.height * 0.05,
+                ),
+                // ImagePicker that adds images from gallery to controller.images
                 _buildTextField(
                   label: 'Event Name',
                   onChanged: (value) => controller.name.value = value,
@@ -167,7 +173,7 @@ class ScheduleEventScreen extends StatelessWidget {
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
                             description: controller.description.value,
-                            imageUrl: controller.images[0],
+                            images: controller.images,
                             location: 'T.B.D',
                             registeredVendors: [],
                             applications: [],
@@ -190,6 +196,30 @@ class ScheduleEventScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              minimumSize: Size(Get.width / 2, Get.height * 0.05),
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.blueGrey[700],
+            ),
+            onPressed: () => controller.pickImage(ImageSource.gallery),
+            icon: const Icon(Icons.add_a_photo),
+            label: const Text('Add Image'),
+          ),
+        ],
       ),
     );
   }

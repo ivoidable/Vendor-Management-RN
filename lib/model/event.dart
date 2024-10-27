@@ -87,7 +87,6 @@ class Event {
   final String name;
   final DateTime date;
   final int maxVendors;
-  final String imageUrl;
   final double vendorFee;
   final double attendeeFee;
   final String location;
@@ -95,12 +94,12 @@ class Event {
   List<Question> questions;
   List<Vendor> registeredVendors;
   List<Application> applications;
+  List<String> images;
 
   Event({
     required this.id,
     required this.name,
     required this.date,
-    required this.imageUrl,
     required this.organizerId,
     required this.vendorFee,
     required this.attendeeFee,
@@ -108,6 +107,7 @@ class Event {
     required this.location,
     required this.description,
     required this.registeredVendors,
+    required this.images,
     required this.applications,
     required this.questions,
   });
@@ -141,7 +141,9 @@ class Event {
       vendorFee: data['vendor_fee'],
       attendeeFee: data['attendee_fee'],
       organizerId: data['organizer_id'],
-      imageUrl: data['image_url'] ?? '',
+      images: (data['images'] as List<dynamic>)
+          .map((stri) => stri.toString())
+          .toList(),
       description: data['description'] ?? '',
       registeredVendors: vendors,
       applications: applications,
@@ -157,7 +159,7 @@ class Event {
       'date': Timestamp.fromDate(date),
       'location': location,
       'description': description,
-      'image_url': imageUrl,
+      'images': images.toList(),
       'vendor_fee': vendorFee,
       'attendee_fee': attendeeFee,
       'organizer_id': organizerId,

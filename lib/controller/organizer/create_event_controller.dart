@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateEventController extends GetxController {
   var name = ''.obs;
@@ -10,6 +13,22 @@ class CreateEventController extends GetxController {
   var maxVendors = 0.obs;
   var images = <String>[].obs;
   var applications = <String>[].obs;
+
+  final ImagePicker _picker = ImagePicker();
+  var selectedImage = Rx<File?>(null); // Reactive variable
+
+  // Method to pick an image from gallery or camera
+  Future<void> pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source);
+    if (image != null) {
+      selectedImage.value = File(image.path);
+    }
+  }
+
+  // Method to clear the selected image
+  void removeImage(int index) {
+    images.remove(index);
+  }
 
   void setDate(DateTime pickedDate) {
     date.value = pickedDate;
@@ -35,6 +54,7 @@ class CreateEventController extends GetxController {
 
   @override
   void onClose() {
+    images.clear();
     for (var controller in questions) {
       controller.dispose(); // Clean up controllers
     }

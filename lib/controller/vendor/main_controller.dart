@@ -2,25 +2,26 @@ import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
-import 'package:vendor/screen/vendor/tabs/vendor_tabs.dart';
 
 class VendorMainController extends GetxController {
   var selectedIndex = 0.obs;
 
-  List<Event> events = [];
-  List<Vendor> vendors = [];
+  var events = <Event>[].obs;
+  var vendors = <Vendor>[].obs;
 
   void changeTab(int index) {
     selectedIndex.value = index;
   }
 
-  Future<List<Event>> getEvents() async {
-    events = await DatabaseService().getAllEvents();
-    return events;
+  Future<void> getEvents() async {
+    events.value = await DatabaseService().getAllEvents();
   }
 
-  Future<List<Vendor>> getVendors() async {
-    vendors = await DatabaseService().getAllVendors();
-    return vendors;
+  Future<void> onRefresh() {
+    return Future.wait([getEvents(), getVendors()]);
+  }
+
+  Future<void> getVendors() async {
+    vendors.value = await DatabaseService().getAllVendors();
   }
 }
