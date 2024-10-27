@@ -73,18 +73,22 @@ class VendorVendorsTab extends StatelessWidget {
         } else {
           List<Vendor> vendor = mainController.vendors;
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.vendors.length,
-              itemBuilder: (context, index) {
-                return VendorCard(
-                  vendor: vendor[index],
-                  onClick: () {
-                    Get.to(ViewVendorVendorProfileScreen(
-                      vendor: mainController.vendors[index],
-                    ));
-                    print('Clicked on ${mainController.vendors[index]}');
+            padding: const EdgeInsets.all(24.0),
+            child: Obx(
+              () {
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: mainController.vendors.length,
+                  itemBuilder: (context, index) {
+                    return VendorCard(
+                      vendor: vendor[index],
+                      onClick: () {
+                        Get.to(ViewVendorVendorProfileScreen(
+                          vendor: vendor[index],
+                        ));
+                        print('Clicked on ${mainController.vendors[index]}');
+                      },
+                    );
                   },
                 );
               },
