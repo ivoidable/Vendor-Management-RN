@@ -9,6 +9,7 @@ import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/organizer/events/view_event_screen.dart';
 import 'package:vendor/screen/organizer/profile/edit_profile_screen.dart';
+import 'package:vendor/screen/organizer/vendor/view_profile_screen.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerEventsTab extends StatelessWidget {
@@ -17,94 +18,42 @@ class OrganizerEventsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: mainController
-          .getScheduledEvents(DatabaseService().getUser(authController.uid)),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print(snapshot.error);
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        } else if (snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Stack(
-              children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: mainController.events.length,
-                  itemBuilder: (context, index) {
-                    final event = mainController.events[index];
-                    return EventCard(
-                      name: event.name,
-                      imageUrl: event.imageUrl,
-                      vendors: event.registeredVendors.length,
-                      maxVendors: event.maxVendors,
-                      onClick: () {
-                        // Handle click event
-                        Get.to(ViewEventScreen(event: event));
-                        print('Clicked on ${event.name}');
-                      },
-                    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Stack(
+        children: [
+          Obx(() {
+            return ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: mainController.events.value.length,
+              itemBuilder: (context, index) {
+                final event = mainController.events[index];
+                return EventCard(
+                  name: event.name,
+                  imageUrl: event.imageUrl,
+                  vendors: event.registeredVendors.length,
+                  maxVendors: event.maxVendors,
+                  onClick: () {
+                    Get.to(ViewEventScreen(event: event));
                   },
-                ),
-                Positioned(
-                  bottom: 25,
-                  right: 25,
-                  child: FloatingActionButton(
-                    backgroundColor: Colors.amber,
-                    foregroundColor: Colors.blueGrey,
-                    onPressed: () {
-                      Get.to(ScheduleEventScreen());
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                ),
-              ],
+                );
+              },
+            );
+          }),
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: FloatingActionButton(
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.blueGrey,
+              onPressed: () {
+                Get.to(ScheduleEventScreen());
+              },
+              child: Icon(Icons.add),
             ),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Stack(
-              children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: mainController.events.length,
-                  itemBuilder: (context, index) {
-                    final event = mainController.events[index];
-                    return EventCard(
-                      name: event.name,
-                      imageUrl: event.imageUrl,
-                      vendors: event.registeredVendors.length,
-                      maxVendors: event.maxVendors,
-                      onClick: () {
-                        // Handle click event
-                        print('Clicked on ${event.name}');
-                      },
-                    );
-                  },
-                ),
-                Positioned(
-                  bottom: 25,
-                  right: 25,
-                  child: FloatingActionButton(
-                    backgroundColor: Colors.amber,
-                    foregroundColor: Colors.blueGrey,
-                    onPressed: () {
-                      Get.to(ScheduleEventScreen());
-                    },
-                    child: Icon(
-                      Icons.add,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -128,18 +77,18 @@ class OrganizerVendorsTab extends StatelessWidget {
             child: Text(snapshot.error.toString()),
           );
         } else {
-          List<Vendor> vendor = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.events.length,
+              itemCount: mainController.vendors.length,
               itemBuilder: (context, index) {
-                final event = mainController.events[index];
+                final event = mainController.vendors[index];
                 return VendorCard(
-                  vendor: vendor[index],
+                  vendor: mainController.vendors[index],
                   onClick: () {
-                    //TODO: Get.to(ViewVendorProfile());
+                    Get.to(ViewVendorProfileScreen(
+                        vendor: mainController.vendors[index]));
                     print('Clicked on ${event.name}');
                   },
                 );
@@ -157,7 +106,7 @@ class OrganizerNotificationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("Notifications Do not work yet");
+    return Center(child: Text("Notifications Do not work yet"));
   }
 }
 

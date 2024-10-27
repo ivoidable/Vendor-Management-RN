@@ -1,14 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 
 class OrganizerMainController extends GetxController {
   var selectedIndex = 0.obs;
 
-  List<Event> events = [];
-  List<Vendor> vendors = [];
+  var events = <Event>[].obs;
+  var vendors = <Vendor>[].obs;
+  late Organizer organizerz =
+      Organizer.fromMap(authController.uid, authController.appUser);
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    onRefresh();
+  }
 
   void changeTab(int index) {
     selectedIndex.value = index;
@@ -18,16 +28,15 @@ class OrganizerMainController extends GetxController {
     DatabaseService().scheduleEvent(organizer, event);
   }
 
-  Future<List<Event>> getScheduledEvents(
-      Future<DocumentSnapshot<Map<String, dynamic>>?> organizer) async {
-    var org =
-        Organizer.fromMap((await organizer)!.id, (await organizer)!.data()!);
-    events = await DatabaseService().getScheduledEvents(org);
-    return events;
+  Future<void> getEvents() async {
+    events.value = await DatabaseService().getScheduledEvents(organizerz);
   }
 
-  Future<List<Vendor>> getVendors() async {
-    vendors = await DatabaseService().getAllVendors();
-    return vendors;
+  Future<void> onRefresh() {
+    return Future.wait([getEvents(), getVendors()]);
+  }
+
+  Future<void> getVendors() async {
+    vendors.value = await DatabaseService().getAllVendors();
   }
 }

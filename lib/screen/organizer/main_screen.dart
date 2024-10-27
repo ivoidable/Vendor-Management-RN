@@ -27,12 +27,12 @@ class OrganizerMainScreen extends StatelessWidget {
         backgroundColor: Colors.amber,
         centerTitle: true,
       ),
-      body: Obx(() {
-        return IndexedStack(
-          index: controller.selectedIndex.value,
-          children: tabs,
-        );
-      }),
+      body: Obx(() => RefreshIndicator(
+          child: IndexedStack(
+            index: controller.selectedIndex.value,
+            children: tabs,
+          ),
+          onRefresh: controller.onRefresh)),
       bottomNavigationBar: GNav(
         rippleColor: Colors.amber[500]!,
         hoverColor: Colors.grey[100]!,
