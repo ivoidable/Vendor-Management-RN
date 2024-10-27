@@ -85,13 +85,6 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(
               height: 6,
             ),
-            Switch(
-              value: controller.isVendor.value,
-              onChanged: (vendor) {
-                print(vendor);
-                controller.isVendor.value = vendor;
-              },
-            ),
             ChipSelector(),
             const SizedBox(
               height: 12,

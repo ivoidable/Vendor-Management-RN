@@ -10,6 +10,7 @@ class AuthController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String uid = "";
+  Map<String, dynamic> appUser = {};
   Rxn<User?> firebaseUser = Rxn<User?>();
   RxString userRole = ''.obs; // Observes role changes
 
@@ -25,6 +26,7 @@ class AuthController extends GetxController {
       uid = '';
       userRole.value = ''; // Reset role on sign out
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        appUser = {};
         Get.offAll(LoginScreen());
       });
     } else {
@@ -33,6 +35,7 @@ class AuthController extends GetxController {
       uid = userDoc.id;
       debugPrint(uid);
       userRole.value = userDoc['role'] ?? 'signed_out';
+      appUser = userDoc.data()!;
       _navigateBasedOnRole(
           userRole.value, userDoc.data()!); // Navigate based on role
     }
@@ -49,8 +52,7 @@ class AuthController extends GetxController {
           debugPrint("Running As Vendor");
           if (vendor.businessName == "" ||
               vendor.phoneNumber == null ||
-              vendor.phoneNumber == "" ||
-              vendor.logoUrl == "") {
+              vendor.phoneNumber == "") {
             Get.offAllNamed('/vendor_onboard');
           } else {
             Get.offAllNamed('/vendor_main');

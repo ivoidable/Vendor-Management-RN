@@ -7,6 +7,7 @@ import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
+import 'package:vendor/screen/vendor/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
 
 class VendorEventsTab extends StatelessWidget {
@@ -174,7 +175,10 @@ class VendorProfileTab extends StatelessWidget {
                     foregroundColor: Colors.blueGrey[700],
                   ),
                   onPressed: () {
-                    //TODO: Get.to(EditProfileScreen());
+                    Get.to(EditProfileScreen(
+                      vendor: Vendor.fromMap(
+                          authController.uid, authController.appUser),
+                    ));
                   },
                   icon: Icon(Icons.edit),
                   label: Text("Edit Profile"),

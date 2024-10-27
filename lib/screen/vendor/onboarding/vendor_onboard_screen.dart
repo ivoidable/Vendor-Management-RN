@@ -46,6 +46,7 @@ class VendorOnboardScreen extends StatelessWidget {
             // Submit button
             ElevatedButton(
               onPressed: () {
+                print(authController.appUser);
                 DatabaseService().updateUser(
                   authController.uid,
                   {

@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 
-class VendorController extends GetxController {
+class VendorEditProfileController extends GetxController {
   final Vendor vendor;
 
-  VendorController(this.vendor);
+  VendorEditProfileController(this.vendor);
 
   // Observables for fields
   var name = ''.obs;
@@ -24,13 +26,15 @@ class VendorController extends GetxController {
   }
 
   // Update vendor object with the new data
-  void updateVendor() {
+  void updateVendor() async {
     vendor.name = name.value;
     vendor.dateOfBirth = dateOfBirth.value;
     vendor.email = email.value;
     vendor.businessName = businessName.value;
 
     // For demonstration, print updated vendor data
+    DatabaseService().updateUser(authController.uid, vendor.toMap());
+    authController.appUser = vendor.toMap();
     print(
         'Updated Vendor: ${vendor.name}, ${vendor.dateOfBirth}, ${vendor.email}, ${vendor.businessName}');
   }
