@@ -8,6 +8,7 @@ import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/organizer/events/view_event_screen.dart';
+import 'package:vendor/screen/organizer/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerEventsTab extends StatelessWidget {
@@ -197,29 +198,24 @@ class OrganizerProfileTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Edit Profile Button
-
                 // Name
                 ListTile(
                   leading: Icon(Icons.person),
                   title: Text("Name"),
                   subtitle: Text(user.name),
                 ),
-
                 // Date of Birth
                 ListTile(
                   leading: Icon(Icons.cake),
                   title: Text("Date of Birth"),
                   subtitle: Text(formatDate(user.dateOfBirth)),
                 ),
-
                 // Email (Placeholder - assuming email is part of AppUser data later)
                 ListTile(
                   leading: Icon(Icons.email),
                   title: Text("Email"),
                   subtitle: Text(user.email), // Placeholder
                 ),
-
                 // Phone Number (Placeholder)
                 ListTile(
                   leading: Icon(Icons.phone),
@@ -239,7 +235,9 @@ class OrganizerProfileTab extends StatelessWidget {
                     foregroundColor: Colors.blueGrey[700],
                   ),
                   onPressed: () {
-                    //TODO: Get.to(EditProfileScreen());
+                    Get.to(OrganizerEditProfileScreen(
+                      organizer: user,
+                    ));
                   },
                   icon: Icon(Icons.edit),
                   label: Text("Edit Profile"),
