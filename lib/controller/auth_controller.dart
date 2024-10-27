@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 
 class AuthController extends GetxController {
@@ -27,29 +28,37 @@ class AuthController extends GetxController {
         Get.offAll(LoginScreen());
       });
     } else {
-      DocumentSnapshot userDoc =
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
           await _firestore.collection('users').doc(user.uid).get();
       uid = userDoc.id;
       debugPrint(uid);
       userRole.value = userDoc['role'] ?? 'signed_out';
-      _navigateBasedOnRole(userRole.value); // Navigate based on role
+      _navigateBasedOnRole(
+          userRole.value, userDoc.data()!); // Navigate based on role
     }
   }
 
-  void _navigateBasedOnRole(String role) {
+  void _navigateBasedOnRole(
+    String role,
+    Map<String, dynamic> user,
+  ) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       switch (role) {
         case 'vendor':
+          Vendor vendor = Vendor.fromMap(uid, user);
           debugPrint("Running As Vendor");
-          Get.offAllNamed('/vendor_main');
+          if (vendor.businessName == "" ||
+              vendor.phoneNumber == null ||
+              vendor.phoneNumber == "" ||
+              vendor.logoUrl == "") {
+            Get.offAllNamed('/vendor_onboard');
+          } else {
+            Get.offAllNamed('/vendor_main');
+          }
           break;
         case 'organizer':
           debugPrint("Running As Organizer");
           Get.offAllNamed('/organizer_main');
-          break;
-        case 'user':
-          debugPrint("Running As User");
-          Get.offAllNamed('/user_main');
           break;
         case 'admin':
           Get.offAllNamed('/admin_main');

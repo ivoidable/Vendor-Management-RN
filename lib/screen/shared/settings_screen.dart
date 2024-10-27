@@ -28,14 +28,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Get.to(SettingsScreen());
-            },
-          ),
-        ],
+        backgroundColor: Colors.amber,
       ),
       body: Center(
         child: Container(

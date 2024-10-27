@@ -2,6 +2,7 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
+import 'package:vendor/model/user.dart';
 
 class RegisterController extends GetxController {
   var isVendor = false.obs;
@@ -9,6 +10,10 @@ class RegisterController extends GetxController {
 
   void selectChip(int index) {
     selectedChip.value = index; // Update the selected chip
+  }
+
+  void updateShite(Vendor vendor) {
+    //TODO: Update Vendor
   }
 }
 

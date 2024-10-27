@@ -7,6 +7,7 @@ import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/settings_screen.dart';
+import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
 
 class VendorEventsTab extends StatelessWidget {
   final VendorMainController mainController;
@@ -78,14 +79,15 @@ class VendorVendorsTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: mainController.events.length,
+              itemCount: mainController.vendors.length,
               itemBuilder: (context, index) {
-                final event = mainController.events[index];
                 return VendorCard(
                   vendor: vendor[index],
                   onClick: () {
-                    //TODO: Get.to(ViewVendorProfile());
-                    print('Clicked on ${event.name}');
+                    Get.to(ViewVendorVendorProfileScreen(
+                      vendor: mainController.vendors[index],
+                    ));
+                    print('Clicked on ${mainController.vendors[index]}');
                   },
                 );
               },

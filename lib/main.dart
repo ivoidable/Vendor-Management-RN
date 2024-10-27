@@ -7,6 +7,7 @@ import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/shared/register_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
+import 'package:vendor/screen/vendor/onboarding/vendor_onboard_screen.dart';
 import 'controller/auth_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -22,7 +23,7 @@ void main() async {
   Hive.init(dir.path);
   Hive.openBox('settings');
   authController = Get.put(AuthController()); // Initialize UserController
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
+        GetPage(name: '/vendor_onboard', page: () => VendorOnboardScreen()),
+        GetPage(name: '/vendor_pricing', page: () => VendorOnboardScreen()),
         GetPage(
           name: '/vendor_main',
           middlewares: [AuthMiddleware('vendor')],
