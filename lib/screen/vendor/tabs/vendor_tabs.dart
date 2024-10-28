@@ -6,6 +6,7 @@ import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
+import 'package:vendor/screen/vendor/events/view_event_screen.dart';
 import 'package:vendor/screen/vendor/profile/add_product_screen.dart';
 import 'package:vendor/screen/vendor/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
@@ -40,7 +41,7 @@ class VendorEventsTab extends StatelessWidget {
                         vendors: event.registeredVendors.length,
                         maxVendors: event.maxVendors,
                         onClick: () {
-                          //TODO: Navigate to Event Screen
+                          Get.to(VendorViewEventScreen(event: event));
                         },
                       );
                     },
