@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/product.dart';
 import 'package:vendor/model/user.dart';
 
@@ -93,6 +95,12 @@ class CatalogView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isOwning = false;
+    if (authController.userRole.value == 'vendor') {
+      if (vendor.id == authController.uid) {
+        isOwning = true;
+      }
+    }
     return Container(
       height: Get.height * 0.5,
       width: Get.width * 0.88,
@@ -113,10 +121,7 @@ class CatalogView extends StatelessWidget {
             ),
             child: ProductWidget(
               product: vendor.products[index],
-              onTap: () {
-                // Get.to(ViewProductScreen(vendor: vendor, index: index));
-                //TODO: Add Product View
-              },
+              isOwning: isOwning,
             ),
           );
         },
@@ -128,75 +133,112 @@ class CatalogView extends StatelessWidget {
 
 class ProductWidget extends StatelessWidget {
   final Product product;
-  final Function() onTap;
-  ProductWidget({required this.product, required this.onTap});
+  final bool isOwning;
+  ProductWidget({required this.product, required this.isOwning});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 3,
-        child: Column(
-          children: [
-            //Image will be changed to carousel
-            product.images.isEmpty
-                ? SizedBox(
-                    height: Get.width * 0.2,
-                    width: Get.width * 0.3,
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    height: Get.width * 0.2,
-                    width: Get.width * 0.3,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+    return Card(
+      elevation: 3,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              //Image will be changed to carousel
+              product.images.isEmpty
+                  ? SizedBox(
+                      height: Get.width * 0.2,
+                      width: Get.width * 0.3,
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Image.network(
-                        product.images[0],
-                        fit: BoxFit.fill,
+                      height: Get.width * 0.2,
+                      width: Get.width * 0.3,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        child: Image.network(
+                          product.images[0],
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
-                  ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    product.productName,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w800),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.productName,
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 4.0,
-                left: 4.0,
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 4.0,
+                  left: 4.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${product.price} SAR",
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Color.fromARGB(255, 1, 74, 4),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "${product.price} SAR",
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Color.fromARGB(255, 1, 74, 4),
+              // Text("${product.stock} Left"),
+            ],
+          ),
+          isOwning
+              ? Positioned(
+                  top: 4.0,
+                  right: 4.0,
+                  child: ClipOval(
+                    child: GestureDetector(
+                      onTap: () {
+                        //TODO: Dialog for removal then removal logic
+                        Get.defaultDialog(
+                          title: "Remove Product",
+                          middleText:
+                              "Are you sure you want to remove this product?",
+                          textConfirm: "Yes",
+                          textCancel: "No",
+                          confirmTextColor: Colors.white,
+                          onConfirm: () {
+                            DatabaseService().removeProduct(
+                                authController.uid, product.productName);
+                            Get.back();
+                          },
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            // Text("${product.stock} Left"),
-          ],
-        ),
+                )
+              : const SizedBox(),
+        ],
       ),
     );
   }

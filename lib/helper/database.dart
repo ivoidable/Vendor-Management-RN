@@ -22,6 +22,17 @@ class DatabaseService {
     doc.update(user.toMap());
   }
 
+  void removeProduct(String uid, String productName) {
+    getUser(uid).then((user) {
+      if (user != null) {
+        var vend = Vendor.fromMap(uid, user.data()!);
+        vend.products
+            .removeWhere((product) => product.productName == productName);
+        updateUser(uid, vend.toMap());
+      }
+    });
+  }
+
   // READ an event by ID
   Future<Event?> getEvent(String eventId) async {
     DocumentSnapshot doc = await _db.collection('events').doc(eventId).get();
