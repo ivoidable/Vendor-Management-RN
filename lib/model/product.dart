@@ -17,7 +17,7 @@ class Product {
     return Product(
       vendorId: data['vendor_id'],
       productName: data['product_name'],
-      price: data['price'],
+      price: double.parse(data['price'].toString()),
       stock: data['stock'],
       images: List<String>.from(data['images'] ?? []),
     );

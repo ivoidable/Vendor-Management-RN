@@ -38,17 +38,21 @@ class LoginScreen extends StatelessWidget {
             ),
             // Submit button
             ElevatedButton(
-                onPressed: () {
-                  DatabaseService()
-                      .signIn(emailController.text, passwordController.text);
-                },
-                child: Text("Login"),),
-            SizedBox(height: 18,),
+              onPressed: () {
+                DatabaseService()
+                    .signIn(emailController.text, passwordController.text);
+              },
+              child: Text("Login"),
+            ),
+            SizedBox(
+              height: 18,
+            ),
             OutlinedButton(
-                onPressed: () {
-                  Get.offNamed('/register');
-                },
-                child: Text("Register"),),
+              onPressed: () {
+                Get.offNamed('/register');
+              },
+              child: Text("Register"),
+            ),
           ],
         ),
       ),

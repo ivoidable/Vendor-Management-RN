@@ -101,13 +101,22 @@ class CatalogView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 4,
+        padding: const EdgeInsets.all(8.0),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 7 / 8,
         ),
         itemBuilder: (context, index) {
-          return GridTile(
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ProductWidget(
               product: vendor.products[index],
+              onTap: () {
+                // Get.to(ViewProductScreen(vendor: vendor, index: index));
+                //TODO: Add Product View
+              },
             ),
           );
         },
@@ -119,32 +128,75 @@ class CatalogView extends StatelessWidget {
 
 class ProductWidget extends StatelessWidget {
   final Product product;
-  ProductWidget({required this.product});
+  final Function() onTap;
+  ProductWidget({required this.product, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: Column(
-        children: [
-          //Image will be changed to carousel
-          product.images.isEmpty
-              ? const SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Image.network(product.images[0]),
-                ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Row(
-              children: [
-                Text(product.productName),
-                Text("${product.price} SAR"),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 3,
+        child: Column(
+          children: [
+            //Image will be changed to carousel
+            product.images.isEmpty
+                ? SizedBox(
+                    height: Get.width * 0.2,
+                    width: Get.width * 0.3,
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    height: Get.width * 0.2,
+                    width: Get.width * 0.3,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: Image.network(
+                        product.images[0],
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    product.productName,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w800),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text("${product.stock} Left"),
-        ],
+
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 4.0,
+                left: 4.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "${product.price} SAR",
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color.fromARGB(255, 1, 74, 4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Text("${product.stock} Left"),
+          ],
+        ),
       ),
     );
   }

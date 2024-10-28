@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -173,11 +174,39 @@ class DatabaseService {
 
   // Authentication - Sign In User with Email & Password
   Future<User?> signIn(String email, String password) async {
-    UserCredential result = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return result.user;
+    // Check if email and password are valid
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar('Error', 'Email or Password can not be empty!');
+    }
+
+    // Check if email is valid
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar('Error', 'Email is not valid!');
+    }
+
+    // Check if password is valid
+    if (password.length < 6) {
+      Get.snackbar('Error', 'Password must be at least 6 characters!');
+    }
+
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        Get.snackbar('Error', 'No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        Get.snackbar('Error', 'Wrong password provided for that user.');
+      } else if (e.code == 'invalid-email') {
+        Get.snackbar('Error', 'Email is not valid!');
+      } else if (e.code == 'email-already-in-use') {
+        Get.snackbar('Error', 'The account already exists for that email.');
+      }
+      return null;
+    }
   }
 
   // Authentication - Sign Out User

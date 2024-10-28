@@ -6,7 +6,6 @@ import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/user.dart';
-import 'package:vendor/screen/shared/settings_screen.dart';
 import 'package:vendor/screen/vendor/profile/add_product_screen.dart';
 import 'package:vendor/screen/vendor/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
@@ -69,26 +68,29 @@ class VendorVendorsTab extends StatelessWidget {
           );
         } else {
           List<Vendor> vendor = mainController.vendors;
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Obx(
-              () {
-                return ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: mainController.vendors.length,
-                  itemBuilder: (context, index) {
-                    return VendorCard(
-                      vendor: vendor[index],
-                      onClick: () {
-                        Get.to(ViewVendorVendorProfileScreen(
-                          vendor: vendor[index],
-                        ));
-                        print('Clicked on ${mainController.vendors[index]}');
-                      },
-                    );
-                  },
-                );
-              },
+          return RefreshIndicator(
+            onRefresh: mainController.onRefresh,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Obx(
+                () {
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: mainController.vendors.length,
+                    itemBuilder: (context, index) {
+                      return VendorCard(
+                        vendor: vendor[index],
+                        onClick: () {
+                          Get.to(ViewVendorVendorProfileScreen(
+                            vendor: vendor[index],
+                          ));
+                          print('Clicked on ${mainController.vendors[index]}');
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         }
