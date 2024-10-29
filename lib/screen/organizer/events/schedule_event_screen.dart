@@ -164,6 +164,13 @@ class ScheduleEventScreen extends StatelessWidget {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           String uid = authController.uid;
+                          List<Question> questions = controller.questions.value
+                              .map((questionController) {
+                            return Question(
+                                question: questionController.text, answer: '');
+                          }).toList();
+                          print(questions[0].toMap());
+                          //TODO: GeoLocation
                           Event event = Event(
                             id: '',
                             organizerId: uid,
@@ -174,12 +181,13 @@ class ScheduleEventScreen extends StatelessWidget {
                             maxVendors: controller.maxVendors.value,
                             description: controller.description.value,
                             images: controller.images,
+                            appliedVendorsId: [],
                             location: 'T.B.D',
                             registeredVendors: [],
-                            applications: [],
-                            questions: [],
+                            questions: questions,
                           );
                           DatabaseService().createEvent(event);
+                          controller.dispose();
                           Get.back();
                           Get.snackbar('Success', 'Event Has Been Scheduled',
                               backgroundColor: Colors.lightGreen);

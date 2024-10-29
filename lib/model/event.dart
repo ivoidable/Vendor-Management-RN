@@ -21,7 +21,7 @@ class Application {
   String eventId;
   DateTime applicationDate;
   Approval approved;
-  List<Map<String, dynamic>> questions;
+  List<Question> questions;
 
   Application({
     required this.id,
@@ -34,6 +34,9 @@ class Application {
   });
 
   factory Application.fromMap(String id, Map<String, dynamic> data) {
+    List<Question> questions = (data['questions'] as List<dynamic>)
+        .map((question) => Question.fromMap(question))
+        .toList();
     return Application(
       id: id,
       vendorId: data['name'] ?? '',
@@ -41,8 +44,8 @@ class Application {
           data['vendor_id'], data['vendor'] as Map<String, dynamic>),
       eventId: data['event_id'] ?? '',
       applicationDate: (data['application_date'] as Timestamp).toDate(),
-      questions: data['questions'],
-      approved: data['approved'],
+      questions: questions,
+      approved: Approval.fromMap(data['approved']),
     );
   }
 
@@ -54,8 +57,8 @@ class Application {
       'vendor': vendor.toMap(),
       'event_id': eventId,
       'application_date': Timestamp.fromDate(applicationDate),
-      'questions': questions,
-      'approved': approved,
+      'questions': questions.map((que) => que.toMap()).toList(),
+      'approved': approved.toMap(),
     };
   }
 }
@@ -92,8 +95,9 @@ class Event {
   final String location;
   final String description;
   List<Question> questions;
+  List<String> appliedVendorsId;
   List<Vendor> registeredVendors;
-  List<Application> applications;
+  CollectionReference? applicationsCollection; // Nullable
   List<String> images;
 
   Event({
@@ -106,31 +110,27 @@ class Event {
     required this.maxVendors,
     required this.location,
     required this.description,
+    required this.appliedVendorsId,
     required this.registeredVendors,
     required this.images,
-    required this.applications,
     required this.questions,
+    this.applicationsCollection,
   });
 
   // Convert Firestore data to Event object
   factory Event.fromMap(String id, Map<String, dynamic> data) {
     List<Vendor> vendors = (data['registered_vendors'] as List<dynamic>?)
-            ?.map(
-              (vendorData) => Vendor.fromMap(vendorData['id'], vendorData),
-            )
+            ?.map((vendorData) => Vendor.fromMap(vendorData['id'], vendorData))
             .toList() ??
         [];
 
-    List<Application> applications = (data['applications'] as List<dynamic>?)
-            ?.map(
-              (application) =>
-                  Application.fromMap(application['id'], application),
-            )
-            .toList() ??
-        [];
     List<Question> questions = (data['questions'] as List<dynamic>)
         .map((question) => Question.fromMap(question))
         .toList();
+
+    // Reinitialize the subcollection reference if it exists
+    CollectionReference? collectionRef =
+        FirebaseFirestore.instance.collection('events/$id/applications');
 
     return Event(
       id: id,
@@ -141,12 +141,13 @@ class Event {
       vendorFee: data['vendor_fee'],
       attendeeFee: data['attendee_fee'],
       organizerId: data['organizer_id'],
+      appliedVendorsId: List<String>.from(data['applied_vendors']),
       images: (data['images'] as List<dynamic>)
           .map((stri) => stri.toString())
           .toList(),
+      applicationsCollection: collectionRef,
       description: data['description'] ?? '',
       registeredVendors: vendors,
-      applications: applications,
       questions: questions,
     );
   }
@@ -162,13 +163,13 @@ class Event {
       'images': images.toList(),
       'vendor_fee': vendorFee,
       'attendee_fee': attendeeFee,
+      'applied_vendors': appliedVendorsId,
       'organizer_id': organizerId,
       'max_vendors': maxVendors,
-      'questions': questions.map((questions) => questions.toMap()).toList(),
+      'questions': questions.map((question) => question.toMap()).toList(),
       'registered_vendors':
           registeredVendors.map((vendor) => vendor.toMap()).toList(),
-      'applications':
-          applications.map((application) => application.toMap()).toList(),
+      // No need to store the path since it's a known subcollection path
     };
   }
 }

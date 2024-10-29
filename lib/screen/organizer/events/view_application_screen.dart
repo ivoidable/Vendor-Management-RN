@@ -32,8 +32,8 @@ class ViewApplicationScreen extends StatelessWidget {
             ),
             ...application.questions.map(
               (question) => ListTile(
-                title: Text(question['question']),
-                subtitle: Text(question['answer']),
+                title: Text(question.question),
+                subtitle: Text(question.answer),
               ),
             ),
             const Spacer(),

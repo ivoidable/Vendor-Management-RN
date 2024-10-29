@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,14 +12,34 @@ class DatabaseService {
   void createEvent(Event event) {
     var doc = _db.collection('events').doc();
     event.id = doc.id;
-    print(doc.id);
     doc.set(event.toMap());
+  }
+
+  Future<bool> applyForEvent(String eventId, Application application) async {
+    // Check if not applied already
+
+    var eventDoc = await _db.collection('events').doc(eventId).get();
+    var event =
+        Event.fromMap(eventDoc.id, eventDoc.data() as Map<String, dynamic>);
+    if (event.appliedVendorsId.contains(application.vendorId)) {
+      return false;
+    } else {
+      var doc = _db
+          .collection('events')
+          .doc(eventId)
+          .collection('applications')
+          .doc();
+      application.id = doc.id;
+      doc.set(application.toMap());
+      event.appliedVendorsId.add(application.vendorId);
+      _db.collection('events').doc(eventId).update(event.toMap());
+      return true;
+    }
   }
 
   void addProduct(Vendor user) {
     var doc = _db.collection('users').doc();
     user.id = doc.id;
-    print(doc.id);
     doc.update(user.toMap());
   }
 

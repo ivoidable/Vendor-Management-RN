@@ -17,19 +17,38 @@ class EditProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.amber,
         title: const Text('Edit Vendor Profile'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
           children: [
+            SizedBox(height: Get.height * 0.05),
+            profileImageWidget(),
+            SizedBox(height: Get.height * 0.05),
             _buildTextField(
               label: 'Name',
               icon: Icons.person,
               onChanged: (value) => controller.name.value = value,
               initialValue: controller.name.value,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+            _buildTextField(
+              label: 'Business Name',
+              icon: Icons.business,
+              onChanged: (value) => controller.businessName.value = value,
+              initialValue: controller.businessName.value,
+            ),
+            const SizedBox(height: 24),
+            _buildTextField(
+              label: 'Phone',
+              icon: Icons.phone,
+              onChanged: (value) => controller.phoneNumber.value = value,
+              initialValue: controller.phoneNumber.value,
+            ),
+            const SizedBox(height: 24),
             _buildTextField(
               label: 'Email',
               icon: Icons.email,
@@ -37,16 +56,13 @@ class EditProfileScreen extends StatelessWidget {
               initialValue: controller.email.value,
               keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
-            _buildTextField(
-              label: 'Business Name',
-              icon: Icons.business,
-              onChanged: (value) => controller.businessName.value = value,
-              initialValue: controller.businessName.value,
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             DateTimePicker(
               initialValue: '',
+              decoration: InputDecoration(
+                labelText: 'Date of Birth',
+                border: OutlineInputBorder(),
+              ),
               initialDate: controller.dateOfBirth.value,
               firstDate: DateTime(1930),
               lastDate: DateTime.now(),
@@ -62,6 +78,14 @@ class EditProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                minimumSize: Size(Get.width / 2, Get.height * 0.05),
+                backgroundColor: Colors.amber,
+                foregroundColor: Colors.blueGrey[700],
+              ),
               onPressed: () {
                 controller.updateVendor();
                 Get.back(); // Navigate back after saving
@@ -72,6 +96,27 @@ class EditProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget profileImageWidget() {
+    final VendorEditProfileController controller = Get.find();
+    return Obx(() {
+      return GestureDetector(
+        onTap: () async {
+          await controller.pickImage(); // Pick a new image on tap
+        },
+        child: CircleAvatar(
+          radius: 60,
+          backgroundColor: Colors.grey[300],
+          backgroundImage: controller.profileImage.value != null
+              ? FileImage(controller.profileImage.value!)
+              : AssetImage('assets/default_profile.png') as ImageProvider,
+          child: controller.profileImage.value == null
+              ? Icon(Icons.camera_alt, size: 30, color: Colors.white)
+              : null,
+        ),
+      );
+    });
   }
 
   Widget _buildTextField({
