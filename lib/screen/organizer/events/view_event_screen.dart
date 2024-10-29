@@ -11,8 +11,10 @@ class ViewEventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    event.applications
-        .sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
+    //FIXME: Get Applications Better
+    //TODO: DatabaseService().getApplications(event.id);
+    // event.applicationsCollection
+    //     .sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
@@ -98,33 +100,34 @@ class ViewEventScreen extends StatelessWidget {
             const SizedBox(
               height: 4,
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.grey[300],
-              ),
-              width: Get.width * 0.85,
-              height: Get.height * 0.3,
-              child: ListView.builder(
-                itemCount: event.applications.length,
-                itemBuilder: (context, index) {
-                  final application = event.applications[index];
-                  return ApplicationCard(
-                    application: application,
-                    onShowDetails: () async {
-                      Approval approval = await Get.to(
-                          ViewApplicationScreen(application: application));
-                      application.approved = approval;
-                      if (approval.approved != null) {
-                        if (approval.approved!) {
-                          event.registeredVendors.add(application.vendor);
-                        } else if (!approval.approved!) {}
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
+            //FIXME: Get Applications Better
+            // Container(
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(12),
+            //     color: Colors.grey[300],
+            //   ),
+            //   width: Get.width * 0.85,
+            //   height: Get.height * 0.3,
+            //   child: ListView.builder(
+            //     itemCount: event.applications.length,
+            //     itemBuilder: (context, index) {
+            //       final application = event.applications[index];
+            //       return ApplicationCard(
+            //         application: application,
+            //         onShowDetails: () async {
+            //           Approval approval = await Get.to(
+            //               ViewApplicationScreen(application: application));
+            //           application.approved = approval;
+            //           if (approval.approved != null) {
+            //             if (approval.approved!) {
+            //               event.registeredVendors.add(application.vendor);
+            //             } else if (!approval.approved!) {}
+            //           }
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
             const SizedBox(height: 16),
           ],
         ),

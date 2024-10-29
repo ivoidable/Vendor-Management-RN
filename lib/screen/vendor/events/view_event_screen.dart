@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
+import 'package:vendor/model/user.dart';
+import 'package:vendor/screen/vendor/events/vendor_application_screen.dart';
 
 class VendorViewEventScreen extends StatelessWidget {
   final Event event;
@@ -12,13 +16,33 @@ class VendorViewEventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.amber,
+        centerTitle: true,
         title: Text('Event: ${event.name}'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Image.network(
+                      event.images.first,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
+            ),
             Text(
               event.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -44,6 +68,111 @@ class VendorViewEventScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
             const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                minimumSize: Size(Get.width / 2.5, Get.height * 0.05),
+                backgroundColor: Colors.amber,
+                foregroundColor: Colors.blueGrey[700],
+              ),
+              child: Text('Apply'),
+              onPressed: () {
+                //TODO: Check if there are any questions then ask them
+                if (event.questions.isNotEmpty) {
+                  Get.to(VendorApplicationScreen(
+                    event: event,
+                  ));
+                } else {
+                  Get.defaultDialog(
+                    title: 'Apply for event',
+                    titleStyle: TextStyle(fontSize: 24),
+                    middleText:
+                        "Are you sure you want to apply for this event?",
+                    barrierDismissible: true,
+                    onConfirm: () async {
+                      Application application = Application(
+                        id: '',
+                        vendorId: authController.uid,
+                        eventId: event.id,
+                        vendor: Vendor.fromMap(
+                            authController.uid, authController.appUser),
+                        applicationDate: DateTime.now(),
+                        questions: [],
+                        approved: Approval(approved: null),
+                      );
+                      var result = await DatabaseService().applyForEvent(
+                        event.id,
+                        application,
+                      );
+                      if (result) {
+                        Get.snackbar('Congratulations',
+                            'You have applied for this event!');
+                      } else {
+                        Get.snackbar('Error', 'Can not apply more than once');
+                      }
+                    },
+                    onCancel: () {},
+                  );
+                }
+
+                // Get.dialog(
+                //   Container(
+                //     height: Get.height * 0.5,
+                //     width: Get.width * 0.88,
+                //     decoration: BoxDecoration(
+                //       color: Colors.grey[300],
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     child: Column(
+                //       children: [
+                //         const Text('Apply for event'),
+                //         const Text(
+                //             'Are you sure you want to apply for this event?'),
+                //         const Spacer(),
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //           children: [
+                //             ElevatedButton(
+                //               style: ElevatedButton.styleFrom(
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(12),
+                //                 ),
+                //                 minimumSize:
+                //                     Size(Get.width / 4, Get.height * 0.05),
+                //                 backgroundColor: Colors.amber,
+                //                 foregroundColor: Colors.blueGrey[700],
+                //               ),
+                //               onPressed: () {
+                //                 Get.back();
+                //               },
+                //               child: const Text('Cancel'),
+                //             ),
+                //             ElevatedButton(
+                //               style: ElevatedButton.styleFrom(
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(12),
+                //                 ),
+                //                 minimumSize:
+                //                     Size(Get.width / 4, Get.height * 0.05),
+                //                 backgroundColor: Colors.amber,
+                //                 foregroundColor: Colors.blueGrey[700],
+                //               ),
+                //               onPressed: () {
+                //                 //TODO: Apply vendor for event
+                //               },
+                //               child: const Text('Apply'),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //   barrierDismissible: true,
+                // );
+              },
+            ),
             // Image carousel with height of 150 and width of 85% of screen width
             // Container(
             //   width: Get.width * 0.86,
@@ -82,24 +211,6 @@ class VendorViewEventScreen extends StatelessWidget {
             //     }).toList(),
             //   ),
             // ),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Image.network(
-                      event.images.first,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:vendor/middleware/auth_middleware.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 import 'package:vendor/screen/organizer/main_screen.dart';
 import 'package:vendor/screen/shared/register_screen.dart';
+import 'package:vendor/screen/shared/splash_screen.dart';
 import 'package:vendor/screen/vendor/main_screen.dart';
 import 'package:vendor/screen/vendor/onboarding/vendor_onboard_screen.dart';
 import 'controller/auth_controller.dart';
@@ -34,8 +35,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       defaultTransition: Transition.cupertino,
       title: "Vendor Management App",
-      initialRoute: '/login',
+      initialRoute: '/splash',
       getPages: [
+        GetPage(name: '/splash', page: () => SplashScreen()),
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
         GetPage(name: '/vendor_onboard', page: () => VendorOnboardScreen()),
