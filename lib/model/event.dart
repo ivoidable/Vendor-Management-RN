@@ -1,6 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/model/user.dart';
 
+enum Activity {
+  food,
+  accessories,
+  entertainment,
+  clothing,
+  decor,
+  miscellaneous,
+}
+
 class Approval {
   bool? approved;
   Approval({
@@ -94,6 +103,7 @@ class Event {
   final double attendeeFee;
   final String location;
   final String description;
+  final List<Activity> tags;
   List<Question> questions;
   List<String> appliedVendorsId;
   List<Vendor> registeredVendors;
@@ -110,6 +120,7 @@ class Event {
     required this.maxVendors,
     required this.location,
     required this.description,
+    required this.tags,
     required this.appliedVendorsId,
     required this.registeredVendors,
     required this.images,
@@ -128,6 +139,12 @@ class Event {
         .map((question) => Question.fromMap(question))
         .toList();
 
+    List<Activity> tags = (data['tags'] as List<dynamic>)
+            .map((tag) =>
+                Activity.values.firstWhere((element) => element.name == tag))
+            .toList() ??
+        [];
+
     // Reinitialize the subcollection reference if it exists
     CollectionReference? collectionRef =
         FirebaseFirestore.instance.collection('events/$id/applications');
@@ -139,6 +156,7 @@ class Event {
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       vendorFee: data['vendor_fee'],
+      tags: tags,
       attendeeFee: data['attendee_fee'],
       organizerId: data['organizer_id'],
       appliedVendorsId: List<String>.from(data['applied_vendors']),
@@ -163,6 +181,7 @@ class Event {
       'images': images.toList(),
       'vendor_fee': vendorFee,
       'attendee_fee': attendeeFee,
+      'tags': tags.map((tag) => tag.name).toList(),
       'applied_vendors': appliedVendorsId,
       'organizer_id': organizerId,
       'max_vendors': maxVendors,

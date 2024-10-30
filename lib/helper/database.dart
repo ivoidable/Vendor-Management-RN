@@ -61,9 +61,17 @@ class DatabaseService {
     return Event.fromMap(doc.id, doc.data() as Map<String, dynamic>);
   }
 
-  Future<List<Event>> getAllEvents() async {
-    List<Event> events =
-        (await _db.collection('events').get()).docs.map((elem) {
+  Future<List<Event>> getAllEventsVendor() async {
+    Vendor vendor =
+        Vendor.fromMap(_auth.currentUser!.uid, authController.appUser);
+    List<Event> events = (await (await _db.collection('events').where(
+                  'tags',
+                  arrayContainsAny:
+                      vendor.activities.map((toElement) => toElement.name),
+                ))
+            .get())
+        .docs
+        .map((elem) {
       return Event.fromMap(elem.id, elem.data());
     }).toList();
     return events;
@@ -186,6 +194,7 @@ class DatabaseService {
             name: name,
             email: email,
             dateOfBirth: dateOfBirth,
+            activities: [],
             businessName: businessName ?? '',
             logoUrl: logoUrl ?? '',
             privileges: [],

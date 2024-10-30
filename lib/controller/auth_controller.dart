@@ -45,31 +45,30 @@ class AuthController extends GetxController {
     String role,
     Map<String, dynamic> user,
   ) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      switch (role) {
-        case 'vendor':
-          Vendor vendor = Vendor.fromMap(uid, user);
-          debugPrint("Running As Vendor");
-          if (vendor.businessName == "" ||
-              vendor.phoneNumber == null ||
-              vendor.phoneNumber == "") {
-            Get.offAllNamed('/vendor_onboard');
-          } else {
-            Get.offAllNamed('/vendor_main');
-          }
-          break;
-        case 'organizer':
-          debugPrint("Running As Organizer");
-          Get.offAllNamed('/organizer_main');
-          break;
-        case 'admin':
-          Get.offAllNamed('/admin_main');
-          break;
-        default:
-          Get.offAll(LoginScreen());
-          break;
-      }
-    });
+    switch (role) {
+      case 'vendor':
+        Vendor vendor = Vendor.fromMap(uid, user);
+        debugPrint("Running As Vendor");
+        if (vendor.businessName == "" ||
+            vendor.phoneNumber == null ||
+            vendor.phoneNumber == "" ||
+            vendor.activities.isEmpty) {
+          Get.offAllNamed('/vendor_onboard');
+        } else {
+          Get.offAllNamed('/vendor_main');
+        }
+        break;
+      case 'organizer':
+        debugPrint("Running As Organizer");
+        Get.offAllNamed('/organizer_main');
+        break;
+      case 'admin':
+        Get.offAllNamed('/admin_main');
+        break;
+      default:
+        Get.offAll(LoginScreen());
+        break;
+    }
   }
 
   Future<void> signOut() async {

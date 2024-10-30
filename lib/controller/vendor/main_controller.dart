@@ -14,7 +14,7 @@ class VendorMainController extends GetxController {
   }
 
   Future<void> getEvents() async {
-    events.value = await DatabaseService().getAllEvents();
+    events.value = await DatabaseService().getAllEventsVendor();
   }
 
   Future<void> onRefresh() {

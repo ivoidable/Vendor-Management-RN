@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vendor/model/event.dart';
 
 class CreateEventController extends GetxController {
   var name = ''.obs;
@@ -16,6 +17,17 @@ class CreateEventController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
   var selectedImage = Rx<File?>(null); // Reactive variable
+
+  var availableTags = Activity.values.map((str) => str.name).toList().obs;
+  var selectedTags = <String>[].obs;
+
+  void toggleTag(String tag) {
+    if (selectedTags.contains(tag)) {
+      selectedTags.remove(tag);
+    } else {
+      selectedTags.add(tag);
+    }
+  }
 
   // Method to pick an image from gallery or camera
   Future<void> pickImage(ImageSource source) async {
