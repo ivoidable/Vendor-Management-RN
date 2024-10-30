@@ -49,7 +49,7 @@ class Application {
         .toList();
     return Application(
       id: id,
-      vendorId: data['name'] ?? '',
+      vendorId: data['vendor_id'] ?? '',
       vendor: Vendor.fromMap(
           data['vendor_id'], data['vendor'] as Map<String, dynamic>),
       eventId: data['event_id'] ?? '',

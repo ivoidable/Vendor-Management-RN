@@ -98,12 +98,13 @@ class VendorViewEventScreen extends StatelessWidget {
                       foregroundColor: Colors.blueGrey[700],
                     ),
                     child: Text('Apply'),
-                    onPressed: () {
+                    onPressed: () async {
                       //TODO: Check if there are any questions then ask them
                       if (event.questions.isNotEmpty) {
-                        Get.to(VendorApplicationScreen(
+                        await Get.to(VendorApplicationScreen(
                           event: event,
                         ));
+                        Get.back();
                       } else {
                         Get.defaultDialog(
                           title: 'Apply for event',

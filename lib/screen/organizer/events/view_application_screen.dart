@@ -24,8 +24,6 @@ class ViewApplicationScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Slogan: ${application.vendor.slogan ?? ""}'),
             const SizedBox(height: 8),
-            Text('Event ID: ${application.eventId}'),
-            const SizedBox(height: 8),
             const Text(
               'Questions:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

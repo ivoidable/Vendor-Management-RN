@@ -30,6 +30,14 @@ class DatabaseService {
     return applis;
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> getApplicationsQuery(
+      String id) async {
+    var applis =
+        await _db.collection('events').doc(id).collection('applications').get();
+    print(id);
+    return applis;
+  }
+
   Stream<QuerySnapshot<Map<String, dynamic>>> getApplicationsStream(String id) {
     var applis = _db
         .collection('events')
@@ -146,15 +154,15 @@ class DatabaseService {
   Future<void> registerVendorForEvent(
       String eventId, String vendorId, String appId) async {
     //TODO: Notify User About Registration
+    await _db.collection('events').doc(eventId).update({
+      'registered_vendors': FieldValue.arrayUnion([vendorId]),
+    });
     await _db
         .collection('events')
         .doc(eventId)
         .collection('applications')
         .doc(appId)
         .delete();
-    await _db.collection('events').doc(eventId).update({
-      'registered_vendors': FieldValue.arrayUnion([vendorId]),
-    });
   }
 
   Future<void> declineApplication(

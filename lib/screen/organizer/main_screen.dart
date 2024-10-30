@@ -57,7 +57,7 @@ class OrganizerMainScreen extends StatelessWidget {
         tabs: const [
           GButton(
             icon: Icons.home,
-            text: 'Home',
+            text: 'Events',
           ),
           GButton(
             icon: Icons.people,

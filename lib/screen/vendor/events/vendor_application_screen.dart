@@ -65,6 +65,7 @@ class VendorApplicationScreen extends StatelessWidget {
           } else {
             Get.snackbar('Congratulations', 'You have applied for this event!');
           }
+          Get.back();
         },
         child: Text('Submit'),
         style: ElevatedButton.styleFrom(

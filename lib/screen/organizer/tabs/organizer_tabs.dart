@@ -11,6 +11,15 @@ import 'package:vendor/screen/organizer/events/view_event_screen.dart';
 import 'package:vendor/screen/organizer/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/organizer/vendor/view_profile_screen.dart';
 
+// class OrganizerAnalyticsTab extends StatelessWidget {
+//   OrganizerAnalyticsTab({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(child: Text("Analytics Do not work yet"));
+//   }
+// }
+
 class OrganizerEventsTab extends StatelessWidget {
   final OrganizerMainController mainController =
       Get.find<OrganizerMainController>();
