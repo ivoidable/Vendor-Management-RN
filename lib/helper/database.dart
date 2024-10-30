@@ -1,18 +1,157 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage storage = FirebaseStorage.instance;
 
   void createEvent(Event event) {
     var doc = _db.collection('events').doc();
     event.id = doc.id;
+    var imageRef = storage.ref('${event.id}/');
+    event.images.forEach((image) {
+      imageRef.putFile(File(image));
+    });
     doc.set(event.toMap());
+  }
+
+  Future<void> uploadLogo(XFile imageFile, String userId) async {
+    try {
+      // Get the file extension from the XFile's mime type
+      String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
+      
+      // Create a reference to the Firebase Storage location
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('$userId/logo/image.$extension');
+
+      // Upload the file
+      await storageRef.putFile(File(imageFile.path));
+
+      print("File uploaded successfully!");
+    } catch (e) {
+      print("Error uploading file: $e");
+    }
+  }
+
+  Future<String?> getLogoUrl(String userId) async {
+    try {
+      // Define the path to the user's logo image
+      final ref = FirebaseStorage.instance.ref('$userId/logo/image.png');
+
+      // Try to get the download URL for a .png file
+      try {
+        return await ref.getDownloadURL();
+      } catch (e) {
+        // If .png doesn't exist, check for .jpg instead
+        final jpgRef = FirebaseStorage.instance.ref('$userId/logo/image.jpg');
+        return await jpgRef.getDownloadURL();
+      }
+    } catch (e) {
+      print("Error retrieving logo URL: $e");
+      return null;
+    }
+  }
+
+  Future<void> uploadProductImage(XFile imageFile, String userId, String productId) async {
+    try {
+      // Get the file extension from the XFile's mime type
+      String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
+      
+      // Create a reference to the Firebase Storage location
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('$userId/logo/$productId.$extension');
+
+      // Upload the file
+      await storageRef.putFile(File(imageFile.path));
+
+      print("File uploaded successfully!");
+    } catch (e) {
+      print("Error uploading file: $e");
+    }
+  }
+
+  Future<String?> getProductImageUrl(String userId, String productId) async {
+    try {
+      // Define the path to the user's logo image
+      final ref = FirebaseStorage.instance.ref('$userId/products/$productId.png');
+
+      // Try to get the download URL for a .png file
+      try {
+        return await ref.getDownloadURL();
+      } catch (e) {
+        // If .png doesn't exist, check for .jpg instead
+        final jpgRef = FirebaseStorage.instance.ref('$userId/products/$productId.jpg');
+        return await jpgRef.getDownloadURL();
+      }
+    } catch (e) {
+      print("Error retrieving logo URL: $e");
+      return null;
+    }
+  }
+
+  Future<List<String>> getVendorProductsImagesUrl(String userId, String productId) async {
+    List<String> fileUrls = [];
+    try {
+      // Define the path to the user's logo image
+      final ref = FirebaseStorage.instance.ref('$userId/products/');
+
+      final ListResult result = await ref.listAll();
+
+      // Try to get the download URL for a .png file
+      for (var item in result.items) {
+        final url = await item.getDownloadURL();
+        fileUrls.add(url);
+      }
+    } catch (e) {
+      print("Error listing logo URLs: $e");
+    }
+    return fileUrls;
+  }
+
+  Future<void> uploadEventImage(XFile imageFile, String eventId) async {
+    try {
+      // Create a reference to the Firebase Storage location
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('$eventId/');
+
+      // Upload the file
+      await storageRef.putFile(File(imageFile.path));
+
+      print("File uploaded successfully!");
+    } catch (e) {
+      print("Error uploading file: $e");
+    }
+  }
+
+  Future<List<String>> getEventImagesUrl(String eventId) async {
+    List<String> fileUrls = [];
+    try {
+      // Define the path to the user's logo image
+      final ref = FirebaseStorage.instance.ref('$eventId/');
+
+      final ListResult result = await ref.listAll();
+
+      // Try to get the download URL for a .png file
+      for (var item in result.items) {
+        final url = await item.getDownloadURL();
+        fileUrls.add(url);
+      }
+    } catch (e) {
+      print("Error listing logo URLs: $e");
+    }
+    return fileUrls;
   }
 
   Future<List<Application>> getApplications(String id) async {

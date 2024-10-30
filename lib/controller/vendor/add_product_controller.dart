@@ -21,6 +21,7 @@ class AddProductController extends GetxController {
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
       selectedImage.value = File(image.path);
+      //TODO: Product Image Logic
     }
   }
 

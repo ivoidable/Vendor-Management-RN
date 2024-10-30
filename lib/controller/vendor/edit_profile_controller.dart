@@ -27,6 +27,7 @@ class VendorEditProfileController extends GetxController {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       profileImage.value = File(image.path);
+      DatabaseService().uploadLogo(image, authController.uid);
     }
   }
 
