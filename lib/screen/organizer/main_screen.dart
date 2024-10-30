@@ -22,7 +22,7 @@ class OrganizerMainScreen extends StatelessWidget {
         title: const Text(
           'Events & Bazaars',
           style: TextStyle(
-            color: Colors.blueGrey,
+            color: Colors.black,
           ),
         ),
         actions: [

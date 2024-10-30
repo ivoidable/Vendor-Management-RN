@@ -192,7 +192,7 @@ class ScheduleEventScreen extends StatelessWidget {
                             images: controller.images,
                             location: 'T.B.D',
                             appliedVendorsId: [],
-                            registeredVendors: [],
+                            registeredVendorsId: [],
                             questions: questions,
                           );
                           DatabaseService().createEvent(event);

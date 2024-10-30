@@ -38,7 +38,7 @@ class VendorEventsTab extends StatelessWidget {
                       return EventCard(
                         name: event.name,
                         images: event.images,
-                        vendors: event.registeredVendors.length,
+                        vendors: event.registeredVendorsId.length,
                         maxVendors: event.maxVendors,
                         onClick: () {
                           Get.to(VendorViewEventScreen(event: event));

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/user.dart';
 
 enum Activity {
@@ -106,7 +107,7 @@ class Event {
   final List<Activity> tags;
   List<Question> questions;
   List<String> appliedVendorsId;
-  List<Vendor> registeredVendors;
+  List<String> registeredVendorsId;
   CollectionReference? applicationsCollection; // Nullable
   List<String> images;
 
@@ -122,7 +123,7 @@ class Event {
     required this.description,
     required this.tags,
     required this.appliedVendorsId,
-    required this.registeredVendors,
+    required this.registeredVendorsId,
     required this.images,
     required this.questions,
     this.applicationsCollection,
@@ -130,11 +131,6 @@ class Event {
 
   // Convert Firestore data to Event object
   factory Event.fromMap(String id, Map<String, dynamic> data) {
-    List<Vendor> vendors = (data['registered_vendors'] as List<dynamic>?)
-            ?.map((vendorData) => Vendor.fromMap(vendorData['id'], vendorData))
-            .toList() ??
-        [];
-
     List<Question> questions = (data['questions'] as List<dynamic>)
         .map((question) => Question.fromMap(question))
         .toList();
@@ -157,6 +153,7 @@ class Event {
       maxVendors: data['max_vendors'] ?? 0,
       vendorFee: data['vendor_fee'],
       tags: tags,
+      registeredVendorsId: List<String>.from(data['registered_vendors']),
       attendeeFee: data['attendee_fee'],
       organizerId: data['organizer_id'],
       appliedVendorsId: List<String>.from(data['applied_vendors']),
@@ -165,7 +162,6 @@ class Event {
           .toList(),
       applicationsCollection: collectionRef,
       description: data['description'] ?? '',
-      registeredVendors: vendors,
       questions: questions,
     );
   }
@@ -186,8 +182,7 @@ class Event {
       'organizer_id': organizerId,
       'max_vendors': maxVendors,
       'questions': questions.map((question) => question.toMap()).toList(),
-      'registered_vendors':
-          registeredVendors.map((vendor) => vendor.toMap()).toList(),
+      'registered_vendors': registeredVendorsId,
       // No need to store the path since it's a known subcollection path
     };
   }

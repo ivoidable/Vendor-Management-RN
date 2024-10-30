@@ -10,7 +10,6 @@ import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/organizer/events/view_event_screen.dart';
 import 'package:vendor/screen/organizer/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/organizer/vendor/view_profile_screen.dart';
-import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerEventsTab extends StatelessWidget {
   final OrganizerMainController mainController =
@@ -33,7 +32,7 @@ class OrganizerEventsTab extends StatelessWidget {
                     return EventCard(
                       name: event.name,
                       images: event.images,
-                      vendors: event.registeredVendors.length,
+                      vendors: event.registeredVendorsId.length,
                       maxVendors: event.maxVendors,
                       onClick: () {
                         Get.to(ViewEventScreen(event: event));

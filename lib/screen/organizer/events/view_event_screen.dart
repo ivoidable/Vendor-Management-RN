@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:vendor/helper/database.dart';
+import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/screen/organizer/events/view_application_screen.dart';
 
@@ -11,127 +14,149 @@ class ViewEventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //FIXME: Get Applications Better
-    //TODO: DatabaseService().getApplications(event.id);
-    // event.applicationsCollection
-    //     .sort((a, b) => a.applicationDate.compareTo(b.applicationDate));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
         centerTitle: true,
         title: Text('Event: ${event.name}'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.amber,
-              height: 180,
-              width: Get.width * 0.85,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Image.network(
-                      event.images.first,
-                      width: 180,
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: DatabaseService().getApplicationsStream(authController.uid),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: Text("No Applications"),
+              );
+            } else {
+              List<Application> applications = snapshot.data!.docs
+                  .map((doc) => Application.fromMap(doc.id, doc.data()))
+                  .toList();
+              return Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      color: Colors.amber,
                       height: 180,
-                      fit: BoxFit.cover,
+                      width: Get.width * 0.85,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Image.network(
+                              event.images.first,
+                              width: 180,
+                              height: 180,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            Text(
-              event.name,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              event.description,
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Text(
+                      event.name,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      event.description,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${DateFormat.yMMMMd().add_jm().format(event.date)}',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Applications:',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.grey[300],
+                      ),
+                      width: Get.width * 0.85,
+                      height: Get.height * 0.3,
+                      child: ListView.builder(
+                        itemCount: applications.length,
+                        itemBuilder: (context, index) {
+                          final application = applications[index];
+                          return ApplicationCard(
+                            application: application,
+                            onShowDetails: () async {
+                              Approval approval = await Get.to(
+                                  ViewApplicationScreen(
+                                      application: application));
+                              application.approved = approval;
+                              if (approval.approved != null) {
+                                if (approval.approved!) {
+                                  DatabaseService().registerVendorForEvent(
+                                    event.id,
+                                    application.vendorId,
+                                    application.id,
+                                  );
+                                } else if (!approval.approved!) {
+                                  DatabaseService().declineApplication(
+                                    event.id,
+                                    application.vendorId,
+                                    application.id,
+                                  );
+                                }
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-                Text(
-                  'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '${DateFormat.yMMMMd().add_jm().format(event.date)}',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w400),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'Applications:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            //FIXME: Get Applications Better
-            // Container(
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(12),
-            //     color: Colors.grey[300],
-            //   ),
-            //   width: Get.width * 0.85,
-            //   height: Get.height * 0.3,
-            //   child: ListView.builder(
-            //     itemCount: event.applications.length,
-            //     itemBuilder: (context, index) {
-            //       final application = event.applications[index];
-            //       return ApplicationCard(
-            //         application: application,
-            //         onShowDetails: () async {
-            //           Approval approval = await Get.to(
-            //               ViewApplicationScreen(application: application));
-            //           application.approved = approval;
-            //           if (approval.approved != null) {
-            //             if (approval.approved!) {
-            //               event.registeredVendors.add(application.vendor);
-            //             } else if (!approval.approved!) {}
-            //           }
-            //         },
-            //       );
-            //     },
-            //   ),
-            // ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+              );
+            }
+          }),
     );
   }
 }

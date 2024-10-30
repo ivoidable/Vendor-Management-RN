@@ -15,6 +15,31 @@ class DatabaseService {
     doc.set(event.toMap());
   }
 
+  Future<List<Application>> getApplications(String id) async {
+    List<Application> applis = (await _db
+            .collection('events')
+            .doc(id)
+            .collection('applications')
+            .get()
+            .then((doc) {
+      return doc.docs
+          .map((doc) => Application.fromMap(doc.id, doc.data()))
+          .toList();
+    }))
+        .toList();
+    return applis;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getApplicationsStream(String id) {
+    var applis = _db
+        .collection('events')
+        .doc(id)
+        .collection('applications')
+        .get()
+        .asStream();
+    return applis;
+  }
+
   Future<bool> applyForEvent(String eventId, Application application) async {
     // Check if not applied already
 
@@ -118,10 +143,29 @@ class DatabaseService {
   }
 
   // REGISTER a vendor for an event
-  Future<void> registerVendorForEvent(String eventId, Vendor vendor) async {
+  Future<void> registerVendorForEvent(
+      String eventId, String vendorId, String appId) async {
+    //TODO: Notify User About Registration
+    await _db
+        .collection('events')
+        .doc(eventId)
+        .collection('applications')
+        .doc(appId)
+        .delete();
     await _db.collection('events').doc(eventId).update({
-      'registered_vendors': FieldValue.arrayUnion([vendor.toMap()]),
+      'registered_vendors': FieldValue.arrayUnion([vendorId]),
     });
+  }
+
+  Future<void> declineApplication(
+      String eventId, String vendorId, String appId) async {
+    // TODO: Notify User About Decline
+    await _db
+        .collection('events')
+        .doc(eventId)
+        .collection('applications')
+        .doc(appId)
+        .delete();
   }
 
   // REMOVE a vendor from an event
