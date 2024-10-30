@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:vendor/controller/organizer/main_controller.dart';
 import 'package:vendor/screen/organizer/tabs/organizer_tabs.dart';
+import 'package:vendor/screen/shared/settings_screen.dart';
 
 class OrganizerMainScreen extends StatelessWidget {
   OrganizerMainScreen({super.key});
@@ -24,6 +25,14 @@ class OrganizerMainScreen extends StatelessWidget {
             color: Colors.blueGrey,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Get.to(SettingsScreen());
+            },
+          ),
+        ],
         backgroundColor: Colors.amber,
         centerTitle: true,
       ),

@@ -123,17 +123,6 @@ class OrganizerProfileTab extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Get.to(SettingsScreen());
-            },
-          ),
-        ],
-      ),
       body: FutureBuilder(
         future: DatabaseService().getUser(authController.uid),
         builder: (context, snapshot) {
