@@ -1,6 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/model/product.dart';
 
+enum Activity {
+  food,
+  accessories,
+  entertainment,
+  clothing,
+  decor,
+  miscellaneous,
+}
+
 class AppUser {
   String id;
   String name;
@@ -48,6 +57,7 @@ class Vendor extends AppUser {
   String businessName;
   String logoUrl;
   String? slogan;
+  List<Activity> activities;
   List<Product> products;
 
   Vendor({
@@ -55,6 +65,7 @@ class Vendor extends AppUser {
     required String name,
     required DateTime dateOfBirth,
     required String email,
+    required this.activities,
     String? phoneNumber,
     required this.businessName,
     this.logoUrl = '',
@@ -71,12 +82,17 @@ class Vendor extends AppUser {
         );
 
   factory Vendor.fromMap(String id, Map<String, dynamic> data) {
+    List<Activity> activities = (data['activities'] as List<dynamic>)
+        .map((tag) =>
+            Activity.values.firstWhere((element) => element.name == tag))
+        .toList();
     return Vendor(
       id: id,
       name: data['name'] ?? '',
       dateOfBirth: DateTime.parse(data['date_of_birth']),
       email: data['email'] ?? "",
       phoneNumber: data['phone_number'] ?? "",
+      activities: activities,
       businessName: data['business_name'] ?? '',
       privileges: (data['privileges'] as List<dynamic>)
           .map((strin) => strin.toString())
@@ -96,6 +112,7 @@ class Vendor extends AppUser {
       'business_name': businessName,
       'logo_url': logoUrl,
       'slogan': slogan,
+      'activities': activities.map((tag) => tag.name).toList(),
       'products': products.map((product) => product.toMap()).toList(),
     });
     return map;

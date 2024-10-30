@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/main.dart';
+import 'package:vendor/model/event.dart';
+import 'package:vendor/screen/shared/register_screen.dart';
 
 class VendorOnboardScreen extends StatelessWidget {
   VendorOnboardScreen({super.key});
 
   DateTime dateOfBirth = DateTime.now();
+  final RegisterController controller = Get.put(RegisterController());
   final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController sloganController = TextEditingController();
   final TextEditingController businessNameController = TextEditingController();
 
   @override
@@ -43,15 +47,29 @@ class VendorOnboardScreen extends StatelessWidget {
             const SizedBox(
               height: 6,
             ),
+            TextField(
+              controller: sloganController,
+              keyboardType: TextInputType.name,
+              maxLength: 128,
+              decoration: const InputDecoration(label: Text("Slogan")),
+            ),
+            const SizedBox(
+              height: 6,
+            ),
+            TagSelector(tagController: controller),
+            const SizedBox(
+              height: 6,
+            ),
             // Submit button
             ElevatedButton(
               onPressed: () {
-                print(authController.appUser);
+                print(controller.selectedTags.value);
                 DatabaseService().updateUser(
                   authController.uid,
                   {
                     'business_name': businessNameController.text,
                     'phone_number': phoneNumberController.text,
+                    'activities': controller.selectedTags.value,
                   },
                 );
                 Get.offAllNamed('/vendor_main');
@@ -64,6 +82,58 @@ class VendorOnboardScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TagSelector extends StatelessWidget {
+  final RegisterController tagController;
+  TagSelector({required this.tagController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(
+          fit: FlexFit.loose,
+          child: Obx(
+            () => Wrap(
+              children: tagController.selectedTags
+                  .map((tag) => Chip(
+                        label: Text(tag),
+                        deleteIcon: Icon(Icons.cancel),
+                        onDeleted: () => tagController.toggleTag(tag),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: DropdownButton<String>(
+            hint: Text("Select Activities"),
+            items: tagController.availableTags.map((String tag) {
+              return DropdownMenuItem<String>(
+                value: tag,
+                child: Obx(
+                  () => Container(
+                    width: Get.width * 0.6,
+                    child: CheckboxListTile(
+                      title: Text(tag),
+                      value: tagController.selectedTags.contains(tag),
+                      onChanged: (_) => tagController.toggleTag(tag),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (_) {},
+          ),
+        ),
+      ],
     );
   }
 }

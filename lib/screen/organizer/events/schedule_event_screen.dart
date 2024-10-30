@@ -68,6 +68,7 @@ class ScheduleEventScreen extends StatelessWidget {
                       double.tryParse(value) ?? 0.0,
                   format: [FilteringTextInputFormatter.digitsOnly],
                 ),
+
                 // _buildTextField(
                 //   label: 'User Fee',
                 //   keyboardType: TextInputType.number,
@@ -149,6 +150,8 @@ class ScheduleEventScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
+                TagSelector(tagController: controller),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -180,9 +183,15 @@ class ScheduleEventScreen extends StatelessWidget {
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
                             description: controller.description.value,
+                            tags: controller.selectedTags.value
+                                .map(
+                                  (tag) => Activity.values
+                                      .firstWhere((act) => act.name == tag),
+                                )
+                                .toList(),
                             images: controller.images,
-                            appliedVendorsId: [],
                             location: 'T.B.D',
+                            appliedVendorsId: [],
                             registeredVendors: [],
                             questions: questions,
                           );
@@ -325,4 +334,56 @@ class ScheduleEventScreen extends StatelessWidget {
   //     ],
   //   );
   // });
+}
+
+class TagSelector extends StatelessWidget {
+  final CreateEventController tagController;
+  TagSelector({required this.tagController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(
+          fit: FlexFit.loose,
+          child: Obx(
+            () => Wrap(
+              children: tagController.selectedTags
+                  .map((tag) => Chip(
+                        label: Text(tag),
+                        deleteIcon: Icon(Icons.cancel),
+                        onDeleted: () => tagController.toggleTag(tag),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
+          child: DropdownButton<String>(
+            hint: Text("Select Activities"),
+            items: tagController.availableTags.map((String tag) {
+              return DropdownMenuItem<String>(
+                value: tag,
+                child: Obx(
+                  () => Container(
+                    width: Get.width * 0.6,
+                    child: CheckboxListTile(
+                      title: Text(tag),
+                      value: tagController.selectedTags.contains(tag),
+                      onChanged: (_) => tagController.toggleTag(tag),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (_) {},
+          ),
+        ),
+      ],
+    );
+  }
 }

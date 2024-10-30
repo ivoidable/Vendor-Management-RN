@@ -8,6 +8,17 @@ class RegisterController extends GetxController {
   var isVendor = false.obs;
   var selectedChip = 0.obs; // Observable to store the selected chip index
 
+  var availableTags = Activity.values.map((str) => str.name).toList().obs;
+  var selectedTags = <String>[].obs;
+
+  void toggleTag(String tag) {
+    if (selectedTags.contains(tag)) {
+      selectedTags.remove(tag);
+    } else {
+      selectedTags.add(tag);
+    }
+  }
+
   void selectChip(int index) {
     selectedChip.value = index; // Update the selected chip
   }
@@ -20,8 +31,6 @@ class RegisterController extends GetxController {
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
-  final RegisterController controller = Get.put(RegisterController());
-
   DateTime dateOfBirth = DateTime.now();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -29,6 +38,7 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    RegisterController controller = Get.put(RegisterController());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
