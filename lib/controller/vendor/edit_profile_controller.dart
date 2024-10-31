@@ -42,10 +42,6 @@ class VendorEditProfileController extends GetxController {
     businessName.value = vendor.businessName;
   }
 
-  void uploadImage() {
-    //TODO: Implement image upload
-  }
-
   // Update vendor object with the new data
   void updateVendor() async {
     vendor.name = name.value;

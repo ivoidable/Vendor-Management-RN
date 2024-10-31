@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/model/product.dart';
+import 'package:vendor/model/review.dart';
 
 enum Activity {
   food,
@@ -152,7 +153,9 @@ class Organizer extends AppUser {
   @override
   Map<String, dynamic> toMap() {
     final map = super.toMap();
-    map.addAll({'business_name': managedEvents});
+    map.addAll({
+      'business_name': managedEvents,
+    });
     return map;
   }
 }

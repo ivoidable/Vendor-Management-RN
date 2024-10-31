@@ -14,7 +14,6 @@ class OrganizerMainController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     onRefresh();
   }

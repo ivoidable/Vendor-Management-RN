@@ -209,7 +209,6 @@ class ProductWidget extends StatelessWidget {
                   child: ClipOval(
                     child: GestureDetector(
                       onTap: () {
-                        //TODO: Dialog for removal then removal logic
                         Get.defaultDialog(
                           title: "Remove Product",
                           middleText:

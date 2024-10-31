@@ -99,7 +99,6 @@ class VendorViewEventScreen extends StatelessWidget {
                     ),
                     child: Text('Apply'),
                     onPressed: () async {
-                      //TODO: Check if there are any questions then ask them
                       if (event.questions.isNotEmpty) {
                         await Get.to(VendorApplicationScreen(
                           event: event,
@@ -182,7 +181,6 @@ class VendorViewEventScreen extends StatelessWidget {
                       //                 foregroundColor: Colors.blueGrey[700],
                       //               ),
                       //               onPressed: () {
-                      //                 //TODO: Apply vendor for event
                       //               },
                       //               child: const Text('Apply'),
                       //             ),

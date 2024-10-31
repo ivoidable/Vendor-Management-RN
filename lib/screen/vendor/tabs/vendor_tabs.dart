@@ -209,9 +209,7 @@ class VendorProfileTab extends StatelessWidget {
                   title: const Text("Products"),
                   trailing: IconButton(
                     onPressed: () {
-                      //TODO: Add Product Here
                       Get.to(AddProductScreen());
-                      print("Add Product");
                     },
                     icon: const Icon(Icons.add),
                   ),

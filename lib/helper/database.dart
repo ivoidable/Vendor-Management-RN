@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
+import 'package:vendor/model/review.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,18 +25,37 @@ class DatabaseService {
     doc.set(event.toMap());
   }
 
+  Future<List<Vendor>> getRegisteredVendorsQuery(String eventId) async {
+    Event? event =
+        await _db.collection('events').doc(eventId).get().then((event) {
+      return Event.fromMap(event.id, event.data()!);
+    });
+
+    var doc = (await _db
+        .collection('users')
+        .where('id', whereIn: event!.registeredVendorsId)
+        .get());
+
+    List<Vendor> vends = doc.docs
+        .map((vendor) => Vendor.fromMap(vendor.id, vendor.data()))
+        .toList();
+    return vends;
+  }
+
   Future<void> uploadLogo(XFile imageFile, String userId) async {
     try {
       // Get the file extension from the XFile's mime type
       String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
-      
+
       // Create a reference to the Firebase Storage location
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('$userId/logo/image.$extension');
+      final storageRef =
+          FirebaseStorage.instance.ref().child('$userId/logo/image.$extension');
 
       // Upload the file
       await storageRef.putFile(File(imageFile.path));
+      updateUser(userId, {
+        'logo_url': await storageRef.getDownloadURL(),
+      });
 
       print("File uploaded successfully!");
     } catch (e) {
@@ -62,15 +82,16 @@ class DatabaseService {
     }
   }
 
-  Future<void> uploadProductImage(XFile imageFile, String userId, String productId) async {
+  Future<void> uploadProductImage(
+      XFile imageFile, String userId, String productId) async {
     try {
       // Get the file extension from the XFile's mime type
       String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
-      
+
       // Create a reference to the Firebase Storage location
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('$userId/logo/$productId.$extension');
+          .child('$userId/products/$productId.$extension');
 
       // Upload the file
       await storageRef.putFile(File(imageFile.path));
@@ -84,14 +105,16 @@ class DatabaseService {
   Future<String?> getProductImageUrl(String userId, String productId) async {
     try {
       // Define the path to the user's logo image
-      final ref = FirebaseStorage.instance.ref('$userId/products/$productId.png');
+      final ref =
+          FirebaseStorage.instance.ref('$userId/products/$productId.png');
 
       // Try to get the download URL for a .png file
       try {
         return await ref.getDownloadURL();
       } catch (e) {
         // If .png doesn't exist, check for .jpg instead
-        final jpgRef = FirebaseStorage.instance.ref('$userId/products/$productId.jpg');
+        final jpgRef =
+            FirebaseStorage.instance.ref('$userId/products/$productId.jpg');
         return await jpgRef.getDownloadURL();
       }
     } catch (e) {
@@ -100,7 +123,8 @@ class DatabaseService {
     }
   }
 
-  Future<List<String>> getVendorProductsImagesUrl(String userId, String productId) async {
+  Future<List<String>> getVendorProductsImagesUrl(
+      String userId, String productId) async {
     List<String> fileUrls = [];
     try {
       // Define the path to the user's logo image
@@ -122,9 +146,8 @@ class DatabaseService {
   Future<void> uploadEventImage(XFile imageFile, String eventId) async {
     try {
       // Create a reference to the Firebase Storage location
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('$eventId/');
+      final storageRef =
+          FirebaseStorage.instance.ref('events/').child('$eventId/');
 
       // Upload the file
       await storageRef.putFile(File(imageFile.path));
@@ -139,7 +162,7 @@ class DatabaseService {
     List<String> fileUrls = [];
     try {
       // Define the path to the user's logo image
-      final ref = FirebaseStorage.instance.ref('$eventId/');
+      final ref = FirebaseStorage.instance.ref('events/$eventId/');
 
       final ListResult result = await ref.listAll();
 
@@ -302,6 +325,29 @@ class DatabaseService {
         .collection('applications')
         .doc(appId)
         .delete();
+  }
+
+  Future<void> addOrganizerFeedback(Review review) async {
+    var doc = (await _db
+        .collection('users')
+        .doc(review.organizerId)
+        .collection('reviews')
+        .doc());
+    review.id = doc.id;
+    doc.set(review.toMap());
+  }
+
+  Future<List<Review>> getOrganizerFeedback(String organizerId) async {
+    List<Review> reviews = (await _db
+            .collection('users')
+            .doc(organizerId)
+            .collection('reviews')
+            .get())
+        .docs
+        .map((doc) {
+      return Review.fromMap(doc.data());
+    }).toList();
+    return reviews;
   }
 
   Future<void> declineApplication(

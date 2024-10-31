@@ -22,10 +22,6 @@ class RegisterController extends GetxController {
   void selectChip(int index) {
     selectedChip.value = index; // Update the selected chip
   }
-
-  void updateShite(Vendor vendor) {
-    //TODO: Update Vendor
-  }
 }
 
 class RegisterScreen extends StatelessWidget {

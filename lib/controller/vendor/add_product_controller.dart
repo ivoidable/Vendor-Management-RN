@@ -14,14 +14,13 @@ class AddProductController extends GetxController {
   RxDouble price = 0.0.obs;
 
   final ImagePicker _picker = ImagePicker();
-  var selectedImage = Rx<File?>(null); // Reactive variable
+  var selectedImage = Rx<XFile?>(null); // Reactive variable
 
   // Method to pick an image from gallery or camera
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
-      selectedImage.value = File(image.path);
-      //TODO: Product Image Logic
+      selectedImage.value = XFile(image.path);
     }
   }
 
@@ -33,6 +32,11 @@ class AddProductController extends GetxController {
   void addProduct(Product product) {
     Vendor user = Vendor.fromMap(authController.uid, authController.appUser);
     user.products.add(product);
+    DatabaseService().uploadProductImage(
+      selectedImage.value!,
+      authController.uid,
+      product.productName,
+    );
     DatabaseService().updateUser(authController.uid, user.toMap());
   }
 }
