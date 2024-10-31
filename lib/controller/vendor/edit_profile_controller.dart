@@ -17,7 +17,6 @@ class VendorEditProfileController extends GetxController {
   var email = ''.obs;
   var phoneNumber = ''.obs;
   var businessName = ''.obs;
-
   var profileImage = Rx<File?>(null); // Observable to store the selected image
 
   final ImagePicker _picker = ImagePicker(); // Instance of ImagePicker
