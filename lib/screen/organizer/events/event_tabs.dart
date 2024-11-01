@@ -89,7 +89,12 @@ class ViewEventDetailsTab extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    '${DateFormat.yMMMMd().add_jm().format(event.date)}',
+                    '${DateFormat.yMMMMd().add_jm().format(event.startDate)}',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w400),
+                  ),
+                  Text(
+                    '${DateFormat.yMMMMd().add_jm().format(event.endDate)}',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w400),
                   ),
@@ -169,6 +174,7 @@ class ViewApplicationsScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.amber,
       ),
+      //TODO: FUCKING OPTIMIZE THIS SHIT MF
       body: FutureBuilder(
         future: DatabaseService().getApplicationsQuery(event.id),
         builder: (context, snapshot) {

@@ -10,7 +10,8 @@ class CreateEventController extends GetxController {
   var description = ''.obs;
   var vendorFee = 0.0.obs;
   var userFee = 0.0.obs;
-  var date = DateTime.now().obs;
+  var startDate = DateTime.now().obs;
+  var endDate = DateTime.now().obs;
   var maxVendors = 0.obs;
   var images = <String>[].obs;
   var applications = <String>[].obs;
@@ -42,8 +43,12 @@ class CreateEventController extends GetxController {
     images.remove(index);
   }
 
-  void setDate(DateTime pickedDate) {
-    date.value = pickedDate;
+  void setStartDate(DateTime pickedDate) {
+    startDate.value = pickedDate;
+  }
+
+  void setEndDate(DateTime pickedDate) {
+    endDate.value = pickedDate;
   }
 
   void addImage(String url) {

@@ -76,7 +76,8 @@ class ScheduleEventScreen extends StatelessWidget {
                 //       controller.userFee.value = double.tryParse(value) ?? 0.0,
                 //   format: [FilteringTextInputFormatter.digitsOnly],
                 // ),
-                _buildDatePicker(context),
+                _buildStartDatePicker(context),
+                _buildEndDatePicker(context),
                 Obx(
                   () => ListView.builder(
                     shrinkWrap: true,
@@ -178,7 +179,8 @@ class ScheduleEventScreen extends StatelessWidget {
                             id: '',
                             organizerId: uid,
                             name: controller.name.value,
-                            date: controller.date.value,
+                            startDate: controller.startDate.value,
+                            endDate: controller.endDate.value,
                             vendorFee: controller.vendorFee.value,
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
@@ -193,6 +195,7 @@ class ScheduleEventScreen extends StatelessWidget {
                             location: 'T.B.D',
                             appliedVendorsId: [],
                             registeredVendorsId: [],
+                            declinedVendorsId: [],
                             questions: questions,
                           );
                           DatabaseService().createEvent(event);
@@ -285,11 +288,11 @@ class ScheduleEventScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDatePicker(BuildContext context) {
+  Widget _buildStartDatePicker(BuildContext context) {
     return Obx(() {
       return ListTile(
         title: Text(
-          'Event Date: ${controller.date.value.toLocal().toIso8601String()}'
+          'Event Date: ${controller.startDate.value.toLocal().toIso8601String()}'
               .split('T')[0],
         ),
         trailing: const Icon(Icons.calendar_today),
@@ -301,7 +304,30 @@ class ScheduleEventScreen extends StatelessWidget {
             lastDate: DateTime(DateTime.now().year + 3),
           );
           if (picked != null) {
-            controller.setDate(picked);
+            controller.setStartDate(picked);
+          }
+        },
+      );
+    });
+  }
+
+  Widget _buildEndDatePicker(BuildContext context) {
+    return Obx(() {
+      return ListTile(
+        title: Text(
+          'Event Date: ${controller.startDate.value.toLocal().toIso8601String()}'
+              .split('T')[0],
+        ),
+        trailing: const Icon(Icons.calendar_today),
+        onTap: () async {
+          DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime(controller.startDate.value.day + 1),
+            firstDate: DateTime(controller.startDate.value.day + 1),
+            lastDate: DateTime(DateTime.now().year + 1),
+          );
+          if (picked != null) {
+            controller.setEndDate(picked);
           }
         },
       );

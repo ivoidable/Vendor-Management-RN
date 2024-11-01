@@ -25,6 +25,14 @@ class DatabaseService {
     doc.set(event.toMap());
   }
 
+  Stream<Event?> getRegisteredVendorsStream(String eventId) {
+    return _db.collection('events').doc(eventId).snapshots().map((event) {
+      if (event.exists && event.data() != null) {
+        return Event.fromMap(event.id, event.data()!);
+      }
+    });
+  }
+
   Future<String?> uploadReviewImageAndGetUrl(
       XFile imageFile, String reviewId) async {
     try {
@@ -248,11 +256,12 @@ class DatabaseService {
 
   Future<bool> applyForEvent(String eventId, Application application) async {
     // Check if not applied already
-
     var eventDoc = await _db.collection('events').doc(eventId).get();
     var event =
         Event.fromMap(eventDoc.id, eventDoc.data() as Map<String, dynamic>);
-    if (event.appliedVendorsId.contains(application.vendorId)) {
+    if (event.appliedVendorsId.contains(application.vendorId) ||
+        event.declinedVendorsId.contains(application.vendorId) ||
+        event.startDate.isBefore(DateTime.now())) {
       return false;
     } else {
       var doc = _db
@@ -340,7 +349,9 @@ class DatabaseService {
 
   // UPDATE an event
   Future<void> updateEvent(Event event) async {
-    await _db.collection('events').doc(event.id).update(event.toMap());
+    if (!event.endDate.isBefore(DateTime.now())) {
+      await _db.collection('events').doc(event.id).update(event.toMap());
+    }
   }
 
   // DELETE an event
@@ -353,6 +364,7 @@ class DatabaseService {
       String eventId, String vendorId, String appId) async {
     //TODO: Notify User About Registration
     await _db.collection('events').doc(eventId).update({
+      'applied_vendors': FieldValue.arrayRemove([vendorId]),
       'registered_vendors': FieldValue.arrayUnion([vendorId]),
     });
     await _db
@@ -389,6 +401,10 @@ class DatabaseService {
   Future<void> declineApplication(
       String eventId, String vendorId, String appId) async {
     // TODO: Notify User About Decline
+    await _db.collection('events').doc(eventId).update({
+      'applied_vendors': FieldValue.arrayRemove([vendorId]),
+      'declined_vendors': FieldValue.arrayUnion([vendorId]),
+    });
     await _db
         .collection('events')
         .doc(eventId)

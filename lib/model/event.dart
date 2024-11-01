@@ -98,7 +98,8 @@ class Event {
   String id;
   final String organizerId;
   final String name;
-  final DateTime date;
+  final DateTime startDate;
+  final DateTime endDate;
   final int maxVendors;
   final double vendorFee;
   final double attendeeFee;
@@ -108,13 +109,15 @@ class Event {
   List<Question> questions;
   List<String> appliedVendorsId;
   List<String> registeredVendorsId;
+  List<String> declinedVendorsId;
   CollectionReference? applicationsCollection; // Nullable
   List<String> images;
 
   Event({
     required this.id,
     required this.name,
-    required this.date,
+    required this.startDate,
+    required this.endDate,
     required this.organizerId,
     required this.vendorFee,
     required this.attendeeFee,
@@ -123,6 +126,7 @@ class Event {
     required this.description,
     required this.tags,
     required this.appliedVendorsId,
+    required this.declinedVendorsId,
     required this.registeredVendorsId,
     required this.images,
     required this.questions,
@@ -148,14 +152,16 @@ class Event {
     return Event(
       id: id,
       name: data['name'] ?? '',
-      date: (data['date'] as Timestamp).toDate(),
+      startDate: (data['start_date'] as Timestamp).toDate(),
+      endDate: (data['end_date'] as Timestamp).toDate(),
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
-      vendorFee: data['vendor_fee'],
       tags: tags,
       registeredVendorsId: List<String>.from(data['registered_vendors']),
-      attendeeFee: data['attendee_fee'],
+      attendeeFee: double.parse(data['attendee_fee'].toString()),
+      vendorFee: double.parse(data['vendor_fee'].toString()),
       organizerId: data['organizer_id'],
+      declinedVendorsId: List<String>.from(data['declined_vendors']),
       appliedVendorsId: List<String>.from(data['applied_vendors']),
       images: (data['images'] as List<dynamic>)
           .map((stri) => stri.toString())
@@ -171,7 +177,8 @@ class Event {
     return {
       'id': id,
       'name': name,
-      'date': Timestamp.fromDate(date),
+      'start_date': Timestamp.fromDate(startDate),
+      'end_date': Timestamp.fromDate(endDate),
       'location': location,
       'description': description,
       'images': images.toList(),
@@ -180,6 +187,7 @@ class Event {
       'tags': tags.map((tag) => tag.name).toList(),
       'applied_vendors': appliedVendorsId,
       'organizer_id': organizerId,
+      'declined_vendors': declinedVendorsId,
       'max_vendors': maxVendors,
       'questions': questions.map((question) => question.toMap()).toList(),
       'registered_vendors': registeredVendorsId,
