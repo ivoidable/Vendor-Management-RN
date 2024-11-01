@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vendor/controller/organizer/create_event_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
+
+class LocationController extends GetxController {
+  var selectedLocation = Rx<LatLng?>(null);
+
+  void updateLocation(LatLng position) {
+    selectedLocation.value = position;
+  }
+}
 
 class ScheduleEventScreen extends StatelessWidget {
   ScheduleEventScreen({super.key});
@@ -68,16 +77,16 @@ class ScheduleEventScreen extends StatelessWidget {
                       double.tryParse(value) ?? 0.0,
                   format: [FilteringTextInputFormatter.digitsOnly],
                 ),
-
-                // _buildTextField(
-                //   label: 'User Fee',
-                //   keyboardType: TextInputType.number,
-                //   onChanged: (value) =>
-                //       controller.userFee.value = double.tryParse(value) ?? 0.0,
-                //   format: [FilteringTextInputFormatter.digitsOnly],
-                // ),
                 _buildStartDatePicker(context),
                 _buildEndDatePicker(context),
+                Container(
+                  height: 200,
+                  width: Get.width,
+                  child: _buildLocation(),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
                 Obx(
                   () => ListView.builder(
                     shrinkWrap: true,
@@ -181,6 +190,7 @@ class ScheduleEventScreen extends StatelessWidget {
                             name: controller.name.value,
                             startDate: controller.startDate.value,
                             endDate: controller.endDate.value,
+                            latlng: controller.selectedLocation.value!,
                             vendorFee: controller.vendorFee.value,
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
@@ -192,7 +202,7 @@ class ScheduleEventScreen extends StatelessWidget {
                                 )
                                 .toList(),
                             images: controller.images,
-                            location: 'T.B.D',
+                            location: controller.getGoogleMapsLink() ?? '',
                             appliedVendorsId: [],
                             registeredVendorsId: [],
                             declinedVendorsId: [],
@@ -217,6 +227,20 @@ class ScheduleEventScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLocation() {
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(37.7749, -122.4194), // Starting position
+            zoom: 10,
+          ),
+          onTap: controller.updateLatlng,
+        ),
+      ],
     );
   }
 
@@ -292,7 +316,7 @@ class ScheduleEventScreen extends StatelessWidget {
     return Obx(() {
       return ListTile(
         title: Text(
-          'Event Date: ${controller.startDate.value.toLocal().toIso8601String()}'
+          'Event Start Date: ${controller.startDate.value.toLocal().toIso8601String()}'
               .split('T')[0],
         ),
         trailing: const Icon(Icons.calendar_today),
@@ -315,15 +339,15 @@ class ScheduleEventScreen extends StatelessWidget {
     return Obx(() {
       return ListTile(
         title: Text(
-          'Event Date: ${controller.startDate.value.toLocal().toIso8601String()}'
+          'Event End Date: ${controller.endDate.value.toLocal().toIso8601String()}'
               .split('T')[0],
         ),
         trailing: const Icon(Icons.calendar_today),
         onTap: () async {
           DateTime? picked = await showDatePicker(
             context: context,
-            initialDate: DateTime(controller.startDate.value.day + 1),
-            firstDate: DateTime(controller.startDate.value.day + 1),
+            initialDate: controller.endDate.value,
+            firstDate: controller.startDate.value.add(Duration(days: 1)),
             lastDate: DateTime(DateTime.now().year + 1),
           );
           if (picked != null) {
@@ -370,7 +394,7 @@ class TagSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           fit: FlexFit.loose,
@@ -386,7 +410,7 @@ class TagSelector extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 12),
         Flexible(
           fit: FlexFit.loose,
           child: DropdownButton<String>(

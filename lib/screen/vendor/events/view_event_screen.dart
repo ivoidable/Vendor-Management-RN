@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vendor/controller/vendor/view_event_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/main.dart';
@@ -118,6 +120,13 @@ class VendorViewEventScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     buildApplyWidget(controller.event!.value!),
+                    TextButton(
+                      onPressed: () {
+                        //TODO: Launch Google Maps with url
+                        launchUrlString(controller.event!.value!.location);
+                      },
+                      child: Text("Location", style: TextStyle(fontSize: 16)),
+                    ),
                   ],
                 ),
               );

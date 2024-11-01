@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/user.dart';
 
@@ -104,6 +105,7 @@ class Event {
   final double vendorFee;
   final double attendeeFee;
   final String location;
+  final LatLng latlng;
   final String description;
   final List<Activity> tags;
   List<Question> questions;
@@ -125,6 +127,7 @@ class Event {
     required this.location,
     required this.description,
     required this.tags,
+    required this.latlng,
     required this.appliedVendorsId,
     required this.declinedVendorsId,
     required this.registeredVendorsId,
@@ -157,6 +160,7 @@ class Event {
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       tags: tags,
+      latlng: LatLng(data['lat'] ?? 0.0, data['lng'] ?? 0.0),
       registeredVendorsId: List<String>.from(data['registered_vendors']),
       attendeeFee: double.parse(data['attendee_fee'].toString()),
       vendorFee: double.parse(data['vendor_fee'].toString()),
@@ -184,6 +188,8 @@ class Event {
       'images': images.toList(),
       'vendor_fee': vendorFee,
       'attendee_fee': attendeeFee,
+      'lat': latlng.latitude,
+      'lng': latlng.longitude,
       'tags': tags.map((tag) => tag.name).toList(),
       'applied_vendors': appliedVendorsId,
       'organizer_id': organizerId,

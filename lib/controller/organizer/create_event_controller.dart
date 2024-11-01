@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vendor/model/event.dart';
 
@@ -11,10 +12,11 @@ class CreateEventController extends GetxController {
   var vendorFee = 0.0.obs;
   var userFee = 0.0.obs;
   var startDate = DateTime.now().obs;
-  var endDate = DateTime.now().obs;
+  var endDate = DateTime.now().add(Duration(days: 1)).obs;
   var maxVendors = 0.obs;
   var images = <String>[].obs;
   var applications = <String>[].obs;
+  var selectedLocation = Rx<LatLng?>(null);
 
   final ImagePicker _picker = ImagePicker();
   var selectedImage = Rx<File?>(null); // Reactive variable
@@ -30,12 +32,25 @@ class CreateEventController extends GetxController {
     }
   }
 
+  void updateLatlng(LatLng position) {
+    selectedLocation.value = position;
+  }
+
   // Method to pick an image from gallery or camera
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
       selectedImage.value = File(image.path);
     }
+  }
+
+  String? getGoogleMapsLink() {
+    if (selectedLocation.value != null) {
+      double latitude = selectedLocation.value!.latitude;
+      double longitude = selectedLocation.value!.longitude;
+      return 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    }
+    return null;
   }
 
   // Method to clear the selected image
