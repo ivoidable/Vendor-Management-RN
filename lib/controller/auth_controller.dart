@@ -1,7 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vendor/helper/database.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/shared/login_screen.dart';
 
@@ -15,9 +17,16 @@ class AuthController extends GetxController {
   RxString userRole = ''.obs; // Observes role changes
 
   @override
-  void onInit() {
+  void onInit() async {
     firebaseUser.bindStream(_auth.authStateChanges());
     ever(firebaseUser, _setUserRole); // Listen to auth changes and update role
+    print(appUser);
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      DatabaseService().updateUser(uid, {
+        'fcm_token': newToken,
+      });
+    });
     super.onInit();
   }
 
@@ -25,10 +34,8 @@ class AuthController extends GetxController {
     if (user == null) {
       uid = '';
       userRole.value = ''; // Reset role on sign out
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        appUser = {};
-        Get.offAll(LoginScreen());
-      });
+      appUser = {};
+      Get.offAll(LoginScreen());
     } else {
       DocumentSnapshot<Map<String, dynamic>> userDoc =
           await _firestore.collection('users').doc(user.uid).get();
@@ -36,6 +43,17 @@ class AuthController extends GetxController {
       debugPrint(uid);
       userRole.value = userDoc['role'] ?? 'signed_out';
       appUser = userDoc.data()!;
+      if (appUser['fcm_token'] == null) {
+        // If not set, set it
+        print('Setting FCM token');
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          print(uid);
+          DatabaseService().updateUser(uid, {
+            'fcm_token': fcmToken,
+          });
+        }
+      }
       _navigateBasedOnRole(
           userRole.value, userDoc.data()!); // Navigate based on role
     }

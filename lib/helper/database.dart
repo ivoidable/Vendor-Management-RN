@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,19 +8,64 @@ import 'package:vendor/model/review.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage storage = FirebaseStorage.instance;
 
+  String constructFCMPayload(String? token) {
+    return jsonEncode({
+      'token': token,
+      'notification': {
+        'via': 'FlutterFire Cloud Messaging!!!',
+      },
+      'notification': {
+        'title': 'Hello FlutterFire!',
+        'body': 'This notification (#) was created via FCM!',
+      },
+    });
+  }
+
+  Future<void> sendNotification(
+      List<String> tokens, String title, String message) async {
+    const serverKey =
+        'AIzaSyBqZY9YGYb9cvB5Ub8DCtEp4AVo06EH9bM'; // Replace with your Firebase server key
+    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+    final payload = {
+      'registration_ids': tokens,
+      'notification': {
+        'title': title,
+        'body': message,
+      },
+      'priority': 'high',
+    };
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'key=$serverKey',
+    };
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(payload),
+    );
+
+    if (response.statusCode == 200) {
+      print('Notification sent successfully');
+    } else {
+      print('Failed to send notification: ${response.body}');
+    }
+  }
+
   void createEvent(Event event) {
     var doc = _db.collection('events').doc();
     event.id = doc.id;
-    var imageRef = storage.ref('${event.id}/');
-    event.images.forEach((image) {
-      imageRef.putFile(File(image));
-    });
+    print(event.images);
     doc.set(event.toMap());
   }
 
@@ -187,7 +231,8 @@ class DatabaseService {
     return fileUrls;
   }
 
-  Future<void> uploadEventImage(XFile imageFile, String eventId) async {
+  Future<String?> uploadEventImageAndGetUrl(
+      XFile imageFile, String eventId) async {
     try {
       // Create a reference to the Firebase Storage location
       final storageRef =
@@ -197,6 +242,7 @@ class DatabaseService {
       await storageRef.putFile(File(imageFile.path));
 
       print("File uploaded successfully!");
+      return storageRef.getDownloadURL();
     } catch (e) {
       print("Error uploading file: $e");
     }
