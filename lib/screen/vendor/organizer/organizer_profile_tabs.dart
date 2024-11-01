@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vendor/controller/vendor/view_organizer_controller.dart';
+import 'package:vendor/helper/database.dart';
+import 'package:vendor/model/review.dart';
+import 'package:vendor/model/user.dart';
 
 class OrganizerDetailsTab extends StatelessWidget {
   final controller = Get.find<ViewOrganizerController>();
@@ -35,30 +40,6 @@ class OrganizerDetailsTab extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            ElevatedButton(
-              onPressed: () {
-                //TODO: Implement Review Logic
-                Get.defaultDialog(
-                  title: 'Review',
-                  textConfirm: "Submit",
-                  textCancel: "Cancel",
-                  onConfirm: () {},
-                  onCancel: () {},
-                );
-              },
-              child: Text("Review"),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                minimumSize: Size(Get.width / 4, Get.height * 0.05),
-                backgroundColor: Colors.blueGrey[700],
-                foregroundColor: Colors.amber,
-              ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -81,8 +62,85 @@ class OrganizerDetailsTab extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
+            ElevatedButton(
+              onPressed: () {
+                Get.dialog(
+                  AlertDialog(
+                    title: Text('Enter Data'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Obx(
+                          () {
+                            return controller.image.value == null
+                                ? IconButton(
+                                    icon: Icon(Icons.image, size: 50),
+                                    onPressed: controller.pickImage,
+                                  )
+                                : Image.file(
+                                    File(controller.image.value!.path),
+                                    width: 100,
+                                    height: 100,
+                                  );
+                          },
+                        ),
+                        TextField(
+                          onChanged: controller.updateText,
+                          decoration: InputDecoration(labelText: 'Details'),
+                        ),
+                        SizedBox(height: 24),
+                        buildRatingWidget(),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text('Submit'),
+                        onPressed: controller.submitData,
+                      ),
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          controller.textInput.value = '';
+                          controller.image.value = null;
+                          Get.back();
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text("Review"),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                minimumSize: Size(Get.width / 4, Get.height * 0.05),
+                backgroundColor: Colors.blueGrey[700],
+                foregroundColor: Colors.amber,
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildRatingWidget() {
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(5, (index) {
+          return IconButton(
+            icon: Icon(
+              Icons.star,
+              color:
+                  index < controller.rating.value ? Colors.amber : Colors.grey,
+            ),
+            onPressed: () {
+              controller.updateRating(index + 1);
+            },
+          );
+        }),
       ),
     );
   }
@@ -113,11 +171,113 @@ class OrganizerFeedbackTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: Text(controller.organizer.name),
+        title: const Text('Registered Vendors'),
         centerTitle: true,
+        backgroundColor: Colors.amber,
       ),
-      body: Center(child: Text("To be implemented")),
+      body: FutureBuilder(
+        future: DatabaseService().getOrganizerFeedback(controller.organizer.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                snapshot.error.toString(),
+              ),
+            );
+          } else if (!snapshot.hasData) {
+            return Text(snapshot.error.toString());
+          } else {
+            List<Review> reviews = snapshot.data!;
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Container(
+                  height: Get.height * 0.85,
+                  width: Get.width * 0.85,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey[300],
+                  ),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return ReviewWidget(review: reviews[index]);
+                    },
+                    itemCount: snapshot.data!.length,
+                  ),
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class ReviewWidget extends StatelessWidget {
+  final Review review;
+
+  const ReviewWidget({Key? key, required this.review}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: DatabaseService().getUser(review.reviewerId),
+      builder: (context, snapshot) {
+        final Vendor vendor =
+            Vendor.fromMap(review.reviewerId, snapshot.data!.data()!);
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(review.imagesUrls.first),
+                    ),
+                    SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vendor.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: List.generate(5, (index) {
+                            return Icon(
+                              Icons.star,
+                              color: index < review.rating
+                                  ? Colors.amber
+                                  : Colors.grey,
+                              size: 18,
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  review.review,
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

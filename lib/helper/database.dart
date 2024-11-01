@@ -25,6 +25,42 @@ class DatabaseService {
     doc.set(event.toMap());
   }
 
+  Future<String?> uploadReviewImageAndGetUrl(
+      XFile imageFile, String reviewId) async {
+    try {
+      // Get the file extension from the XFile's mime type
+      String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
+
+      // Create a reference to the Firebase Storage location
+      final storageRef =
+          FirebaseStorage.instance.ref().child('$reviewId/image.$extension');
+      await storageRef.putFile(File(imageFile.path));
+
+      print("File uploaded successfully!");
+      return storageRef.getDownloadURL();
+    } catch (e) {
+      print("Error uploading file: $e");
+      return null;
+    }
+  }
+
+  void reviewOrganizer(
+      String eventId, Review review, String organizerId, XFile image) async {
+    // Add the review to the organizer's reviews collection
+    var doc =
+        _db.collection('users').doc(organizerId).collection('reviews').doc();
+    review.id = doc.id;
+    String? url = await uploadReviewImageAndGetUrl(
+      image,
+      review.id,
+    );
+
+    if (url != null) {
+      review.imagesUrls.add(url);
+    }
+    doc.set(review.toMap());
+  }
+
   Future<List<Vendor>> getRegisteredVendorsQuery(String eventId) async {
     Event? event =
         await _db.collection('events').doc(eventId).get().then((event) {

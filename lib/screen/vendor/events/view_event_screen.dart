@@ -6,6 +6,7 @@ import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/vendor/events/vendor_application_screen.dart';
+import 'package:vendor/screen/vendor/organizer/view_organizer_screen.dart';
 
 class VendorViewEventScreen extends StatelessWidget {
   final Event event;
@@ -71,15 +72,38 @@ class VendorViewEventScreen extends StatelessWidget {
               event.description,
               style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
             const SizedBox(height: 8),
-            Text(
-              'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            TextButton(
+              onPressed: () async {
+                var organizer = Organizer.fromMap(
+                    event.organizerId,
+                    (await DatabaseService().getUser(event.organizerId))!
+                        .data()!);
+                Get.to(ViewOrganizerScreen(
+                  organizer: organizer,
+                  eventId: event.id,
+                ));
+              },
+              child: Text(
+                "",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Vendor Fee: \$${event.vendorFee.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'User Fee: \$${event.attendeeFee.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Text(

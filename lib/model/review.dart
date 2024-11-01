@@ -25,11 +25,12 @@ class Review {
       'event_id': eventId,
       'review': review,
       'rating': rating,
-      'images_utls': imagesUrls,
+      'images_urls': imagesUrls,
     };
   }
 
   factory Review.fromMap(Map<String, dynamic> map) {
+    print(map['images_urls']);
     return Review(
       id: map['id'],
       reviewerId: map['reviewer_id'],

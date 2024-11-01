@@ -7,11 +7,18 @@ import 'package:vendor/screen/vendor/organizer/organizer_profile_tabs.dart';
 
 class ViewOrganizerScreen extends StatelessWidget {
   final Organizer organizer;
-  ViewOrganizerScreen({required this.organizer});
+  final String eventId;
+  ViewOrganizerScreen({
+    required this.organizer,
+    required this.eventId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(ViewOrganizerController(organizer: organizer));
+    var controller = Get.put(ViewOrganizerController(
+      organizer: organizer,
+      eventId: eventId,
+    ));
     var tabs = [
       OrganizerDetailsTab(),
       OrganizerEventsTab(),
@@ -38,7 +45,7 @@ class ViewOrganizerScreen extends StatelessWidget {
         onTabChange: (index) => controller.index.value = index,
         tabs: const [
           GButton(
-            icon: Icons.person,
+            icon: Icons.person_outline,
             text: 'Profile',
           ),
           GButton(
@@ -46,7 +53,7 @@ class ViewOrganizerScreen extends StatelessWidget {
             text: 'Events',
           ),
           GButton(
-            icon: Icons.feedback,
+            icon: Icons.feedback_outlined,
             text: 'Feedback',
           ),
         ],
