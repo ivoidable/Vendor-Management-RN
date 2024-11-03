@@ -1,6 +1,8 @@
 # todo
 
-- Organizer Edit Events
+- Vendor Calendar System
+- Vendor Assistants
+- Vendor Events History
 - Organizer & Vendor Social Links
 - Clean Up
 
@@ -10,6 +12,3 @@
 - Design Screens
 - Add Firestore rules & Firebase Storage Rules
 - First Demo
-
-- Vendor Events History
-- Organizer Events History

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vendor/model/product.dart';
-import 'package:vendor/model/review.dart';
 
 enum Activity {
   food,
@@ -121,23 +120,21 @@ class Vendor extends AppUser {
 }
 
 class Organizer extends AppUser {
-  List<String> managedEvents;
-
   Organizer({
     required String id,
     required String name,
     required DateTime dateOfBirth,
     String? phoneNumber,
     required String email,
-    this.managedEvents = const [],
     super.privileges = const ['canScheduleEvents'],
   }) : super(
-            id: id,
-            name: name,
-            phoneNumber: phoneNumber,
-            email: email,
-            dateOfBirth: dateOfBirth,
-            role: 'organizer');
+          id: id,
+          name: name,
+          phoneNumber: phoneNumber,
+          email: email,
+          dateOfBirth: dateOfBirth,
+          role: 'organizer',
+        );
 
   factory Organizer.fromMap(String id, Map<String, dynamic> data) {
     return Organizer(
@@ -153,9 +150,6 @@ class Organizer extends AppUser {
   @override
   Map<String, dynamic> toMap() {
     final map = super.toMap();
-    map.addAll({
-      'business_name': managedEvents,
-    });
     return map;
   }
 }

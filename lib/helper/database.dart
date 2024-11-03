@@ -393,6 +393,94 @@ class DatabaseService {
     return vendors;
   }
 
+  Future<List<Event>> getAllOrganizedEventsHistory(String organizerUid) async {
+    List<Event> events = (await _db
+            .collection('events')
+            .where('organizer_id', isEqualTo: organizerUid)
+            .get())
+        .docs
+        .map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    List<Event?> eventsNew = events
+        .map((event) {
+          if (event.endDate.isBefore(DateTime.now())) {
+            return event;
+          }
+        })
+        .where((event) => event != null)
+        .toList();
+
+    List<Event> eventsOld = eventsNew.map((event) => event!).toList();
+    return eventsOld;
+  }
+
+  Future<List<Event>> getAllRegisteredEvents(String uid) async {
+    List<Event> events = (await _db
+            .collection('events')
+            .where('registered_vendors', arrayContains: uid)
+            .get())
+        .docs
+        .map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    List<Event?> eventsNew = events
+        .map((event) {
+          if (!event.endDate.isBefore(DateTime.now())) {
+            return event;
+          }
+        })
+        .where((event) => event != null)
+        .toList();
+
+    List<Event> eventsOld = eventsNew.map((event) => event!).toList();
+    return eventsOld;
+  }
+
+  Future<List<Event>> getAllRegisteredEventsHistory(String uid) async {
+    List<Event> events = (await _db
+            .collection('events')
+            .where('registered_vendors', arrayContains: uid)
+            .get())
+        .docs
+        .map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    List<Event?> eventsNew = events
+        .map((event) {
+          if (event.endDate.isBefore(DateTime.now())) {
+            return event;
+          }
+        })
+        .where((event) => event != null)
+        .toList();
+
+    List<Event> eventsOld = eventsNew.map((event) => event!).toList();
+    return eventsOld;
+  }
+
+  Future<List<Event>> getAllOrganizedEventsActive(String organizerUid) async {
+    List<Event> events = (await _db
+            .collection('events')
+            .where('organizer_id', isEqualTo: organizerUid)
+            .get())
+        .docs
+        .map((elem) {
+      return Event.fromMap(elem.id, elem.data());
+    }).toList();
+    List<Event> eventsNew = events
+        .map((event) {
+          if (event.endDate.isBefore(DateTime.now())) {
+            return event;
+          }
+        })
+        .where((event) => event != null)
+        .toList()
+        .map((event) => event!)
+        .toList();
+    return eventsNew;
+  }
+
   // UPDATE an event
   Future<void> updateEvent(Event event) async {
     if (!event.endDate.isBefore(DateTime.now())) {
@@ -519,7 +607,6 @@ class DatabaseService {
             email: email,
             dateOfBirth: dateOfBirth,
             privileges: [],
-            managedEvents: [],
             phoneNumber: "",
           );
           break;

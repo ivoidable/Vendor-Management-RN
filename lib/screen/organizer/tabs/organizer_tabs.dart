@@ -5,6 +5,7 @@ import 'package:vendor/controller/organizer/main_controller.dart';
 import 'package:vendor/helper/database.dart';
 import 'package:vendor/helper/helper_widgets.dart';
 import 'package:vendor/main.dart';
+import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/organizer/events/schedule_event_screen.dart';
 import 'package:vendor/screen/organizer/events/view_event_screen.dart';
@@ -172,6 +173,11 @@ class OrganizerProfileTab extends StatelessWidget {
                       ? "No number set"
                       : user.phoneNumber ?? "No number set"), // Placeholder
                 ),
+                ListTile(
+                  leading: Icon(Icons.history),
+                  title: Text("Events History"),
+                  onTap: () => Get.to(() => OrganizerEventsHistoryScreen()),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
@@ -193,6 +199,57 @@ class OrganizerProfileTab extends StatelessWidget {
               ],
             ),
           );
+        },
+      ),
+    );
+  }
+}
+
+class OrganizerEventsHistoryScreen extends StatelessWidget {
+  const OrganizerEventsHistoryScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Events History"),
+        centerTitle: true,
+        backgroundColor: Colors.amber,
+      ),
+      body: FutureBuilder(
+        future:
+            DatabaseService().getAllOrganizedEventsHistory(authController.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          } else {
+            List<Event> events = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey[300],
+                ),
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return EventCard(
+                      name: events[index].name,
+                      images: events[index].images,
+                      vendors: events[index].registeredVendorsId.length,
+                      maxVendors: events[index].maxVendors,
+                      onClick: () {
+                        //TODO: Show a little more details
+                      },
+                    );
+                  },
+                  itemCount: events.length,
+                ),
+              ),
+            );
+          }
         },
       ),
     );

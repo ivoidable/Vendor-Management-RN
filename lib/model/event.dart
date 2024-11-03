@@ -96,17 +96,17 @@ class Question {
 
 class Event {
   String id;
-  final String organizerId;
-  final String name;
-  final DateTime startDate;
-  final DateTime endDate;
-  final int maxVendors;
-  final double vendorFee;
-  final double attendeeFee;
-  final String location;
-  final LatLng latlng;
-  final String description;
-  final List<Activity> tags;
+  String organizerId;
+  String name;
+  DateTime startDate;
+  DateTime endDate;
+  int maxVendors;
+  double vendorFee;
+  double attendeeFee;
+  String location;
+  LatLng latlng;
+  String description;
+  List<Activity> tags;
   List<Question> questions;
   List<String> appliedVendorsId;
   List<String> registeredVendorsId;

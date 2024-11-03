@@ -21,6 +21,12 @@ class ViewEventDetailsTab extends StatelessWidget {
         title: Text('Event: ${event.name}'),
         actions: [
           IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Get.to(EditEventScreen(event: event));
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
               DatabaseService().deleteEvent(event.id);
@@ -102,6 +108,101 @@ class ViewEventDetailsTab extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class EventEditController extends GetxController {
+  //TODO: Add location & Date Fields
+  // The event to be edited, initialized through the constructor
+  Rx<Event> event;
+
+  EventEditController(this.event);
+
+  // Method to update fields
+  void updateName(String newName) => event.update((e) {
+        if (e != null) e.name = newName;
+      });
+
+  void updateStartDate(DateTime newDate) => event.update((e) {
+        if (e != null) e.startDate = newDate;
+      });
+  void updateEndDate(DateTime newDate) => event.update((e) {
+        if (e != null) e.endDate = newDate;
+      });
+  // void updateLocation(String newLocation) => event.update((e) {
+  //       if (e != null) e.location = newLocation;
+  //     });
+  void updateVendorFee(double newFee) => event.update((e) {
+        if (e != null) e.vendorFee = newFee;
+      });
+  void updateAttendeeFee(double newFee) => event.update((e) {
+        if (e != null) e.attendeeFee = newFee;
+      });
+  void updateDescription(String newDescription) => event.update((e) {
+        if (e != null) e.description = newDescription;
+      });
+
+  void saveEvent() {
+    DatabaseService().updateEvent(event.value);
+  }
+}
+
+class EditEventScreen extends StatelessWidget {
+  final Event event;
+  EditEventScreen({required this.event});
+
+  @override
+  Widget build(BuildContext context) {
+    EventEditController controller = Get.put(EventEditController(event.obs));
+    return Scaffold(
+      appBar: AppBar(title: Text('Edit Event')),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(labelText: 'Event Name'),
+              onChanged: controller.updateName,
+              controller:
+                  TextEditingController(text: controller.event.value.name),
+            ),
+            // TextField(
+            //   decoration: InputDecoration(labelText: 'Location'),
+            //   onChanged: controller.updateLocation,
+            //   controller:
+            //       TextEditingController(text: controller.event.value.location),
+            // ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Vendor Fee'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) =>
+                  controller.updateVendorFee(double.parse(value)),
+              controller: TextEditingController(
+                  text: controller.event.value.vendorFee.toString()),
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Attendee Fee'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) =>
+                  controller.updateAttendeeFee(double.parse(value)),
+              controller: TextEditingController(
+                  text: controller.event.value.attendeeFee.toString()),
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Description'),
+              onChanged: controller.updateDescription,
+              controller: TextEditingController(
+                  text: controller.event.value.description),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => controller.saveEvent(),
+              child: Text('Save Changes'),
+            ),
+          ],
         ),
       ),
     );
