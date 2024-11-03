@@ -2,8 +2,6 @@
 
 - Vendor Calendar System
 - Vendor Assistants
-- Vendor Events History
-- Organizer & Vendor Social Links
 - Clean Up
 
 - Add Notifications & Notifications Page
@@ -11,4 +9,5 @@
 - Add Pricing and Payments for Organizer
 - Design Screens
 - Add Firestore rules & Firebase Storage Rules
+- Organizer & Vendor Social Links
 - First Demo

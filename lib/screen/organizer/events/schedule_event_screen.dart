@@ -137,8 +137,11 @@ class ScheduleEventScreen extends StatelessWidget {
                     _buildMap(mapController),
                   ],
                 ),
+                chipSelec(),
                 _buildStartDatePicker(context),
-                _buildEndDatePicker(context),
+                controller.selectedChip.value == 1
+                    ? _buildEndDatePicker(context)
+                    : Container(),
                 const SizedBox(
                   height: 12,
                 ),
@@ -268,6 +271,9 @@ class ScheduleEventScreen extends StatelessWidget {
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
                             description: controller.description.value,
+                            isOneDay: controller.selectedChip.value == 0
+                                ? true
+                                : false,
                             tags: controller.selectedTags.value
                                 .map(
                                   (tag) => Activity.values
@@ -480,6 +486,35 @@ class ScheduleEventScreen extends StatelessWidget {
   }
 
   // Widget _buildMaxVendorsSlider() {
+
+  Widget chipSelec() {
+    final List<String> options = ['One Day', 'Multiple Day'];
+    return Wrap(
+      spacing: 12.0,
+      children: options.asMap().entries.map(
+        (entry) {
+          final int index = entry.key;
+          final String label = entry.value;
+          return Obx(
+            () => ChoiceChip(
+              label: Text(label),
+              selected: controller.selectedChip.value == index,
+              onSelected: (bool isSelected) {
+                if (isSelected) controller.selectChip(index);
+              },
+              selectedColor: Colors.amber,
+              backgroundColor: Colors.grey.shade200,
+              labelStyle: TextStyle(
+                color: controller.selectedChip.value == index
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+  }
 
   // return Obx(() {
   //   return Column(

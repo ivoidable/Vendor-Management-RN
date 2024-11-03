@@ -15,6 +15,12 @@ class CreateEventController extends GetxController {
   var images = <String>[].obs;
   var applications = <String>[].obs;
 
+  var isVendor = false.obs;
+  var selectedChip = 0.obs; // Observable to store the selected chip index
+  void selectChip(int index) {
+    selectedChip.value = index; // Update the selected chip
+  }
+
   final ImagePicker _picker = ImagePicker();
   var selectedImage = Rx<File?>(null); // Reactive variable
 

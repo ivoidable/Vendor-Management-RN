@@ -426,7 +426,7 @@ class DatabaseService {
     }).toList();
     List<Event?> eventsNew = events
         .map((event) {
-          if (!event.endDate.isBefore(DateTime.now())) {
+          if (event.endDate.isAfter(DateTime.now())) {
             return event;
           }
         })

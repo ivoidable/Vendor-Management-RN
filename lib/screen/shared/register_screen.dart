@@ -7,6 +7,9 @@ import 'package:vendor/model/user.dart';
 class RegisterController extends GetxController {
   var isVendor = false.obs;
   var selectedChip = 0.obs; // Observable to store the selected chip index
+  void selectChip(int index) {
+    selectedChip.value = index; // Update the selected chip
+  }
 
   var availableTags = Activity.values.map((str) => str.name).toList().obs;
   var selectedTags = <String>[].obs;
@@ -17,10 +20,6 @@ class RegisterController extends GetxController {
     } else {
       selectedTags.add(tag);
     }
-  }
-
-  void selectChip(int index) {
-    selectedChip.value = index; // Update the selected chip
   }
 }
 

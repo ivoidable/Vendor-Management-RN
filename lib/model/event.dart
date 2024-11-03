@@ -106,6 +106,7 @@ class Event {
   String location;
   LatLng latlng;
   String description;
+  bool isOneDay;
   List<Activity> tags;
   List<Question> questions;
   List<String> appliedVendorsId;
@@ -123,6 +124,7 @@ class Event {
     required this.vendorFee,
     required this.attendeeFee,
     required this.maxVendors,
+    required this.isOneDay,
     required this.location,
     required this.description,
     required this.tags,
@@ -159,6 +161,7 @@ class Event {
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       tags: tags,
+      isOneDay: data['is_one_day'] ?? false,
       latlng: LatLng(data['lat'] ?? 0.0, data['lng'] ?? 0.0),
       registeredVendorsId: List<String>.from(data['registered_vendors']),
       attendeeFee: double.parse(data['attendee_fee'].toString()),
@@ -189,6 +192,7 @@ class Event {
       'attendee_fee': attendeeFee,
       'lat': latlng.latitude,
       'lng': latlng.longitude,
+      'is_one_day': isOneDay,
       'tags': tags.map((tag) => tag.name).toList(),
       'applied_vendors': appliedVendorsId,
       'organizer_id': organizerId,

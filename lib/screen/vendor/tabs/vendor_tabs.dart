@@ -9,6 +9,7 @@ import 'package:vendor/model/event.dart';
 import 'package:vendor/model/user.dart';
 import 'package:vendor/screen/vendor/events/view_event_screen.dart';
 import 'package:vendor/screen/vendor/profile/add_product_screen.dart';
+import 'package:vendor/screen/vendor/profile/calendar_screen.dart';
 import 'package:vendor/screen/vendor/profile/edit_profile_screen.dart';
 import 'package:vendor/screen/vendor/vendor/view_vendor_from_vendor_screen.dart';
 
@@ -202,6 +203,20 @@ class VendorProfileTab extends StatelessWidget {
                   subtitle: Text(user.phoneNumber == ""
                       ? "No number set"
                       : user.phoneNumber ?? "No number set"),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: const Text("History"),
+                  onTap: () {
+                    Get.to(() => VendorEventHistoryScreen());
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.calendar_month),
+                  title: const Text("Calendar"),
+                  onTap: () {
+                    Get.to(() => VendorCalendarScreen());
+                  },
                 ),
                 ListTile(
                   leading: const Icon(
