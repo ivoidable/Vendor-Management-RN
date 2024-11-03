@@ -1,13 +1,12 @@
 # todo
 
-- Vendor Calendar System
+- Add Notifications & Notifications Page
 - Vendor Assistants
+- Add Firestore rules & Firebase Storage Rules
 - Clean Up
 
-- Add Notifications & Notifications Page
 - Add Pricing and Payments for Vendor
 - Add Pricing and Payments for Organizer
-- Design Screens
-- Add Firestore rules & Firebase Storage Rules
 - Organizer & Vendor Social Links
+- Design Screens
 - First Demo
