@@ -576,6 +576,63 @@ class DatabaseService {
     await _auth.currentUser?.delete(); // Auth deletion
   }
 
+  // Create new assistant for vendor
+  Future<void> createAssistant(String vendorId, Assistant assistant) async {
+    var doc = (await _db
+        .collection('users')
+        .doc(vendorId)
+        .collection('assistants')
+        .doc());
+    assistant.id = doc.id;
+    doc.set(assistant.toMap());
+  }
+
+  Future<void> removeAssistant(String vendorId, String assistantId) async {
+    await _db
+        .collection('users')
+        .doc(vendorId)
+        .collection('assistants')
+        .doc(assistantId)
+        .delete();
+  }
+
+  Future<void> updateAssistant(String vendorId, Assistant assistant) async {
+    await _db
+        .collection('users')
+        .doc(vendorId)
+        .collection('assistants')
+        .doc(assistant.id)
+        .update(assistant.toMap());
+  }
+
+  Future<List<Assistant>> getAssistants(String vendorId) async {
+    List<Assistant> assistants = (await _db
+            .collection('users')
+            .doc(vendorId)
+            .collection('assistants')
+            .get())
+        .docs
+        .map((doc) {
+      return Assistant.fromMap(doc.id, doc.data());
+    }).toList();
+    return assistants;
+  }
+
+  Future<Assistant?> getAssistantById(
+      String vendorId, String assistantId) async {
+    DocumentSnapshot<Map<String, dynamic>> doc = await _db
+        .collection('users')
+        .doc(vendorId)
+        .collection('assistants')
+        .doc(assistantId)
+        .get();
+    if (doc.data() != null) {
+      return Assistant.fromMap(doc.id, doc.data()!);
+    } else {
+      return null;
+    }
+  }
+
   // Authentication - Sign Up User with Email & Password
   Future<void> signUp({
     required String email,
@@ -615,6 +672,8 @@ class DatabaseService {
             id: uid,
             name: name,
             email: email,
+            facebookUrl: '',
+            instagramUrl: '',
             dateOfBirth: dateOfBirth,
             activities: [],
             businessName: businessName ?? '',

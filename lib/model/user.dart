@@ -53,10 +53,60 @@ class AppUser {
   }
 }
 
+class Assistant extends AppUser {
+  String masterVendorId;
+
+  Assistant({
+    required String id,
+    required this.masterVendorId,
+    required String name,
+    required DateTime dateOfBirth,
+    required String email,
+    required String phoneNumber,
+    required super.privileges,
+  }) : super(
+          id: id,
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          dateOfBirth: dateOfBirth,
+          role: 'assistant',
+        );
+
+  factory Assistant.fromMap(String id, Map<String, dynamic> data) {
+    return Assistant(
+      id: id,
+      name: data['name'],
+      masterVendorId: data['master_vendor_id'],
+      dateOfBirth: DateTime.parse(data['date_of_birth']),
+      email: data['email'],
+      phoneNumber: data['phone_number'],
+      privileges: (data['privileges'] as List<dynamic>)
+          .map((strin) => strin.toString())
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone_number': phoneNumber,
+      'privileges': privileges,
+      'date_of_birth': dateOfBirth.toIso8601String(),
+      'role': role,
+      'master_vendor_id': masterVendorId,
+    };
+  }
+}
+
 class Vendor extends AppUser {
   String businessName;
   String logoUrl;
   String? slogan;
+  String? instagramUrl;
+  String? facebookUrl;
   List<Activity> activities;
   List<Product> products;
 
@@ -66,6 +116,8 @@ class Vendor extends AppUser {
     required DateTime dateOfBirth,
     required String email,
     required this.activities,
+    required this.instagramUrl,
+    required this.facebookUrl,
     String? phoneNumber,
     required this.businessName,
     this.logoUrl = '',
@@ -89,6 +141,8 @@ class Vendor extends AppUser {
     return Vendor(
       id: id,
       name: data['name'] ?? '',
+      facebookUrl: data['facebook_url'] ?? '',
+      instagramUrl: data['instagram_url'] ?? '',
       dateOfBirth: DateTime.parse(data['date_of_birth']),
       email: data['email'] ?? "",
       phoneNumber: data['phone_number'] ?? "",
@@ -112,6 +166,8 @@ class Vendor extends AppUser {
       'business_name': businessName,
       'logo_url': logoUrl,
       'slogan': slogan,
+      'facebook_url': facebookUrl,
+      'instagram_url': instagramUrl,
       'activities': activities.map((tag) => tag.name).toList(),
       'products': products.map((product) => product.toMap()).toList(),
     });

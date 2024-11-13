@@ -1,6 +1,7 @@
 # todo
 
-- Vendor Assistants as just objects
+- Vendor Assistants
+- Assistant System
 - Add Firestore rules & Firebase Storage Rules
 - Vendor Social Links
 - Design Screens
