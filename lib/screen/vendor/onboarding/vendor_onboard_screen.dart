@@ -72,6 +72,9 @@ class VendorOnboardScreen extends StatelessWidget {
                     'activities': controller.selectedTags.value,
                   },
                 );
+                authController.appUser['business_name'] = businessNameController.text;
+                authController.appUser['phone_number'] = phoneNumberController.text;
+                authController.appUser['activities'] = controller.selectedTags.value.map((elements) => Activity.values.firstWhere((element) => element.name == elements)).toList();
                 Get.offAllNamed('/vendor_main');
               },
               child: const Text("Register"),

@@ -350,10 +350,11 @@ class DatabaseService {
   Future<List<Event>> getAllEventsVendor() async {
     Vendor vendor =
         Vendor.fromMap(_auth.currentUser!.uid, authController.appUser);
+    print(vendor.activities);
     List<Event> events = (await (await _db.collection('events').where(
                   'tags',
                   arrayContainsAny:
-                      vendor.activities.map((toElement) => toElement.name),
+                      vendor.activities.map((toElement) => toElement.name).toList(),
                 ))
             .get())
         .docs
