@@ -119,9 +119,7 @@ class VendorViewEventScreen extends StatelessWidget {
                           fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     const SizedBox(height: 16),
-                    Obx(() {
-                    return buildApplyWidget(controller);
-                    } ),
+                    buildApplyWidget(controller),
                     TextButton(
                       onPressed: () {
                         //TODO: Launch Google Maps with url with latlng

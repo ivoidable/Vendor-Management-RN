@@ -239,7 +239,7 @@ class ReviewWidget extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 24,
-                      backgroundImage: NetworkImage(review.imagesUrls.first),
+                      backgroundImage: NetworkImage(vendor.logoUrl),
                     ),
                     SizedBox(width: 16),
                     Column(
@@ -272,6 +272,11 @@ class ReviewWidget extends StatelessWidget {
                 Text(
                   review.review,
                   style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(review.imagesUrls.first, fit: BoxFit.cover),
                 ),
               ],
             ),

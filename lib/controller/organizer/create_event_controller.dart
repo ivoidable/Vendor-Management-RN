@@ -7,6 +7,7 @@ import 'package:vendor/model/event.dart';
 class CreateEventController extends GetxController {
   var name = ''.obs;
   var description = ''.obs;
+  var pub = 0.obs;
   var vendorFee = 0.0.obs;
   var userFee = 0.0.obs;
   var startDate = DateTime.now().obs;
@@ -22,6 +23,10 @@ class CreateEventController extends GetxController {
   var selectedChip = 0.obs; // Observable to store the selected chip index
   void selectChip(int index) {
     selectedChip.value = index; // Update the selected chip
+  }
+
+  void selectPub(int index) {
+    pub.value = index;
   }
 
   final ImagePicker _picker = ImagePicker();

@@ -279,6 +279,7 @@ class ScheduleEventScreen extends StatelessWidget {
                             attendeeFee: controller.userFee.value,
                             maxVendors: controller.maxVendors.value,
                             description: controller.description.value,
+                            publicity: Publicity.values[controller.pub.value],
                             isOneDay: controller.selectedChip.value == 0
                                 ? true
                                 : false,
@@ -550,6 +551,35 @@ class ScheduleEventScreen extends StatelessWidget {
               backgroundColor: Colors.grey.shade200,
               labelStyle: TextStyle(
                 color: controller.selectedChip.value == index
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+  }
+
+  Widget pubSelection() {
+    final List<String> options = ['Public', 'Vendor Only', 'Private'];
+    return Wrap(
+      spacing: 12.0,
+      children: options.asMap().entries.map(
+        (entry) {
+          final int index = entry.key;
+          final String label = entry.value;
+          return Obx(
+            () => ChoiceChip(
+              label: Text(label),
+              selected: controller.pub.value == index,
+              onSelected: (bool isSelected) {
+                if (isSelected) controller.selectPub(index);
+              },
+              selectedColor: Colors.amber,
+              backgroundColor: Colors.grey.shade200,
+              labelStyle: TextStyle(
+                color: controller.pub.value == index
                     ? Colors.white
                     : Colors.black,
               ),

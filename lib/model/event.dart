@@ -95,6 +95,8 @@ class Question {
   }
 }
 
+enum Publicity { public, vendor_only, private }
+
 class Event {
   String id;
   String organizerId;
@@ -103,6 +105,7 @@ class Event {
   DateTime startDate;
   DateTime endDate;
   int maxVendors;
+  Publicity publicity;
   double vendorFee;
   double attendeeFee;
   String location;
@@ -132,6 +135,7 @@ class Event {
     required this.attendeeFee,
     required this.maxVendors,
     required this.isOneDay,
+    required this.publicity,
     required this.location,
     required this.description,
     required this.tags,
@@ -174,6 +178,7 @@ class Event {
         hour: data['end_time']['hour'],
         minute: data['end_time']['minute'],
       ),
+      publicity: Publicity.values.firstWhere((element) => element.name == data['publicity']),
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       tags: tags,
@@ -210,6 +215,7 @@ class Event {
         'hour' : endTime.hour,
         'minute' : endTime.minute,
       },
+      'publicity': publicity.name,
       'location': location,
       'description': description,
       'images': images.toList(),
