@@ -63,7 +63,6 @@ class VendorOnboardScreen extends StatelessWidget {
             // Submit button
             ElevatedButton(
               onPressed: () {
-                print(controller.selectedTags.value);
                 DatabaseService().updateUser(
                   authController.uid,
                   {
@@ -74,7 +73,7 @@ class VendorOnboardScreen extends StatelessWidget {
                 );
                 authController.appUser['business_name'] = businessNameController.text;
                 authController.appUser['phone_number'] = phoneNumberController.text;
-                authController.appUser['activities'] = controller.selectedTags.value.map((elements) => Activity.values.firstWhere((element) => element.name == elements)).toList();
+                authController.appUser['activities'] = controller.selectedTags.value.map((elements) => EventActivity.values.firstWhere((element) => element.name == elements)).toList();
                 Get.offAllNamed('/vendor_main');
               },
               child: const Text("Register"),

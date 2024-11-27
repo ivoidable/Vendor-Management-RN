@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:vendor/model/user.dart';
+import 'package:vendor/screen/organizer/events/event_tabs.dart';
 
 class EventCard extends StatelessWidget {
   final String name;
@@ -131,6 +133,58 @@ class VendorCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class EventTagSelector extends StatelessWidget {
+  final EventEditController tagController;
+  EventTagSelector({required this.tagController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Flexible(
+          fit: FlexFit.loose,
+          child: Obx(
+            () => Wrap(
+              children: tagController.selectedTags
+                  .map((tag) => Chip(
+                        label: Text(tag),
+                        deleteIcon: const Icon(Icons.cancel),
+                        onDeleted: () => tagController.toggleTag(tag),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Flexible(
+          fit: FlexFit.loose,
+          child: DropdownButton<String>(
+            hint: const Text("Select Activities"),
+            items: tagController.availableTags.map((String tag) {
+              return DropdownMenuItem<String>(
+                value: tag,
+                child: Obx(
+                  () => Container(
+                    width: Get.width * 0.6,
+                    child: CheckboxListTile(
+                      title: Text(tag),
+                      value: tagController.selectedTags.contains(tag),
+                      onChanged: (_) => tagController.toggleTag(tag),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (_) {},
+          ),
+        ),
+      ],
     );
   }
 }

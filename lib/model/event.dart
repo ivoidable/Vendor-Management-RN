@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vendor/model/user.dart';
 
-enum Activity {
+enum EventActivity {
   food,
   accessories,
   entertainment,
@@ -95,6 +95,8 @@ class Question {
   }
 }
 
+enum Publicity { public, vendor_only, private }
+
 class Event {
   String id;
   String organizerId;
@@ -103,13 +105,14 @@ class Event {
   DateTime startDate;
   DateTime endDate;
   int maxVendors;
+  Publicity publicity;
   double vendorFee;
   double attendeeFee;
   String location;
   LatLng latlng;
   String description;
   bool isOneDay;
-  List<Activity> tags;
+  List<EventActivity> tags;
   List<Question> questions;
   List<String> appliedVendorsId;
   List<String> registeredVendorsId;
@@ -132,6 +135,7 @@ class Event {
     required this.attendeeFee,
     required this.maxVendors,
     required this.isOneDay,
+    required this.publicity,
     required this.location,
     required this.description,
     required this.tags,
@@ -150,9 +154,9 @@ class Event {
         .map((question) => Question.fromMap(question))
         .toList();
 
-    List<Activity> tags = (data['tags'] as List<dynamic>)
+    List<EventActivity> tags = (data['tags'] as List<dynamic>)
             .map((tag) =>
-                Activity.values.firstWhere((element) => element.name == tag))
+                EventActivity.values.firstWhere((element) => element.name == tag))
             .toList() ??
         [];
 
@@ -174,6 +178,7 @@ class Event {
         hour: data['end_time']['hour'],
         minute: data['end_time']['minute'],
       ),
+      publicity: Publicity.values.firstWhere((element) => element.name == data['publicity']),
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       tags: tags,
@@ -210,6 +215,7 @@ class Event {
         'hour' : endTime.hour,
         'minute' : endTime.minute,
       },
+      'publicity': publicity.name,
       'location': location,
       'description': description,
       'images': images.toList(),

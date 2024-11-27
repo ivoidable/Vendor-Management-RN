@@ -511,9 +511,18 @@ class DatabaseService {
   }
 
   // UPDATE an event
-  Future<void> updateEvent(Event event) async {
+  Future<bool> updateEvent(Event event) async {
     if (!event.endDate.isBefore(DateTime.now())) {
-      await _db.collection('events').doc(event.id).update(event.toMap());
+      try {
+        await _db.collection('events').doc(event.id).update(event.toMap());
+        return true;
+      } catch (e) {
+        print(e);
+        return false;
+      }
+
+    } else {
+      return false;
     }
   }
 
@@ -668,7 +677,7 @@ class DatabaseService {
     required String password,
     required String name,
     required DateTime dateOfBirth,
-    required String role, // 'Admin', 'Moderator', 'Vendor', 'User'
+    required String role, // 'Admin', 'Vendor', 'User'
     String? businessName, // Only needed for Vendor
     String? logoUrl, // Only needed for Vendor
   }) async {

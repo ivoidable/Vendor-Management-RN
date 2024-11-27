@@ -7,6 +7,7 @@ import 'package:vendor/model/event.dart';
 class CreateEventController extends GetxController {
   var name = ''.obs;
   var description = ''.obs;
+  var pub = 0.obs;
   var vendorFee = 0.0.obs;
   var userFee = 0.0.obs;
   var startDate = DateTime.now().obs;
@@ -24,9 +25,13 @@ class CreateEventController extends GetxController {
     selectedChip.value = index; // Update the selected chip
   }
 
+  void selectPub(int index) {
+    pub.value = index;
+  }
+
   final ImagePicker _picker = ImagePicker();
 
-  var availableTags = Activity.values.map((str) => str.name).toList().obs;
+  var availableTags = EventActivity.values.map((str) => str.name).toList().obs;
   var selectedTags = <String>[].obs;
 
   void toggleTag(String tag) {
@@ -91,6 +96,7 @@ class CreateEventController extends GetxController {
     for (var controller in questions) {
       controller.dispose(); // Clean up controllers
     }
+    dispose();
     super.onClose();
   }
 }

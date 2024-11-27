@@ -16,6 +16,49 @@ class AuthController extends GetxController {
   Rxn<User?> firebaseUser = Rxn<User?>();
   RxString userRole = ''.obs; // Observes role changes
 
+  Future<bool> verifyPhoneNumber(String phone_number) async {
+    bool toReturn = false;
+    await _auth.verifyPhoneNumber(
+      phoneNumber: phone_number,
+      verificationCompleted: (PhoneAuthCredential credential) {
+        updatePhoneNumber(credential);
+        toReturn = true;
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print(e.message);
+        toReturn = false;
+      },
+      codeSent: (String verificationId, int? forceResendingToken) {
+        Get.defaultDialog(
+          title: "Verification Code",
+          content: Column(
+            children: [
+              TextField(
+                onChanged: (value) {
+                  updatePhoneNumber(
+                    PhoneAuthProvider.credential(
+                      verificationId: verificationId,
+                      smsCode: value,
+                    ),
+                  );
+                },
+              ),
+            ]
+          )
+        );
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        toReturn = false;
+      },
+      timeout: const Duration(seconds: 60),
+    );
+    return toReturn;
+  }
+
+  void updatePhoneNumber(PhoneAuthCredential phoneCredential) {
+    _auth.currentUser?.updatePhoneNumber(phoneCredential);
+  }
+
   @override
   void onInit() async {
     firebaseUser.bindStream(_auth.authStateChanges());

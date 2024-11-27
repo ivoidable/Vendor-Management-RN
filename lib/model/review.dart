@@ -30,7 +30,6 @@ class Review {
   }
 
   factory Review.fromMap(Map<String, dynamic> map) {
-    print(map['images_urls']);
     return Review(
       id: map['id'],
       reviewerId: map['reviewer_id'],
