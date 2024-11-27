@@ -9,7 +9,7 @@ import 'package:vendor/model/user.dart';
 
 class AddProductController extends GetxController {
   var productName = ''.obs;
-  var images = <String>[].obs;
+  var images = <String>[];
   RxInt stock = 0.obs;
   RxDouble price = 0.0.obs;
 
@@ -29,14 +29,15 @@ class AddProductController extends GetxController {
     images.remove(index);
   }
 
-  void addProduct(Product product) {
-    Vendor user = Vendor.fromMap(authController.uid, authController.appUser);
-    user.products.add(product);
-    DatabaseService().uploadProductImage(
+  void addProduct(Product product) async {
+    String imageUrl = await DatabaseService().uploadProductImage(
       selectedImage.value!,
       authController.uid,
       product.productName,
     );
-    DatabaseService().updateUser(authController.uid, user.toMap());
+    product.images.clear();
+    product.images.add(imageUrl);
+    print(product.images);
+    DatabaseService().addProduct(authController.uid, product);
   }
 }

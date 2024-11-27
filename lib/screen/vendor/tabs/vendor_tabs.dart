@@ -42,8 +42,9 @@ class VendorEventsTab extends StatelessWidget {
                         images: event.images,
                         vendors: event.registeredVendorsId.length,
                         maxVendors: event.maxVendors,
-                        onClick: () {
-                          Get.to(VendorViewEventScreen(event: event));
+                        onClick: () async {
+                          var res = await DatabaseService().getApplication(authController.uid, event.id);
+                          Get.to(VendorViewEventScreen(event: event, app: res));
                         },
                       );
                     },
@@ -258,6 +259,12 @@ class VendorEventHistoryScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           } else {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!snapshot.hasData) return const Center(child: Text("No Events"));
             List<Event> events = snapshot.data!;
             return Padding(
               padding: const EdgeInsets.all(12.0),

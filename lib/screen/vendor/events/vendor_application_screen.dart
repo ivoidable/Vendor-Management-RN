@@ -48,7 +48,7 @@ class VendorApplicationScreen extends StatelessWidget {
   Widget _buildSubmitButton() => ElevatedButton(
         onPressed: () async {
           Application application = Application(
-            id: '',
+            id: authController.uid,
             vendorId: authController.uid,
             eventId: event.id,
             vendor: Vendor.fromMap(authController.uid, authController.appUser),
@@ -60,6 +60,7 @@ class VendorApplicationScreen extends StatelessWidget {
             event.id,
             application,
           );
+          print(result);
           if (result == false) {
             Get.snackbar('Error', 'Can not apply more than once');
           } else {

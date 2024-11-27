@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vendor/controller/vendor/view_event_controller.dart';
 import 'package:vendor/helper/database.dart';
@@ -13,12 +12,13 @@ import 'package:vendor/screen/vendor/organizer/view_organizer_screen.dart';
 
 class VendorViewEventScreen extends StatelessWidget {
   final Event event;
+  final Application? app;
 
-  VendorViewEventScreen({required this.event});
+  VendorViewEventScreen({required this.event, required this.app});
 
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(ViewEventController());
+    var controller = Get.put(ViewEventController(Rx<Event>(event), app));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
@@ -31,8 +31,8 @@ class VendorViewEventScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           } else {
-            controller.event = snapshot.data.obs;
-            if (controller.event != null && controller.event!.value != null) {
+            controller.event = snapshot.data!.obs;
+            if (controller.event != null && controller.event.value != null) {
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -44,7 +44,7 @@ class VendorViewEventScreen extends StatelessWidget {
                       child: CarouselView(
                         itemExtent: 150,
                         children: [
-                          for (var image in controller.event!.value!.images)
+                          for (var image in controller.event.value.images)
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Image.network(
@@ -58,13 +58,13 @@ class VendorViewEventScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      controller.event!.value!.name,
+                      controller.event.value.name,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      controller.event!.value!.description,
+                      controller.event.value.description,
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
@@ -81,7 +81,7 @@ class VendorViewEventScreen extends StatelessWidget {
                         ));
                       },
                       child: Text(
-                        'Organized by ${controller.event!.value!.name}',
+                        'Organized by ${controller.event.value.organizerName}',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
@@ -90,12 +90,12 @@ class VendorViewEventScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Vendor Fee: \$${controller.event!.value!.vendorFee.toStringAsFixed(2)}',
+                          'Vendor Fee: \$${controller.event.value.vendorFee.toStringAsFixed(2)}',
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         Text(
-                          'User Fee: \$${controller.event!.value!.attendeeFee.toStringAsFixed(2)}',
+                          'User Fee: \$${controller.event.value.attendeeFee.toStringAsFixed(2)}',
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
@@ -103,27 +103,29 @@ class VendorViewEventScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '${controller.event!.value!.appliedVendorsId.length.toString()}/${controller.event!.value!.maxVendors.toString()} vendors applied',
+                      '${controller.event.value.appliedVendorsId.length.toString()}/${controller.event.value.maxVendors.toString()} vendors applied',
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Starts on ${DateFormat.yMMMMd().add_jm().format(controller.event!.value!.startDate)}',
+                      'Starts on ${DateFormat.yMMMMd().add_jm().format(controller.event.value.startDate)}',
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      'Ends on ${DateFormat.yMMMMd().add_jm().format(controller.event!.value!.endDate)}',
+                      'Ends on ${DateFormat.yMMMMd().add_jm().format(controller.event.value.endDate)}',
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w400),
                     ),
                     const SizedBox(height: 16),
-                    buildApplyWidget(controller.event!.value!),
+                    Obx(() {
+                    return buildApplyWidget(controller);
+                    } ),
                     TextButton(
                       onPressed: () {
-                        //TODO: Launch Google Maps with url
-                        launchUrlString(controller.event!.value!.location);
+                        //TODO: Launch Google Maps with url with latlng
+                        launchUrlString('');
                       },
                       child: Text("Location", style: TextStyle(fontSize: 16)),
                     ),
@@ -147,19 +149,23 @@ class VendorViewEventScreen extends StatelessWidget {
     );
   }
 
-  Widget buildApplyWidget(Event data) {
+  Widget buildApplyWidget(ViewEventController controller) {
     var status = "";
     Color color = Colors.green;
-    if (data.appliedVendorsId.contains(authController.uid)) {
+    if (controller.application == null) {
+      status = "";
+      color = Colors.green;
+    } else if (controller.application!.approved.approved == null) {
       status = "Waiting for confirmation";
       color = Colors.amber;
-    } else if (data.registeredVendorsId.contains(authController.uid)) {
+    } else if (controller.application!.approved.approved == true) {
       status = "Your application has been accepted";
       color = Colors.green;
-    } else if (data.declinedVendorsId.contains(authController.uid)) {
+    } else if (controller.application!.approved.approved == false) {
       status = "Your application has been declined";
       color = Colors.red;
-    } else if (data.appliedVendorsId.length >= data.maxVendors) {
+    } else if (controller.event.value.registeredVendorsId.length >=
+        controller.event.value.maxVendors) {
       status = "This event is full";
       color = Colors.red;
     }

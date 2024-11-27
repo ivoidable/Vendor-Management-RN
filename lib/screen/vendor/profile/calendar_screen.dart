@@ -5,13 +5,29 @@ import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
 
 class VendorCalendarScreen extends StatelessWidget {
-  VendorCalendarScreen();
+  List<Appointment> appointments = [];
+
+  VendorCalendarScreen({super.key});
+
+  Future<List<Event>> sheeshManWtf() async {
+    var events = await DatabaseService().getAllEventsVendor();
+    for (var event in events) {
+      // Get days between start date and end date
+      int days = event.endDate.difference(event.startDate).inDays + 1;
+      appointments.add(Appointment(
+          startTime: event.startDate,
+          endTime: event.endDate,
+          subject: event.name,
+          color: Colors.green));
+    }
+    return events;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: DatabaseService().getAllRegisteredEvents(authController.uid),
+        future: sheeshManWtf(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -20,7 +36,7 @@ class VendorCalendarScreen extends StatelessWidget {
           } else {
             return SfCalendar(
               view: CalendarView.month,
-              dataSource: MeetingDataSource(snapshot.data ?? []),
+              dataSource: MeetingDataSource(appointments),
               // by default the month appointment display mode set as Indicator, we can
               // change the display mode as appointment using the appointment display
               // mode property
@@ -38,32 +54,7 @@ class VendorCalendarScreen extends StatelessWidget {
 class MeetingDataSource extends CalendarDataSource {
   /// Creates a meeting data source, which used to set the appointment
   /// collection to the calendar
-  MeetingDataSource(List<Event> source) {
+  MeetingDataSource(List<Appointment> source) {
     appointments = source;
-  }
-
-  @override
-  DateTime getStartTime(int index) {
-    return _getMeetingData(index).startDate;
-  }
-
-  @override
-  DateTime getEndTime(int index) {
-    return _getMeetingData(index).endDate;
-  }
-
-  @override
-  String getName(int index) {
-    return _getMeetingData(index).name;
-  }
-
-  Event _getMeetingData(int index) {
-    final dynamic meeting = appointments![index];
-    late final Event meetingData;
-    if (meeting is Event) {
-      meetingData = meeting;
-    }
-
-    return meetingData;
   }
 }

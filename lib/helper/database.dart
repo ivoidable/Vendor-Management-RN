@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vendor/main.dart';
 import 'package:vendor/model/event.dart';
+import 'package:vendor/model/product.dart';
 import 'package:vendor/model/review.dart';
 import 'package:vendor/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -62,11 +63,26 @@ class DatabaseService {
     }
   }
 
-  void createEvent(Event event) {
-    var doc = _db.collection('events').doc();
-    event.id = doc.id;
-    print(event.images);
-    doc.set(event.toMap());
+  Future<bool> createEvent(Event event, List<String> images) async {
+    try {
+      var doc = _db.collection('events').doc();
+      event.id = doc.id;
+      for (int i = 0; i < images.length; i++) {
+                            var result = await DatabaseService()
+                                .uploadEventImageAndGetUrl(
+                                    XFile(images[i]),
+                                    doc.id, i.toString(),);
+
+                            if (result != null) {
+                              event.images.add(result);
+                            }
+                          }
+      doc.set(event.toMap());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   Stream<Event?> getRegisteredVendorsStream(String eventId) {
@@ -80,12 +96,8 @@ class DatabaseService {
   Future<String?> uploadReviewImageAndGetUrl(
       XFile imageFile, String reviewId) async {
     try {
-      // Get the file extension from the XFile's mime type
-      String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
-
-      // Create a reference to the Firebase Storage location
       final storageRef =
-          FirebaseStorage.instance.ref().child('$reviewId/image.$extension');
+          FirebaseStorage.instance.ref().child('$reviewId/image');
       await storageRef.putFile(File(imageFile.path));
 
       print("File uploaded successfully!");
@@ -96,8 +108,7 @@ class DatabaseService {
     }
   }
 
-  void reviewOrganizer(
-      String eventId, Review review, String organizerId, XFile image) async {
+  void reviewOrganizer(Review review, String organizerId, XFile image) async {
     // Add the review to the organizer's reviews collection
     var doc =
         _db.collection('users').doc(organizerId).collection('reviews').doc();
@@ -170,23 +181,21 @@ class DatabaseService {
     }
   }
 
-  Future<void> uploadProductImage(
+  Future<String> uploadProductImage(
       XFile imageFile, String userId, String productId) async {
     try {
-      // Get the file extension from the XFile's mime type
-      String extension = imageFile.mimeType?.split('/').last ?? 'jpg';
-
-      // Create a reference to the Firebase Storage location
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('$userId/products/$productId.$extension');
+          .child('$userId/products/$productId');
 
       // Upload the file
       await storageRef.putFile(File(imageFile.path));
 
       print("File uploaded successfully!");
+      return storageRef.getDownloadURL();
     } catch (e) {
       print("Error uploading file: $e");
+      return "";
     }
   }
 
@@ -232,11 +241,11 @@ class DatabaseService {
   }
 
   Future<String?> uploadEventImageAndGetUrl(
-      XFile imageFile, String eventId) async {
+      XFile imageFile, String eventId, String id) async {
     try {
       // Create a reference to the Firebase Storage location
       final storageRef =
-          FirebaseStorage.instance.ref('events/').child('$eventId/');
+          FirebaseStorage.instance.ref('events/$eventId/').child(id);
 
       // Upload the file
       await storageRef.putFile(File(imageFile.path));
@@ -265,6 +274,20 @@ class DatabaseService {
       print("Error listing logo URLs: $e");
     }
     return fileUrls;
+  }
+
+  Future<Application?> getApplication(String uid, String eventId) async {
+    var doc = await _db
+        .collection('events')
+        .doc(eventId)
+        .collection('applications')
+        .doc(uid)
+        .get();
+    if (doc.exists) {
+      return Application.fromMap(doc.id, doc.data()!);
+    } else {
+      return null;
+    }
   }
 
   Future<List<Application>> getApplications(String id) async {
@@ -300,33 +323,38 @@ class DatabaseService {
     return applis;
   }
 
+  Future<int> getAppliedVendorsCount(String eventId) async {
+    var count = await _db
+        .collection('events')
+        .doc(eventId)
+        .collection('applications').count().get();
+    return count.count ?? 0;
+  }
+
   Future<bool> applyForEvent(String eventId, Application application) async {
     // Check if not applied already
-    var eventDoc = await _db.collection('events').doc(eventId).get();
-    var event =
-        Event.fromMap(eventDoc.id, eventDoc.data() as Map<String, dynamic>);
-    if (event.appliedVendorsId.contains(application.vendorId) ||
-        event.declinedVendorsId.contains(application.vendorId) ||
-        event.startDate.isBefore(DateTime.now())) {
+    var appDoc = await _db.collection('events').doc(eventId).collection('applications').doc(application.id).get();
+    if (appDoc.exists) {
       return false;
     } else {
       var doc = _db
           .collection('events')
           .doc(eventId)
           .collection('applications')
-          .doc();
-      application.id = doc.id;
+          .doc(application.id);
       doc.set(application.toMap());
-      event.appliedVendorsId.add(application.vendorId);
-      _db.collection('events').doc(eventId).update(event.toMap());
       return true;
     }
   }
 
-  void addProduct(Vendor user) {
-    var doc = _db.collection('users').doc();
-    user.id = doc.id;
-    doc.update(user.toMap());
+  void addProduct(String uid, Product product) {
+    getUser(uid).then((user) {
+      if (user != null) {
+        var vend = Vendor.fromMap(uid, user.data()!);
+        vend.products.add(product);
+        updateUser(uid, vend.toMap());
+      }
+    });
   }
 
   void removeProduct(String uid, String productName) {

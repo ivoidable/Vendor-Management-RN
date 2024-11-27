@@ -80,7 +80,7 @@ class AddProductScreen extends StatelessWidget {
                           var prod = Product(
                             vendorId: authController.uid,
                             productName: controller.productName.value,
-                            images: controller.images.value,
+                            images: controller.images,
                             stock: controller.stock.value,
                             price: controller.price.value,
                           );

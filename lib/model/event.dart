@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vendor/model/user.dart';
 
@@ -97,6 +98,7 @@ class Question {
 class Event {
   String id;
   String organizerId;
+  String organizerName;
   String name;
   DateTime startDate;
   DateTime endDate;
@@ -114,12 +116,17 @@ class Event {
   List<String> declinedVendorsId;
   CollectionReference? applicationsCollection; // Nullable
   List<String> images;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
 
   Event({
     required this.id,
     required this.name,
+    required this.organizerName,
     required this.startDate,
     required this.endDate,
+    required this.startTime,
+    required this.endTime,
     required this.organizerId,
     required this.vendorFee,
     required this.attendeeFee,
@@ -156,8 +163,17 @@ class Event {
     return Event(
       id: id,
       name: data['name'] ?? '',
+      organizerName: data['organizer_name'] ?? '',
       startDate: (data['start_date'] as Timestamp).toDate(),
       endDate: (data['end_date'] as Timestamp).toDate(),
+      startTime: TimeOfDay(
+        hour: data['start_time']['hour'],
+        minute: data['start_time']['minute'],
+      ),
+      endTime: TimeOfDay(
+        hour: data['end_time']['hour'],
+        minute: data['end_time']['minute'],
+      ),
       location: data['location'] ?? '',
       maxVendors: data['max_vendors'] ?? 0,
       tags: tags,
@@ -183,8 +199,17 @@ class Event {
     return {
       'id': id,
       'name': name,
+      'organizer_name': organizerName,
       'start_date': Timestamp.fromDate(startDate),
       'end_date': Timestamp.fromDate(endDate),
+      'start_time': {
+        'hour' : startTime.hour,
+        'minute' : startTime.minute,
+      },
+      'end_time': {
+        'hour' : endTime.hour,
+        'minute' : endTime.minute,
+      },
       'location': location,
       'description': description,
       'images': images.toList(),

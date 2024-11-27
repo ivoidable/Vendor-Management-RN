@@ -46,7 +46,6 @@ class ViewOrganizerController extends GetxController {
   void submitData() {
     if (textInput.isNotEmpty && image.value != null) {
       DatabaseService().reviewOrganizer(
-        eventId,
         Review(
           id: '',
           reviewerId: authController.uid,

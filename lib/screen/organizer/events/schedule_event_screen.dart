@@ -14,14 +14,21 @@ import 'package:vendor/model/event.dart';
 
 class MapController extends GetxController {
   var mapCenter =
-      const LatLng(37.7749, -122.4194).obs; // Default to San Francisco
+      const LatLng(24.774265, 46.738586).obs; // Default to Riyadh
   var markers = <Marker>[].obs;
+
+  void addMarker(LatLng point) {
+    markers.clear();
+    markers.add(
+      Marker(point: point, child: const Icon(Icons.location_pin, color: Colors.red, size: 40),)
+    );
+  }
 
   Future<void> searchLocation(String query) async {
     try {
       final searchRequest = SearchRequest(
         query: query,
-        limit: 3,
+        limit: 5,
         addressDetails: true,
         extraTags: true,
         nameDetails: true,
@@ -52,7 +59,7 @@ class MapController extends GetxController {
   Future<List<String>> getSuggestions(String query) async {
     final searchRequest = SearchRequest(
       query: query,
-      limit: 3,
+      limit: 5,
       addressDetails: true,
       extraTags: true,
       nameDetails: true,
@@ -68,17 +75,14 @@ class MapController extends GetxController {
 class ScheduleEventScreen extends StatelessWidget {
   ScheduleEventScreen({super.key});
 
-  final CreateEventController controller = Get.put(CreateEventController());
+  final CreateEventController controller = CreateEventController();
   final TextEditingController searchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Remove This on release
     MapController mapController = Get.put(MapController());
-    controller.images.add(
-        'https://firebasestorage.googleapis.com/v0/b/vendorevents-d3e6c.appspot.com/o/event_sample.jpg?alt=media&token=7c6dfe6a-c720-4797-bc52-2e301bfec13a');
-    return Scaffold(
+        return Scaffold(
       appBar: AppBar(
         title: Text(
           "Schedule Event",
@@ -137,11 +141,16 @@ class ScheduleEventScreen extends StatelessWidget {
                     _buildMap(mapController),
                   ],
                 ),
-                chipSelec(),
-                _buildStartDatePicker(context),
-                controller.selectedChip.value == 1
-                    ? _buildEndDatePicker(context)
-                    : Container(),
+                Obx(() {
+                  return Column(children: [
+                    chipSelec(),
+                  _buildStartDatePicker(context),
+                  controller.selectedChip.value == 1
+                      ? _buildEndDatePicker(context)
+                      : Container(),
+                    _buildTimeofDay(context)
+                    ],);
+                }),
                 const SizedBox(
                   height: 12,
                 ),
@@ -234,7 +243,6 @@ class ScheduleEventScreen extends StatelessWidget {
                         foregroundColor: Colors.blueGrey[700],
                       ),
                       onPressed: () async {
-                        print('Tried to create event');
                         if (_formKey.currentState!.validate()) {
                           String uid = authController.uid;
                           List<Question> questions = controller.questions.value
@@ -243,16 +251,13 @@ class ScheduleEventScreen extends StatelessWidget {
                                 question: questionController.text, answer: '');
                           }).toList();
 
-                          // if (controller.selectedImage.value != null) {
-                          //   var result = await DatabaseService()
-                          //       .uploadEventImageAndGetUrl(
-                          //           XFile(controller.selectedImage.value!.path),
-                          //           uid);
+                          if (mapController.markers.length == 0) {
+                            Get.snackbar('Failed', 'Please choose event location',
+                              backgroundColor: Colors.red[300]);
+                            return;
+                          }
 
-                          //   if (result != null) {
-                          //     controller.images.value.add(result);
-                          //   }
-                          // }
+                          
 
                           // DatabaseService().sendNotification(
                           //   [authController.appUser['fcm_token']],
@@ -263,9 +268,12 @@ class ScheduleEventScreen extends StatelessWidget {
                           Event event = Event(
                             id: '',
                             organizerId: uid,
+                            organizerName: authController.appUser['name'],
                             name: controller.name.value,
                             startDate: controller.startDate.value,
                             endDate: controller.endDate.value,
+                            startTime: controller.startTime.value,
+                            endTime: controller.endTime.value,
                             latlng: mapController.markers[0].point,
                             vendorFee: controller.vendorFee.value,
                             attendeeFee: controller.userFee.value,
@@ -280,18 +288,25 @@ class ScheduleEventScreen extends StatelessWidget {
                                       .firstWhere((act) => act.name == tag),
                                 )
                                 .toList(),
-                            images: controller.images,
+                            
+                            images: [],
                             location: '',
                             appliedVendorsId: [],
                             registeredVendorsId: [],
                             declinedVendorsId: [],
                             questions: questions,
                           );
-                          DatabaseService().createEvent(event);
-                          controller.dispose();
+                          var res = await DatabaseService().createEvent(event, controller.images.value);
+                          if (res) {
+                            controller.dispose();
                           Get.back();
                           Get.snackbar('Success', 'Event Has Been Scheduled',
                               backgroundColor: Colors.lightGreen);
+                          } else {
+                            Get.snackbar('Failed', 'Failed To Schedule Event',
+                                backgroundColor: Colors.red[300]);
+                          }
+                          
                         }
                       },
                       child: const Text('Create Event'),
@@ -358,6 +373,7 @@ class ScheduleEventScreen extends StatelessWidget {
           options: MapOptions(
             initialCenter: mapController.mapCenter.value,
             initialZoom: 13.0,
+            onTap: (tapPosition, point) => mapController.addMarker(point),
           ),
           children: [
             TileLayer(
@@ -440,30 +456,58 @@ class ScheduleEventScreen extends StatelessWidget {
   }
 
   Widget _buildStartDatePicker(BuildContext context) {
-    return Obx(() {
       return ListTile(
         title: Text(
-          'Event Start Date: ${controller.startDate.value.toLocal().toIso8601String()}'
+          'Event Start Date: ${controller.startDate.value.toLocal().toIso8601String() + "at" + controller.startDate.value.toLocal().toIso8601String().split('T')[1].split('.')[0]}'
               .split('T')[0],
         ),
         trailing: const Icon(Icons.calendar_today),
         onTap: () async {
+          
+          // var picked = await showDateRangePicker(context: context, firstDate: DateTime.now(), lastDate: DateTime(DateTime.now().year + 1));
+
           DateTime? picked = await showDatePicker(
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime.now(),
-            lastDate: DateTime(DateTime.now().year + 3),
+            lastDate: DateTime(DateTime.now().year + 1),
           );
           if (picked != null) {
             controller.setStartDate(picked);
           }
         },
       );
-    });
+  }
+
+  Widget _buildTimeofDay(BuildContext context) {
+      return ListTile(
+        title: Obx(
+          () => Text(
+            'Event Duration: ${(controller.startTime.value.hour > 12 ? controller.startTime.value.hour - 12 : controller.startTime.value.hour).toString().padLeft(2, '0')}:${controller.startTime.value.minute.toString().padLeft(2, '0')} - ${(controller.endTime.value.hour > 12 ? controller.endTime.value.hour - 12 : controller.endTime.value.hour).toString().padLeft(2, '0')}:${controller.endTime.value.minute.toString().padLeft(2, '0')}',
+          ),
+        ),
+        trailing: const Icon(Icons.schedule),
+        onTap: () async {
+          TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.now(),
+          );
+          if (pickedTime == null) {
+            return;
+          }
+
+          TimeOfDay? pickedEndTime = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay(hour: pickedTime.hour > 12 ? pickedTime.hour - 12 : pickedTime.hour, minute: pickedTime.minute),
+          );
+          if (pickedEndTime != null) {
+            controller.setStartTime(pickedTime, pickedEndTime);
+          }
+        },
+      );
   }
 
   Widget _buildEndDatePicker(BuildContext context) {
-    return Obx(() {
       return ListTile(
         title: Text(
           'Event End Date: ${controller.endDate.value.toLocal().toIso8601String()}'
@@ -482,10 +526,10 @@ class ScheduleEventScreen extends StatelessWidget {
           }
         },
       );
-    });
   }
 
   // Widget _buildMaxVendorsSlider() {
+
 
   Widget chipSelec() {
     final List<String> options = ['One Day', 'Multiple Day'];

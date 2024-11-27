@@ -11,8 +11,11 @@ class CreateEventController extends GetxController {
   var userFee = 0.0.obs;
   var startDate = DateTime.now().obs;
   var endDate = DateTime.now().add(const Duration(days: 1)).obs;
+  var startTime = TimeOfDay.now().obs;
+  var endTime = TimeOfDay.now().obs;
   var maxVendors = 0.obs;
   var images = <String>[].obs;
+  var imagesUrls = <String>[].obs;
   var applications = <String>[].obs;
 
   var isVendor = false.obs;
@@ -22,7 +25,6 @@ class CreateEventController extends GetxController {
   }
 
   final ImagePicker _picker = ImagePicker();
-  var selectedImage = Rx<File?>(null); // Reactive variable
 
   var availableTags = Activity.values.map((str) => str.name).toList().obs;
   var selectedTags = <String>[].obs;
@@ -36,6 +38,7 @@ class CreateEventController extends GetxController {
   }
 
   // Method to pick an image from gallery or camera
+
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(source: source);
     print(image);
@@ -43,6 +46,12 @@ class CreateEventController extends GetxController {
       print(image.path);
       images.value.add(image.path);
     }
+  }
+
+  void setStartTime(TimeOfDay pickedTime, TimeOfDay endTimes) {
+    startTime.value = pickedTime;
+    endTime.value = endTimes;
+    update();
   }
 
   // Method to clear the selected image
