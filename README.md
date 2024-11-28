@@ -9,5 +9,4 @@
 - Arabic, English
 - Design
 
-
-- Immediate Confirmation Notice
+- Immediate Confirmation Notice by streams
