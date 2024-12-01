@@ -21,7 +21,7 @@ class VendorViewEventScreen extends StatelessWidget {
     var controller = Get.put(ViewEventController(Rx<Event>(event), app));
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         centerTitle: true,
         title: Text('Event: ${event.name}'),
       ),
@@ -155,7 +155,7 @@ class VendorViewEventScreen extends StatelessWidget {
       color = Colors.green;
     } else if (controller.application!.approved.approved == null) {
       status = "Waiting for confirmation";
-      color = Colors.amber;
+      color = Get.theme.colorScheme.primary;
     } else if (controller.application!.approved.approved == true) {
       status = "Your application has been accepted";
       color = Colors.green;
@@ -174,7 +174,7 @@ class VendorViewEventScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               minimumSize: Size(Get.width / 2.5, Get.height * 0.05),
-              backgroundColor: Colors.amber,
+              backgroundColor: Get.theme.colorScheme.primary,
               foregroundColor: Colors.blueGrey[700],
             ),
             child: Text('Apply'),

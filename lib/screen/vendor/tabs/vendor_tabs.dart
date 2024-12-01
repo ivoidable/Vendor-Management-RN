@@ -163,7 +163,7 @@ class VendorProfileTab extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     minimumSize: Size(Get.width / 2, Get.height * 0.05),
-                    backgroundColor: Colors.amber,
+                    backgroundColor: Get.theme.colorScheme.primary,
                     foregroundColor: Colors.blueGrey[700],
                   ),
                   onPressed: () {
@@ -250,7 +250,7 @@ class VendorEventHistoryScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Event History'),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: FutureBuilder(
         future:

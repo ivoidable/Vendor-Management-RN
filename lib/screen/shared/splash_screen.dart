@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -8,7 +9,7 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
         body: Expanded(
       child: Container(
-        color: Colors.amber,
+        color: Get.theme.colorScheme.primary,
       ),
     ));
   }

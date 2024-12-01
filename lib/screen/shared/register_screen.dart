@@ -139,7 +139,7 @@ class ChipSelector extends StatelessWidget {
               onSelected: (bool isSelected) {
                 if (isSelected) controller.selectChip(index);
               },
-              selectedColor: Colors.amber,
+              selectedColor: Get.theme.colorScheme.primary,
               backgroundColor: Colors.grey.shade200,
               labelStyle: TextStyle(
                 color: controller.selectedChip.value == index

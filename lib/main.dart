@@ -125,8 +125,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       defaultTransition: Transition.cupertino,
-      title: "Vendor Management App",
+      title: "Saudi Events",
       initialRoute: '/login',
+      theme: ThemeData(
+        useMaterial3: true,
+        buttonTheme: ButtonThemeData(
+          padding: const EdgeInsets.all(12),
+          buttonColor: Get.theme.colorScheme.primary,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Get.theme.colorScheme.primary,
+          centerTitle: true,
+          elevation: 0,
+          titleTextStyle: Get.textTheme.titleLarge!.copyWith(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        dividerColor: Get.theme.colorScheme.primary,
+        colorScheme: ColorScheme(brightness: Brightness.light, primary: Colors.pink, onPrimary: Colors.pinkAccent, secondary: Colors.cyan, onSecondary: Colors.cyanAccent, error: Colors.red, onError: Colors.redAccent, surface: Colors.white, onSurface: Colors.white),
+      ),
+      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
       getPages: [
         GetPage(name: '/splash', page: () => SplashScreen()),
         GetPage(name: '/login', page: () => LoginScreen()),
@@ -139,12 +160,15 @@ class MyApp extends StatelessWidget {
           page: () => VendorMainScreen(),
         ),
         GetPage(
+          name: '/user_main',
+          middlewares: [AuthMiddleware('attendee')],
+          page: () => VendorMainScreen(),
+        ),
+        GetPage(
           name: '/organizer_main',
           middlewares: [AuthMiddleware('organizer')],
           page: () => OrganizerMainScreen(),
         ),
-        // GetPage(name: '/moderator_dashboard', page: () => ModeratorDashboard()),
-        // GetPage(name: '/admin_dashboard', page: () => AdminDashboard()),
       ],
     );
   }

@@ -16,7 +16,7 @@ class OrganizerDetailsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         title: Text(controller.organizer.name),
         centerTitle: true,
       ),
@@ -116,7 +116,7 @@ class OrganizerDetailsTab extends StatelessWidget {
                 ),
                 minimumSize: Size(Get.width / 4, Get.height * 0.05),
                 backgroundColor: Colors.blueGrey[700],
-                foregroundColor: Colors.amber,
+                foregroundColor: Get.theme.colorScheme.primary,
               ),
             ),
           ],
@@ -134,7 +134,7 @@ class OrganizerDetailsTab extends StatelessWidget {
             icon: Icon(
               Icons.star,
               color:
-                  index < controller.rating.value ? Colors.amber : Colors.grey,
+                  index < controller.rating.value ? Get.theme.colorScheme.primary : Colors.grey,
             ),
             onPressed: () {
               controller.updateRating(index + 1);
@@ -154,7 +154,7 @@ class OrganizerEventsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         title: Text(controller.organizer.name),
         centerTitle: true,
       ),
@@ -173,7 +173,7 @@ class OrganizerFeedbackTab extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registered Vendors'),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: FutureBuilder(
         future: DatabaseService().getOrganizerFeedback(controller.organizer.id),
@@ -258,7 +258,7 @@ class ReviewWidget extends StatelessWidget {
                             return Icon(
                               Icons.star,
                               color: index < review.rating
-                                  ? Colors.amber
+                                  ? Get.theme.colorScheme.primary
                                   : Colors.grey,
                               size: 18,
                             );

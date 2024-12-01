@@ -18,7 +18,7 @@ class EditProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         title: const Text('Edit Vendor Profile'),
       ),
       body: Padding(
@@ -83,7 +83,7 @@ class EditProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 minimumSize: Size(Get.width / 2, Get.height * 0.05),
-                backgroundColor: Colors.amber,
+                backgroundColor: Get.theme.colorScheme.primary,
                 foregroundColor: Colors.blueGrey[700],
               ),
               onPressed: () {

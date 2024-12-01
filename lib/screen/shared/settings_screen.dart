@@ -28,7 +28,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: Center(
         child: Container(

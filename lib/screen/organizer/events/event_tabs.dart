@@ -24,7 +24,7 @@ class ViewEventDetailsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         centerTitle: true,
         title: Text('Event: ${event.name}'),
         actions: [
@@ -272,7 +272,7 @@ class EditEventScreen extends StatelessWidget {
           style: TextStyle(color: Colors.blueGrey[700]),
         ),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -359,10 +359,10 @@ class EditEventScreen extends StatelessWidget {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: 'Enter your question',
-                                  focusColor: Colors.amber,
+                                  focusColor: Get.theme.colorScheme.primary,
                                   labelStyle:
                                       const TextStyle(color: Colors.blueGrey),
-                                  iconColor: Colors.amber,
+                                  iconColor: Get.theme.colorScheme.primary,
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: const BorderSide(
@@ -371,8 +371,8 @@ class EditEventScreen extends StatelessWidget {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                      color: Colors.amber,
+                                    borderSide: BorderSide(
+                                      color: Get.theme.colorScheme.primary,
                                       width: 3,
                                     ),
                                   ),
@@ -410,7 +410,7 @@ class EditEventScreen extends StatelessWidget {
                         ),
                         minimumSize: Size(Get.width / 2, Get.height * 0.05),
                         backgroundColor: Colors.blueGrey[700],
-                        foregroundColor: Colors.amber,
+                        foregroundColor: Get.theme.colorScheme.primary,
                       ),
                       onPressed: controller.addQuestion,
                       icon: const Icon(Icons.add),
@@ -430,7 +430,7 @@ class EditEventScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         minimumSize: Size(Get.width / 2, Get.height * 0.05),
-                        backgroundColor: Colors.amber,
+                        backgroundColor: Get.theme.colorScheme.primary,
                         foregroundColor: Colors.blueGrey[700],
                       ),
                       onPressed: () async {
@@ -488,13 +488,13 @@ class EditEventScreen extends StatelessWidget {
       textFieldConfiguration: TextFieldConfiguration(
         decoration: InputDecoration(
           labelText: 'Search Location...',
-          focusColor: Colors.amber,
+          focusColor: Get.theme.colorScheme.primary,
           labelStyle: const TextStyle(color: Colors.blueGrey),
-          iconColor: Colors.amber,
+          iconColor: Get.theme.colorScheme.primary,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.amber,
+            borderSide: BorderSide(
+              color: Get.theme.colorScheme.primary,
               width: 3,
             ),
           ),
@@ -559,13 +559,13 @@ class EditEventScreen extends StatelessWidget {
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          focusColor: Colors.amber,
+          focusColor: Get.theme.colorScheme.primary,
           labelStyle: const TextStyle(color: Colors.blueGrey),
-          iconColor: Colors.amber,
+          iconColor: Get.theme.colorScheme.primary,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.amber,
+            borderSide: BorderSide(
+              color: Get.theme.colorScheme.primary,
               width: 3,
             ),
           ),
@@ -683,7 +683,7 @@ class EditEventScreen extends StatelessWidget {
               onSelected: (bool isSelected) {
                 if (isSelected) controller.selectChip(index);
               },
-              selectedColor: Colors.amber,
+              selectedColor: Get.theme.colorScheme.primary,
               backgroundColor: Colors.grey.shade200,
               labelStyle: TextStyle(
                 color: controller.selectedChip.value == index
@@ -712,7 +712,7 @@ class EditEventScreen extends StatelessWidget {
               onSelected: (bool isSelected) {
                 if (isSelected) controller.selectPub(index);
               },
-              selectedColor: Colors.amber,
+              selectedColor: Get.theme.colorScheme.primary,
               backgroundColor: Colors.grey.shade200,
               labelStyle: TextStyle(
                 color: controller.event.value.publicity.index == index
@@ -816,7 +816,7 @@ class ViewApplicationsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Applications'),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       //TODO: FUCKING OPTIMIZE THIS SHIT MF
       body: FutureBuilder(
@@ -900,7 +900,7 @@ class ViewRegisteredVendorsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registered Vendors'),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: FutureBuilder(
         future: DatabaseService().getRegisteredVendorsQuery(event.id),

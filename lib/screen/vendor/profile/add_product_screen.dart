@@ -18,7 +18,7 @@ class AddProductScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Add Product"),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -72,7 +72,7 @@ class AddProductScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         minimumSize: Size(Get.width / 2, Get.height * 0.05),
-                        backgroundColor: Colors.amber,
+                        backgroundColor: Get.theme.colorScheme.primary,
                         foregroundColor: Colors.blueGrey[700],
                       ),
                       onPressed: () {
@@ -117,7 +117,7 @@ class AddProductScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               minimumSize: Size(Get.width / 2, Get.height * 0.05),
-              backgroundColor: Colors.amber,
+              backgroundColor: Get.theme.colorScheme.primary,
               foregroundColor: Colors.blueGrey[700],
             ),
             onPressed: () => controller.pickImage(ImageSource.gallery),
@@ -141,13 +141,13 @@ class AddProductScreen extends StatelessWidget {
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          focusColor: Colors.amber,
+          focusColor: Get.theme.colorScheme.primary,
           labelStyle: TextStyle(color: Colors.blueGrey),
-          iconColor: Colors.amber,
+          iconColor: Get.theme.colorScheme.primary,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: Colors.amber,
+              color: Get.theme.colorScheme.primary,
               width: 3,
             ),
           ),

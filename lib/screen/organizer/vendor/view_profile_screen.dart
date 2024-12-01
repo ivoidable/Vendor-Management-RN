@@ -24,7 +24,7 @@ class ViewVendorProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         title: Text(vendor.name),
       ),
       body: Center(

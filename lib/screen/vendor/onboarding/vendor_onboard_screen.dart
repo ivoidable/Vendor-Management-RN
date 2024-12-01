@@ -18,7 +18,7 @@ class VendorOnboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         centerTitle: true,
         title: const Text('Register'),
       ),
@@ -159,7 +159,7 @@ class TagSelector extends StatelessWidget {
 //               onSelected: (bool isSelected) {
 //                 if (isSelected) controller.selectChip(index);
 //               },
-//               selectedColor: Colors.amber,
+//               selectedColor: Get.theme.colorScheme.primary,
 //               backgroundColor: Colors.grey.shade200,
 //               labelStyle: TextStyle(
 //                 color: controller.selectedChip.value == index

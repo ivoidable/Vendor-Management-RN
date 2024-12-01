@@ -25,7 +25,7 @@ class ViewEventScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: GNav(
-        rippleColor: Colors.amber[500]!,
+        rippleColor: Get.theme.colorScheme.primary,
         hoverColor: Colors.grey[100]!,
         gap: 8,
         activeColor: Colors.blueGrey[700]!,

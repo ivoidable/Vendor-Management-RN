@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ViewRegisteredVendorsScreen extends StatelessWidget {
   const ViewRegisteredVendorsScreen({super.key});
@@ -9,7 +10,7 @@ class ViewRegisteredVendorsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registered Vendors'),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
     );
   }

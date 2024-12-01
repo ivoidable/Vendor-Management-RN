@@ -18,7 +18,7 @@ class VendorApplicationScreen extends StatelessWidget {
     controller.setQuestions(event.questions);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
         title: Text('Application'),
         centerTitle: true,
       ),
@@ -74,7 +74,7 @@ class VendorApplicationScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           minimumSize: Size(Get.width / 2, Get.height * 0.05),
-          backgroundColor: Colors.amber,
+          backgroundColor: Get.theme.colorScheme.primary,
           foregroundColor: Colors.blueGrey[700],
         ),
       );

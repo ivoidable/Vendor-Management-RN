@@ -25,7 +25,7 @@ class EventCard extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            color: Colors.amber,
+            color: Get.theme.colorScheme.primary,
           ),
           borderRadius: BorderRadius.circular(12.0),
         ),
@@ -88,8 +88,8 @@ class VendorCard extends StatelessWidget {
       onTap: onClick,
       child: Card(
         shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            color: Colors.amber,
+          side: BorderSide(
+            color: Get.theme.colorScheme.primary,
           ),
           borderRadius: BorderRadius.circular(12.0),
         ),

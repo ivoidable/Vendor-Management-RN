@@ -55,7 +55,7 @@ class OrganizerEventsTab extends StatelessWidget {
             bottom: 10,
             right: 10,
             child: FloatingActionButton(
-              backgroundColor: Colors.amber,
+              backgroundColor: Get.theme.colorScheme.primary,
               foregroundColor: Colors.blueGrey,
               onPressed: () {
                 Get.to(ScheduleEventScreen());
@@ -185,7 +185,7 @@ class OrganizerProfileTab extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     minimumSize: Size(Get.width / 2, Get.height * 0.05),
-                    backgroundColor: Colors.amber,
+                    backgroundColor: Get.theme.colorScheme.primary,
                     foregroundColor: Colors.blueGrey[700],
                   ),
                   onPressed: () {
@@ -214,7 +214,7 @@ class OrganizerEventsHistoryScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Events History"),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        backgroundColor: Get.theme.colorScheme.primary,
       ),
       body: FutureBuilder(
         future:
