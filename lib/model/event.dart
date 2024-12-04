@@ -199,6 +199,22 @@ class Event {
     );
   }
 
+  String getStatus(String uid) {
+    if (registeredVendorsId.length >= maxVendors) {
+      return 'Full';
+    } else if (appliedVendorsId.contains(organizerId)) {
+      return 'Organizer';
+    } else if (appliedVendorsId.contains(uid)) {
+      return 'Applied';
+    } else if (registeredVendorsId.contains(uid)) {
+        return 'Accepted';
+    } else if (startDate.isBefore(DateTime.now())) {
+      return 'Closed';
+    } else {
+      return 'Open';
+    }
+  }
+
   // Convert Event object to Map for Firestore
   Map<String, dynamic> toMap() {
     return {

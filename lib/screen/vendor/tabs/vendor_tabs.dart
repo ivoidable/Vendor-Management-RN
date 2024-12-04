@@ -38,11 +38,8 @@ class VendorEventsTab extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final event = mainController.events[index];
                       return EventCard(
-                        name: event.name,
-                        images: event.images,
-                        vendors: event.registeredVendorsId.length,
-                        maxVendors: event.maxVendors,
-                        onClick: () async {
+                        event: event,
+                        onTap: () async {
                           var res = await DatabaseService().getApplication(authController.uid, event.id);
                           Get.to(VendorViewEventScreen(event: event, app: res));
                         },
@@ -82,15 +79,7 @@ class VendorVendorsTab extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     itemCount: mainController.vendors.length,
                     itemBuilder: (context, index) {
-                      return VendorCard(
-                        vendor: vendor[index],
-                        onClick: () {
-                          Get.to(ViewVendorVendorProfileScreen(
-                            vendor: vendor[index],
-                          ));
-                          print('Clicked on ${mainController.vendors[index]}');
-                        },
-                      );
+                      return Card(); //TODO: Remove This too
                     },
                   );
                 },
@@ -276,13 +265,7 @@ class VendorEventHistoryScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return EventCard(
-                      name: events[index].name,
-                      images: events[index].images,
-                      vendors: events[index].registeredVendorsId.length,
-                      maxVendors: events[index].maxVendors,
-                      onClick: () {
-                        //TODO: Show a little more details
-                      },
+                      event: events[index],
                     );
                   },
                   itemCount: events.length,

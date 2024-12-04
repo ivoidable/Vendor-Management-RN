@@ -40,13 +40,7 @@ class OrganizerEventsTab extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final event = mainController.events[index];
                     return EventCard(
-                      name: event.name,
-                      images: event.images,
-                      vendors: event.registeredVendorsId.length,
-                      maxVendors: event.maxVendors,
-                      onClick: () {
-                        Get.to(ViewEventScreen(event: event));
-                      },
+                      event: event,
                     );
                   },
                 ));
@@ -94,13 +88,7 @@ class OrganizerVendorsTab extends StatelessWidget {
                   itemCount: mainController.vendors.length,
                   itemBuilder: (context, index) {
                     final vendor = mainController.vendors[index];
-                    return VendorCard(
-                      vendor: mainController.vendors[index],
-                      onClick: () {
-                        Get.to(ViewVendorProfileScreen(vendor: vendor));
-                        print('Clicked on ${vendor.name}');
-                      },
-                    );
+                    return Card(); // Remove This Shit
                   },
                 ),
               ),
@@ -236,13 +224,7 @@ class OrganizerEventsHistoryScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return EventCard(
-                      name: events[index].name,
-                      images: events[index].images,
-                      vendors: events[index].registeredVendorsId.length,
-                      maxVendors: events[index].maxVendors,
-                      onClick: () {
-                        //TODO: Show a little more details
-                      },
+                      event: events[index],
                     );
                   },
                   itemCount: events.length,

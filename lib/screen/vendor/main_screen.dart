@@ -52,7 +52,7 @@ class VendorMainScreen extends StatelessWidget {
         tabBorderRadius: 8,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         duration: Duration(milliseconds: 200),
-        tabBackgroundColor: Colors.grey[100]!,
+        tabBackgroundColor: Colors.pink[100]!,
         color: Colors.black,
         onTabChange: (index) => controller.selectedIndex.value = index,
         tabs: const [

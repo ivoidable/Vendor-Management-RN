@@ -1,5 +1,10 @@
 # todo
 
+
+# Important
+- Fix Login Redirection Issue (Maybe user side shit)
+
+- Change NavBar Layout
 - Implement New Design
 - Add Helper Widgets
 - User Side
