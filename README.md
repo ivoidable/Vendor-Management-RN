@@ -1,19 +1,33 @@
-# todo
+# Vendor Management
 
+#### About
+A simple, yet reliable, vendor management app for bazaar's to help with organizing.
 
-# Important
-- Fix Login Redirection Issue (Maybe user side shit)
+#### Features for organizers
+- Schedule events
+- Limit Vendor Amount
+- Auto-Accept Applications
+- Create event groups for repetitive events
+- Receive Vendors' Applications
+- Filter Applications by criteria and niche
+- Accept and Reject Applications
+- Check calendar for upcoming events and bazaar's
 
-- Change NavBar Layout
-- Implement New Design
-- Add Helper Widgets
-- User Side
-- Setup Payments
-- Vendor Workers and Assistants
-- Finish Background Notifications Redirects
-- Limited Event Subscriptions for free
-- New Event Creation Flow
-- Premium Events (For Big Organizers and Events, and required money or extra credits to sub/apply) and Advertised Events (For money from organizer)
-- Notifications Before Events
-- Translations
-- Immediate Confirmation Notice by streams
+#### Features for vendors
+- Sign up
+- Apply for events
+- Join Event Groups
+- Add and Manage Assistants
+- Create a Product Catalogue
+- Add Links for social media platforms (Instagram, Facebook, Snapchat, Twitter, etc)
+- Check calendar for upcoming events
+- Receive Push notifications for new events, and Application Status Update (Acceptance, Rejection)
+- Get Live Updates (Streams) for new events, application status, etc, without refresh
+
+  #### Screens
+
+  TBD
+
+  #### Release Date
+
+  TBD
